@@ -4,14 +4,15 @@ textarea {
 	white-space: nowrap;
 }
 
+table {
+	border: 1px solid black
+}
 thead {
 	font-weight: bold;
 }
-
 .classname {
 	width: 35%;
 }
-
 @media (max-width: 1336px) { /* More width on smaller screen */
 	.classdays {
 		width: 15%;
