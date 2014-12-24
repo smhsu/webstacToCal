@@ -1,0 +1,33 @@
+textarea {
+	height: 300px;
+	width: 100%;
+	white-space: nowrap;
+}
+
+thead {
+	font-weight: bold;
+}
+
+.classname {
+	width: 35%;
+}
+
+@media (max-width: 1336px) { /* More width on smaller screen */
+	.classdays {
+		width: 15%;
+	}
+}
+@media (min-width: 1337px) {
+	.classdays {
+		width: 10%;
+	}
+}
+.classtime {
+	width: 20%;
+}
+.classloc {
+	width: 20%;
+}
+input[type="text"] {
+	width: 100%;
+}
