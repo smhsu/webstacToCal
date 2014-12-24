@@ -2,9 +2,11 @@ var clientId = '958398529813';
 var apiKey = 'AIzaSyDEiPoOLx-XZvaPSJCRwBi9hwebeo_d4fA';
 var scope = 'https://www.googleapis.com/auth/calendar';
 
+document.getElementById('authorize-button').onclick = handleAuthClick;
+
 function handleClientLoad() {
 	gapi.client.setApiKey(apiKey);
-	window.setTimeout(checkAuth,1);
+	//window.setTimeout(checkAuth,1);
 }
 
 function checkAuth() {
@@ -23,6 +25,6 @@ function handleAuthResult(authResult) {
 }
 
 function handleAuthClick(event) {
-	gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 	return false;
 }
