@@ -44,8 +44,8 @@ function validateToken() {
 	xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET", url, true);
 	xmlhttp.onload = function() {
-		if (!response.error && response.audience == clientId) 
 		response = jQuery.parseJSON(xmlhttp.responseText);
+		if (!response.error && response.audience == clientId) 
 			valid = true;
 	}
 	xmlhttp.send();
@@ -56,7 +56,7 @@ function validateToken() {
 // *
 
 function error(reason) {
-
+	console.log(reason);
 }
 
 /*
@@ -68,7 +68,7 @@ function getCalId(response) {
 	if (!valid)
 		return;
 		
-	cals = response.items;
+	cals = response.result.items;
 	for (index in cals) {
 		if (cals[index].summary == 'Classes') {
 			calId = cals[index].id;
@@ -80,7 +80,7 @@ function getCalId(response) {
 		'path':'https://www.googleapis.com/calendar/v3/calendars',
 		'method': 'POST',
 		'body': {'summary': 'Classes'}
-	}).then( function(response) { calId = response.id; }, error);
+	}).then( function(response) { calId = response.result.id; }, error);
 }
 
 function getClassCal() {
