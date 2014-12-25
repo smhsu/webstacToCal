@@ -1,4 +1,4 @@
-var clientId = '958398529813';
+var clientId = '958398529813-dsebceuap5kr2pjfdskq7rhrimh7p34n.apps.googleusercontent.com';
 var apiKey = 'AIzaSyDEiPoOLx-XZvaPSJCRwBi9hwebeo_d4fA';
 var scope = 'https://www.googleapis.com/auth/calendar';
 
