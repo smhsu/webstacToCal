@@ -154,5 +154,5 @@ function addClass(request) {
 function handleClassBtn() {
 	getClassCal().then(function(postUri) {
 		console.log(postUri);
-	}
+	});
 }
