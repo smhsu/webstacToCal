@@ -94,8 +94,8 @@ function searchCals(response) {
 	cals = response.result.items;
 	for (index in cals) {
 		if (cals[index].summary == 'Classes') { // Class calendar found
-			postUri = convertCalId(calId);
-			return cals[index].id;
+			postUri = convertCalId(cals[index].id);
+			return postUri;
 		}
 	}
 	return null;
