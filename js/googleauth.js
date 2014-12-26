@@ -61,68 +61,61 @@ function validateToken(token) {
 }
 
 // *
-// All the add to calendar functions
+// All the add to calendar functions below...
 // *
 function error(reason) {
 	console.log(reason);
 }
 
-/*
- * Creates the URI for HTTP post requests from a calendar ID.  Also stores it in postUri.
- */
-
-function makePostUri(calId) {
-	postUri = 'https://www.googleapis.com/calendar/v3/calendars/' + calId + '/events';
-	return postUri;
+/* Creates the URI for HTTP post requests from a calendar ID. */
+function convertCalId(calId) {
+	return 'https://www.googleapis.com/calendar/v3/calendars/' + calId + '/events';
 }
-
-var postUri = null
-// returns a promise
-function getPostUri() {
-	return new Promise(function (good, fail) {
-		if (postUri)
-			good(postUri);
-		else
-			getClassCal().then(good(postUri), fail);
-			
-		fail(reason);
-	};
-}
-
-// you can return a value, which the next then can access, or you can return a promise, which the next then will wait on.
 
 /*
  * Searches for a calendar with summary of 'Classes', and if there isn't one,
- * creates it.  Returns a promise.
+ * creates it.  Returns a promise; the success handler will be passed the
+ * postUri.
  */
+var postUri = null;
 function getClassCal() {
-	if (!loggedin)
-		return;
-
-	gapi.client.request({
+	return gapi.client.request({ // Get calendar list
 		'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
 		'params': {'minAccessRole': 'owner'}
-	}).then(searchCals, error).then(function(calId) {
-		console.log(calId);
-	}; // calls getCalId() on success, error() on failure
+	}).then(searchCals)
+		.then(makeNewCal);
 }
 
-// Could return a value... or a promise!
-// If it returns a value, .then(function (arg), arg has the value
-// If it returns a promise, use it like one.  arg will have the server response, but not the value.
+/*
+ * Returns the calendar ID of the calendar with the name of "Classes",
+ * or null if there was no such calendar.
+ */
 function searchCals(response) {
 	cals = response.result.items;
 	for (index in cals) {
 		if (cals[index].summary == 'Classes') { // Class calendar found
+			postUri = convertCalId(calId);
 			return cals[index].id;
 		}
 	}
-	// Class calendar not found, make a new one.  This does nothing for now!
-	gapi.client.request({
+	return null;
+}
+
+/*
+ *
+ */
+function makeNewCal() {
+	if (postUri)
+		return postUri;
+
+	return gapi.client.request({
 		'path':'https://www.googleapis.com/calendar/v3/calendars',
 		'method': 'POST',
 		'body': {'summary': 'Classes'}
-	}).then( function(response) { return response.result.id; }, error);
+	}).then( function(response) {
+		postUri = convertCalId(response.result.id);
+		return postUri;
+	});
 }
 
 function getRequestBody() {
@@ -159,9 +152,7 @@ function addClass(request) {
  * Called when a user presses an "Add to Google Calendar" button
  */
 function handleClassBtn() {
-	if (!valid)
-		login;
-		return;
-		
-	getPostUri().then(success, fail);
+	getClassCal().then(function(postUri) {
+		console.log(postUri);
+	}
 }

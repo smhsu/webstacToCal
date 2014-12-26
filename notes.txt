@@ -1,3 +1,5 @@
+Promises: callback can return a value, which the next then can access, or you can return a promise, which the next then will wait on.
+
 EXRULE works the same as RRULE
 EXDATE must be in the same format as the start time field for the event!  If that includes time, so must EXDATE.
 
