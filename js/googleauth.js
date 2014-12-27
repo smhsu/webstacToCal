@@ -64,7 +64,7 @@ function validateToken(token) {
 // All the add to calendar functions below...
 // *
 function error(reason) {
-	console.log(reason);
+	console.log("Error! ", reason);
 }
 
 /* Creates the URI for HTTP post requests from a calendar ID. */
@@ -78,12 +78,17 @@ function convertCalId(calId) {
  * postUri.
  */
 var postUri = null;
+var promise = null;
 function getClassCal() {
-	return gapi.client.request({ // Get calendar list
-		'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
-		'params': {'minAccessRole': 'owner'}
-	}).then(searchCals)
-		.then(makeNewCal);
+	if (!promise) {
+		promise = gapi.client.request({ // Get calendar list
+			'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+			'params': {'minAccessRole': 'owner'}
+		}).then(searchCals)
+			.then(makeNewCal);
+	}
+	
+	return promise;
 }
 
 /*
@@ -102,7 +107,8 @@ function searchCals(response) {
 }
 
 /*
- *
+ * If postUri is empty, makes a new calendar with name of "Classes".
+ * Returns the postUri.
  */
 function makeNewCal() {
 	if (postUri)
@@ -153,6 +159,7 @@ function addClass(request) {
  */
 function handleClassBtn() {
 	getClassCal().then(function(postUri) {
-		console.log(postUri);
-	});
+		console.log("Got it!", postUri);
+	},
+	error);
 }
