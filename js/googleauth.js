@@ -64,7 +64,10 @@ function validateToken(token) {
 // All the add to calendar functions below...
 // *
 function error(reason) {
-	console.log("Error! ", reason);
+	if (reason.status == 401)
+		console.log("Unauthorized!");
+	else
+		console.log("Error! ", reason);
 }
 
 /* Creates the URI for HTTP post requests from a calendar ID. */
@@ -158,8 +161,14 @@ function addClass(request) {
  * Called when a user presses an "Add to Google Calendar" button
  */
 function handleClassBtn() {
+	if (!loggedin)
+		console.log("Warning: not logged in!");
+		
 	getClassCal().then(function(postUri) {
 		console.log("Got it!", postUri);
 	},
-	error);
+	function(err) {
+		promise = null; // Reset the promise so we can retry
+		error(err);
+	});
 }
