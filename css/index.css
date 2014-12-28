@@ -32,3 +32,7 @@ thead {
 input[type="text"] {
 	width: 100%;
 }
+td img {
+	min-height: 18px;
+	min-width: 58px;
+}

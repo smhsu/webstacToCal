@@ -144,12 +144,7 @@ function getRequestBody() {
 /*
  * Adds a class to the user's calendar.
  */
-function addClass(request) {
-	if (!postUri)
-		getClassCal();
-		// What happens if the user is not authorized?
-		// What happens if it fails?
-		
+function addClass(postUri, body) {
 	gapi.client.request({
 		'path': postUri,
 		'method': 'POST',
@@ -160,9 +155,13 @@ function addClass(request) {
 /*
  * Called when a user presses an "Add to Google Calendar" button
  */
-function handleClassBtn() {
-	if (!loggedin)
-		console.log("Warning: not logged in!");
+var log = null;
+function addBtnPressed() {
+	log = this;
+	if (!loggedin) {
+		authorize();
+		return;
+	}
 		
 	getClassCal().then(function(postUri) {
 		console.log("Got it!", postUri);

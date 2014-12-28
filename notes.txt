@@ -3,6 +3,19 @@ Promises: callback can return a value, which the next then can access, or you ca
 EXRULE works the same as RRULE
 EXDATE must be in the same format as the start time field for the event!  If that includes time, so must EXDATE.
 
+An example request body:
+{
+	'summary': 'Event title',
+	'start': {'dateTime':'2014-12-26T10:00:00', 'timeZone':'America/Chicago'},
+	'end': {'dateTime':'2014-12-26T13:00:00', 'timeZone':'America/Chicago'},
+	'recurrence': [ // Make sure it's the day AFTER semester ends
+		'RRULE:FREQ=WEEKLY;UNTIL=20150107;BYDAY=TU,TH',
+		'EXDATE:20150106' // Must be in same format as start!
+	],
+	'location': 'Event location',
+	'description': 'Created by WebSTAC to Calendar'
+};
+
 
    The following profile of ISO 8601 [ISO8601] dates SHOULD be used in
    new protocols on the Internet.  This is specified using the syntax
