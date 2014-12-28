@@ -8,12 +8,14 @@ var scope = 'https://www.googleapis.com/auth/calendar';
 // api version: v3
 
 var loggedin = false;
+var validFail = false;
 
 /* Called when Google's Javascript client loads */
 function handleClientLoad() {
 	gapi.client.setApiKey(apiKey);
 }
 
+/* Called when someone presses the login button */
 function authorize(event) {
 	loggedin = false;
 	// Working...
@@ -22,14 +24,16 @@ function authorize(event) {
 
 function handleAuthResult(authResult) {
 	var authorizeButton = document.getElementById('authorize-button');
+	validFail = false;
 	if (authResult && !authResult.error) {
 	
 		if (validateToken(authResult)) {
 			loggedin = true;
 			authorizeButton.style.visibility = 'hidden';
-		}
-		else
+		} else {
+			validFail = true;
 			loginFailed();
+		}
 		
 	}
 	else
@@ -38,6 +42,10 @@ function handleAuthResult(authResult) {
 
 function loginFailed() {
 	console.log("Login failed.")
+}
+
+function logout() {
+
 }
 
 /* 
@@ -63,12 +71,6 @@ function validateToken(token) {
 // *
 // All the add to calendar functions below...
 // *
-function error(reason) {
-	if (reason.status == 401)
-		console.log("Unauthorized!");
-	else
-		console.log("Error! ", reason);
-}
 
 /* Creates the URI for HTTP post requests from a calendar ID. */
 function convertCalId(calId) {
@@ -127,47 +129,46 @@ function makeNewCal() {
 	});
 }
 
-function getRequestBody() {
-	return {
-		'summary': 'Test event',
-		'start': {'dateTime':'2014-12-26T10:00:00', 'timeZone':'America/Chicago'},
-		'end': {'dateTime':'2014-12-26T13:00:00', 'timeZone':'America/Chicago'},
-		'recurrence': [ // Make sure it's the day AFTER semester ends
-			'RRULE:FREQ=WEEKLY;UNTIL=20150107;BYDAY=TU,TH',
-			'EXDATE:20150106' // Must be in same format as start!
-		], 
-		'location': 'Test location',
-		'description': 'Added by WebSTAC to Calendar'
-	};
-}
-
-/*
- * Adds a class to the user's calendar.
- */
-function addClass(postUri, body) {
-	gapi.client.request({
+function sendEventReq(postUri, body) {
+	return gapi.client.request({
 		'path': postUri,
 		'method': 'POST',
-		'body': getRequestBody()
-	})
+		'body': body
+	});
 }
 
 /*
  * Called when a user presses an "Add to Google Calendar" button
  */
-var log = null;
 function addBtnPressed() {
-	log = this;
+	if (validFail) {
+		error("Auth fail");
+		return;
+	}
 	if (!loggedin) {
 		authorize();
 		return;
 	}
-		
-	getClassCal().then(function(postUri) {
-		console.log("Got it!", postUri);
-	},
-	function(err) {
-		promise = null; // Reset the promise so we can retry
-		error(err);
-	});
+	
+	$(this.children[4].firstChild).replaceWith("<a class='btn btn-default disabled'>Working...</a>")
+	
+	getClassCal()
+		.catch( function(err) { // getClassCal failed
+			promise = null; // Reset getClassCal's promise so we can retry
+			throw(err);
+		})
+		.then( function(postUri) {
+			// 'this' stores the table row that the button press came from.
+			// genRequestBody defined in main.js.  It can throw exceptions.
+			return sendEventReq(postUri, genRequestBody(this));
+		})
+		.then ( function() { // Success!
+			console.log('success!');
+		}, function(err) { // Final error handler. 
+			error(err);
+		});
+}
+
+function error(reason) {
+	console.log("Error! ", reason);
 }

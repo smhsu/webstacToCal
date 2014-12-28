@@ -189,7 +189,7 @@ function genRequestBody(tableRow) {
 	
 	startSel = children[2].children[0];
 	endSel = children[2].children[1];
-	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex == 0 )
+	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
 		throw "End time is before start time."
 	request.start = {'dateTime': semesters['SP15'].startdate + convertTimeOption(startSel.value), 'timeZone':'America/Chicago'};
 	request.end = {'dateTime': semesters['SP15'].startdate + convertTimeOption(endSel.value), 'timeZone':'America/Chicago'};
