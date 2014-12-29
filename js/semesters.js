@@ -20,7 +20,7 @@ Date.prototype.toISODateStr = function() {
  */
 semesters = {
 	'SP15': {
-		'startdate': new Date('2015','01','12'),
-		'enddate': '20150425'
+		'startDate': new Date('2015','01','12'),
+		'endDate': '20150425'
 	}
 }

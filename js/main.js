@@ -192,14 +192,15 @@ function genRequestBody(tableRow) {
 	request = {}
 	request.summary = children[0].firstChild.value; 
 	
+	// Construct recurrence
 	byDay = convertDayOption(children[1]);
 	if (!byDay)
 		throw "No days are selected.";
-	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].enddate+';BYDAY='+byDay];
+	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].endDate+';BYDAY='+byDay];
 	
+	// Construct start and end
 	dayOffset = firstSelectedDay(children[1]);
 	startDate = semesters['SP15'].startDate.offsetDateBy(dayOffset).toISODateStr();
-	
 	startSel = children[2].children[0];
 	endSel = children[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
