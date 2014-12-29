@@ -150,22 +150,23 @@ function addBtnPressed() {
 		return;
 	}
 	
-	$(this.children[4].firstChild).replaceWith("<a class='btn btn-default disabled'>Working...</a>")
+	originRow = this;
+	$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-default disabled'>Working...</a>");
 	
 	getClassCal()
-		.catch( function(err) { // getClassCal failed
-			promise = null; // Reset getClassCal's promise so we can retry
-			throw(err);
-		})
 		.then( function(postUri) {
 			// 'this' stores the table row that the button press came from.
 			// genRequestBody defined in main.js.  It can throw exceptions.
-			return sendEventReq(postUri, genRequestBody(this));
+			return sendEventReq(postUri, genRequestBody(originRow));
+		}, function(err) { // getClassCal failed
+			promise = null; // Reset getClassCal's promise so we can retry
+			throw(err); // Pass error to next handler
 		})
+		
 		.then ( function() { // Success!
-			console.log('success!');
+			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-success'>Success!</a>");
 		}, function(err) { // Final error handler. 
-			error(err);
+			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-danger'>Failed</a>");
 		});
 }
 
