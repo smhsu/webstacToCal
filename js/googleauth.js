@@ -140,7 +140,7 @@ function sendEventReq(postUri, body) {
 /*
  * Called when a user presses an "Add to Google Calendar" button
  */
-function addBtnPressed(event) {
+function addBtnPressed(rowId) {
 	if (validFail) {
 		error("Auth fail");
 		return;
@@ -150,10 +150,10 @@ function addBtnPressed(event) {
 		return;
 	}
 	
-	btn = $(event);
+	originRow = document.getElementById(rowId);
+	btn = $(originRow.children[4].children[0]);
 	btn.replaceWith("<a class='btn btn-default disabled'>Working...</a>");
-	originRow = btn.parent().parent();
-
+	
 	getClassCal()
 		.then( function(postUri) {
 			return sendEventReq(postUri, genRequestBody(originRow)); // genRequestBody defined in main.js.  It can throw exceptions.
