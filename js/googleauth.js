@@ -164,7 +164,7 @@ function addBtnPressed() {
 		})
 		
 		.then ( function() { // Success!
-			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-success'>Success!</a>");
+			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
 		}, function(err) { // Final error handler. 
 			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-danger'>Failed</a>");
 		});

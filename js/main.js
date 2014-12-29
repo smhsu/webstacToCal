@@ -12,7 +12,7 @@ var classTable =
 			<td>Days <br> (MTWTFSS)</td>\
 			<td>Time <br> (start - end)</td>\
 			<td>Location</td>\
-			<td></td>\
+			<td>Add to calendar</td>\
 		</tr>\
 	</thead>\
 	<tbody id='classtable'></tbody>\
@@ -73,7 +73,7 @@ function makeTimeSelect(timeStr) {
 		ampm = ' PM';
 	start.val(split[0].slice(0, split[0].length - 1) + ampm);
 	
-	if (split[1].charAt(split[1].length) == 'a') // Set end
+	if (split[1].charAt(split[1].length - 1) == 'a') // Set end
 		ampm = ' AM';
 	else
 		ampm = ' PM';
@@ -157,11 +157,21 @@ function convertDayOption(tdEle) {
 		return '';
 }
 
+/* Returns the INDEX of the first selected day in row of seven checkboxes. */
+function firstSelectedDay(tdEle) {
+	boxes = tdEle.children;
+	for (i = 0; i < 7; i++) {
+		if (boxes[i].checked)
+			return i;
+	}
+	return -1;
+}
+
 /**
  * Converts one of the time options to an ISO time string.
  * Warning: incorrect for times from 12:00 AM to 12:59 AM.  Luckily, those aren't options.
  */
-function convertTimeOption(timestr) {
+function toISOTimeStr(timestr) {
 	if (!timestr)
 		return '';
 	hrMin = timestr.split(':');
@@ -187,12 +197,15 @@ function genRequestBody(tableRow) {
 		throw "No days are selected.";
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].enddate+';BYDAY='+byDay];
 	
+	dayOffset = firstSelectedDay(children[1]);
+	startDate = semesters['SP15'].startDate.addDays(dayOffset).toISODateStr();
+	
 	startSel = children[2].children[0];
 	endSel = children[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
 		throw "End time is before start time."
-	request.start = {'dateTime': semesters['SP15'].startdate + convertTimeOption(startSel.value), 'timeZone':'America/Chicago'};
-	request.end = {'dateTime': semesters['SP15'].startdate + convertTimeOption(endSel.value), 'timeZone':'America/Chicago'};
+	request.start = {'dateTime': startDate + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
+	request.end = {'dateTime': startDate + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
 	
 	request.location = children[3].firstChild.value;
 	request.description = 'Created by WebSTAC to Calendar';
