@@ -140,7 +140,7 @@ function sendEventReq(postUri, body) {
 /*
  * Called when a user presses an "Add to Google Calendar" button
  */
-function addBtnPressed() {
+function addBtnPressed(event) {
 	if (validFail) {
 		error("Auth fail");
 		return;
@@ -150,24 +150,32 @@ function addBtnPressed() {
 		return;
 	}
 	
-	originRow = this;
-	$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-default disabled'>Working...</a>");
+	btn = event.target || event.srcElement;
+	$(btn).replaceWith("<a class='btn btn-default disabled'>Working...</a>");
+	originRow = btn.parent.parent;
 	
 	getClassCal()
 		.then( function(postUri) {
-			// 'this' stores the table row that the button press came from.
-			// genRequestBody defined in main.js.  It can throw exceptions.
-			return sendEventReq(postUri, genRequestBody(originRow));
-		}, function(err) { // getClassCal failed
+			return sendEventReq(postUri, genRequestBody(originRow)); // genRequestBody defined in main.js.  It can throw exceptions.
+		},
+		function(errResponse) { // getClassCal failed
 			promise = null; // Reset getClassCal's promise so we can retry
-			throw(err); // Pass error to next handler
+			reason = 'Error trying to get the calendar: ' + errResponse.result.error.message;
+			throw(reason); // Pass error to next handler
 		})
 		
 		.then ( function() { // Success!
-			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
-		}, function(err) { // Final error handler. 
-			$(originRow.children[4].firstChild).replaceWith("<a class='btn btn-danger'>Error - click to retry</a>");
-			console.log(err)
+			$(btn).replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
+		},
+		function(err) { // All errors eventually find their way here.
+			if (typeof(err) == "string") // Error from genRequestBody
+				reason = err;
+			else // Error from Google API
+				reason = 'Error trying post the event: ' + errResponse.result.error.message;
+				
+			errBtn = $("<a class='btn btn-danger'>Error - click to retry</a>");
+			$(btn).replaceWith(errBtn);
+			console.log(err);
 		});
 }
 
