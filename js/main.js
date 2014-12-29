@@ -183,33 +183,34 @@ function toISOTimeStr(timestr) {
 }
 
 /**
+ * Expects a JQuery object as input.
  * Generates the Google Calendar API request body for a user's class.
  * Throws a string describing an error if input fails validation.
  */
 function genRequestBody(tableRow) {
-	children = tableRow.children; // each element of this array is a td element
+	rowCols = tableRow.children(); // each element of this array is a td element
 	
 	request = {}
-	request.summary = children[0].firstChild.value; 
+	request.summary = rowCols[0].firstChild.value; 
 	
 	// Construct recurrence
-	byDay = convertDayOption(children[1]);
+	byDay = convertDayOption(rowCols[1]);
 	if (!byDay)
 		throw "No days are selected.";
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].endDate+';BYDAY='+byDay];
 	
 	// Construct start and end
 	// Warning: only correct if semester starts on a Monday!
-	dayOffset = firstSelectedDay(children[1]);
+	dayOffset = firstSelectedDay(rowCols[1]);
 	startDate = semesters['SP15'].startDate.offsetDateBy(dayOffset).toISODateStr();
-	startSel = children[2].children[0];
-	endSel = children[2].children[1];
+	startSel = rowCols[2].children[0];
+	endSel = rowCols[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
 		throw "End time is before start time."
 	request.start = {'dateTime': startDate + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
 	request.end = {'dateTime': startDate + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
 	
-	request.location = children[3].firstChild.value;
+	request.location = rowCols[3].firstChild.value;
 	request.description = 'Created by WebSTAC to Calendar';
 	
 	return request;

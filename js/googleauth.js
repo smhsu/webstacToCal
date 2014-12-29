@@ -150,10 +150,10 @@ function addBtnPressed(event) {
 		return;
 	}
 	
-	btn = event.target || event.srcElement;
-	$(btn).replaceWith("<a class='btn btn-default disabled'>Working...</a>");
-	originRow = btn.parent.parent;
-	
+	btn = $(event);
+	btn.replaceWith("<a class='btn btn-default disabled'>Working...</a>");
+	originRow = btn.parent().parent();
+
 	getClassCal()
 		.then( function(postUri) {
 			return sendEventReq(postUri, genRequestBody(originRow)); // genRequestBody defined in main.js.  It can throw exceptions.
@@ -165,17 +165,17 @@ function addBtnPressed(event) {
 		})
 		
 		.then ( function() { // Success!
-			$(btn).replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
+			btn.replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
 		},
 		function(err) { // All errors eventually find their way here.
+			console.log(err);
 			if (typeof(err) == "string") // Error from genRequestBody
 				reason = err;
 			else // Error from Google API
-				reason = 'Error trying post the event: ' + errResponse.result.error.message;
+				reason = 'Error trying post the event: ' + err.result.error.message;
 				
 			errBtn = $("<a class='btn btn-danger'>Error - click to retry</a>");
-			$(btn).replaceWith(errBtn);
-			console.log(err);
+			btn.replaceWith(errBtn);
 		});
 }
 
