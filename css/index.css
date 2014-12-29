@@ -37,7 +37,7 @@ td img {
 	min-width: 58px;
 }
 
-btn-success {
+.btn-success {
 	pointer-events: none;
 	cursor: not-allowed;
 }
