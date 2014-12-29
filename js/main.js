@@ -198,7 +198,7 @@ function genRequestBody(tableRow) {
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].enddate+';BYDAY='+byDay];
 	
 	dayOffset = firstSelectedDay(children[1]);
-	startDate = semesters['SP15'].startDate.addDays(dayOffset).toISODateStr();
+	startDate = semesters['SP15'].startDate.offsetDateBy(dayOffset).toISODateStr();
 	
 	startSel = children[2].children[0];
 	endSel = children[2].children[1];

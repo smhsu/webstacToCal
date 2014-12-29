@@ -3,7 +3,7 @@
  ***/
  
 /* Returns a new date that is the specified number of days after this one. */
-Date.prototype.addDays = function(days) {
+Date.prototype.offsetDateBy = function(days) {
     var dat = new Date(this.valueOf());
     dat.setDate(dat.getDate() + days);
     return dat;
