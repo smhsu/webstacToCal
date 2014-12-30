@@ -34,18 +34,22 @@ loggedInDiv = "<div id='logged-in'>You are logged in.<br><a class='btn btn-defau
 /* Called after authorize() */
 function handleAuthResult(authResult) {
 	btn = $('#login-btn');
+	btn.button('reset');
 	if (authResult && !authResult.error) {
 	
 		if (validateToken(authResult)) {
 			loggedin = true;
 			btn.replaceWith(loggedInDiv);
 		} else {
-			btn.replaceWith(makeErrorButton("Login failed - retry?", '', "authorize()"));
+			btn.attr('class', 'btn btn-danger');
+			btn.text("Login failed - retry?");
 		}
-		
+
 	}
-	else
-		btn.replaceWith(makeErrorButton("Login failed - retry?", '', "authorize()"));
+	else {
+		btn.attr('class', 'btn btn-danger');
+		btn.text("Login failed - retry?");
+	}
 }
 
 /**
@@ -77,21 +81,20 @@ function logout() {
 		return;
 	url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
 	
-	xmlhttp = new XMLHttpRequest();
-	xmlhttp.timeout = 5000;
-	xmlhttp.open("GET", url, true);
-	xmlhttp.onload = function() {
-		$('#logged-in').replaceWith(loginButton);
-	}
-	xmlhttp.onerror = function () {
-		console.log("Error logging out");
-	}
-	xmlhttp.ontimeout = function () {
-		console.log("Logout timed out");
-	}
-	
-	$('#logged-in a').button('loading');
-	xmlhttp.send();
+	$.ajax({
+		type: 'GET',
+		url: url,
+		async: false,
+		contentType: "application/json",
+		dataType: 'jsonp',
+		success: function() {
+			loggedin = false;
+			$('#logged-in').replaceWith(loginButton);
+		},
+		error: function(e) {
+		
+		}
+	});
 }
 
 /***
@@ -199,10 +202,10 @@ function addBtnPressed(rowId) {
 	originRow = document.getElementById(rowId);
 	btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
-	onclick = "addBtnPressed('"+rowId+"')";
+	callback = "addBtnPressed('"+rowId+"')";
 	
 	if (!loggedin) {
-		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", onclick));
+		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", callback));
 		return;
 	}
 	
@@ -210,14 +213,14 @@ function addBtnPressed(rowId) {
 	selectedIndex = $("#select-div select")[0].selectedIndex;
 	if (selectedIndex <= 0) {
 		$("#select-div").attr("style", "border: 3px solid red");
-		btn.replaceWith(makeErrorButton("Error - retry?", "Select a calendar above first.", onclick));
+		btn.replaceWith(makeErrorButton("Error - retry?", "Select a calendar first.", callback));
 		return;
 	}
 	else
 		$("#select-div").removeAttr("style");
 	postUri = convertCalId(calIds[selectedIndex - 1]);
 	
-	// Validate the input before sending it off
+	// Validate the input before making the request
 	originRow.children[1].removeAttribute("style"); // Remove red borders that the catch block might have added
 	originRow.children[2].removeAttribute("style");
 	try {
@@ -225,13 +228,13 @@ function addBtnPressed(rowId) {
 	}
 	catch (badCol) {
 		if (badCol == 1) { // Days of the week
-			btn.replaceWith(makeErrorButton("Error - retry?", "Select at least one day of the week.", onclick));
+			btn.replaceWith(makeErrorButton("Error - retry?", "Select at least one day of the week.", callback));
 		}
 		else if (badCol == 2) { // Start and end time
-			btn.replaceWith(makeErrorButton("Error - retry?", "Start time must be before end time", onclick));
+			btn.replaceWith(makeErrorButton("Error - retry?", "Start time must be before end time.", callback));
 		}
 		else // ???
-			btn.replaceWith(makeErrorButton("Error - retry?", "Unexpected exception: "+badCol, onclick));
+			btn.replaceWith(makeErrorButton("Error - retry?", "Unexpected exception: "+badCol, callback));
 			
 		originRow.children[badCol].setAttribute("style", "border: 3px solid red;");
 		return;
