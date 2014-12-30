@@ -16,7 +16,6 @@ var scope = 'https://www.googleapis.com/auth/calendar';
 // api version: v3
 
 var loggedin = false;
-var validFail = false;
 
 /* Called when Google's Javascript client loads */
 function handleClientLoad() {
@@ -26,34 +25,27 @@ function handleClientLoad() {
 /* Called when someone presses the login button */
 function authorize(event) {
 	loggedin = false;
-	// Working...
+	$('#login-btn').button('loading');
 	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 }
 
+loginButton = "<button class='btn btn-primary' id='login-btn' data-loading-text='Working...' onclick='authorize()'>Log in</button>"
+loggedInDiv = "<div id='logged-in'>You are logged in.<br><a class='btn btn-default' data-loading-text='Logging out...' onclick='logout()'>Logout</a></div>";
+/* Called after authorize() */
 function handleAuthResult(authResult) {
-	var authorizeButton = document.getElementById('authorize-button');
-	validFail = false;
+	btn = $('#login-btn');
 	if (authResult && !authResult.error) {
 	
 		if (validateToken(authResult)) {
 			loggedin = true;
-			authorizeButton.style.visibility = 'hidden';
+			btn.replaceWith(loggedInDiv);
 		} else {
-			validFail = true;
-			loginFailed();
+			btn.replaceWith(makeErrorButton("Login failed - retry?", '', "authorize()"));
 		}
 		
 	}
 	else
-		loginFailed();
-}
-
-function loginFailed() {
-	console.log("Login failed.")
-}
-
-function logout() {
-
+		btn.replaceWith(makeErrorButton("Login failed - retry?", '', "authorize()"));
 }
 
 /**
@@ -74,6 +66,32 @@ function validateToken(token) {
 	try { response = jQuery.parseJSON(xmlhttp.responseText); }
 	catch (err) { return false; }
 	return (!response.error && response.audience == clientId);
+}
+
+/**
+ * Called when user presses logout button
+ */
+function logout() {
+	token = gapi.auth.getToken();
+	if (!token)
+		return;
+	url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
+	
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.timeout = 5000;
+	xmlhttp.open("GET", url, true);
+	xmlhttp.onload = function() {
+		$('#logged-in').replaceWith(loginButton);
+	}
+	xmlhttp.onerror = function () {
+		console.log("Error logging out");
+	}
+	xmlhttp.ontimeout = function () {
+		console.log("Logout timed out");
+	}
+	
+	$('#logged-in a').button('loading');
+	xmlhttp.send();
 }
 
 /***
@@ -120,8 +138,12 @@ function makeCalSelect() {
 function refreshCalList() {
 	btn = $("#select-div a");
 	btn.tooltip('destroy');
-	btn.replaceWith(workingLabel);
+	if (!loggedin) {
+		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", "refreshCalList()"));
+		return;
+	}
 	
+	btn.replaceWith(workingLabel);
 	makeCalSelect().then( function(select) {
 		$("#select-div select").replaceWith(select);
 		$("#select-div a").replaceWith(defaultRefreshBtn);
@@ -174,19 +196,15 @@ function sendEventRequest(postUri, request, rowId) {
  * Called when a user presses an "Add to Google Calendar" button
  */
 function addBtnPressed(rowId) {
-	if (validFail) {
-		error("Auth fail");
-		return;
-	}
-	if (!loggedin) {
-		authorize();
-		return;
-	}
-	
 	originRow = document.getElementById(rowId);
 	btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
 	onclick = "addBtnPressed('"+rowId+"')";
+	
+	if (!loggedin) {
+		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", onclick));
+		return;
+	}
 	
 	// Get which calendar the user has selected
 	selectedIndex = $("#select-div select")[0].selectedIndex;
@@ -225,13 +243,17 @@ function addBtnPressed(rowId) {
 
 /**
  * Makes an error button with handy tooltip
+ * text: text of the button
  * reason: the tooltip contents
  * id: the parameter passed to addBtnPressed()
  */
 function makeErrorButton(text, reason, onclick) {
-	errBtn = $("<a class='btn btn-danger' data-toggle='tooltip' data-placement='top'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
-	errBtn.attr("title", reason);
+	errBtn = $("<a class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
+	if (reason) {
+		errBtn.attr("data-toggle", "tooltip");
+		errBtn.attr("title", reason);
+		errBtn.tooltip();
+	}
 	errBtn.attr("onclick", onclick);
-	errBtn.tooltip();
 	return errBtn;
 }
