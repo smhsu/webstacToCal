@@ -17,21 +17,21 @@ var scope = 'https://www.googleapis.com/auth/calendar';
 
 var loggedin = false;
 
-/* Called when Google's Javascript client loads */
+/** Called when Google's Javascript client loads */
 function handleClientLoad() {
 	gapi.client.setApiKey(apiKey);
 }
 
-/* Called when someone presses the login button */
+/** Called when someone presses the login button */
 function authorize(event) {
 	loggedin = false;
 	$('#login-btn').button('loading');
 	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 }
 
-loginButton = "<button class='btn btn-primary' id='login-btn' data-loading-text='Working...' onclick='authorize()'>Log in</button>"
-loggedInDiv = "<div id='logged-in'>You are logged in.<br><a class='btn btn-default' data-loading-text='Logging out...' onclick='logout()'>Logout</a></div>";
-/* Called after authorize() */
+loginButton = "<button class='btn btn-primary' id='login-btn' data-loading-text='Logging in...' onclick='authorize()'>Log in</button>"
+loggedInDiv = "<div id='logged-in'><p>You are logged in.</p><a class='btn btn-default' data-loading-text='Logging out...' onclick='logout()'>Logout</a></div>";
+/** Called after authorize() */
 function handleAuthResult(authResult) {
 	btn = $('#login-btn');
 	btn.button('reset');
@@ -40,6 +40,7 @@ function handleAuthResult(authResult) {
 		if (validateToken(authResult)) {
 			loggedin = true;
 			btn.replaceWith(loggedInDiv);
+			refreshCalList();
 		} else {
 			btn.attr('class', 'btn btn-danger');
 			btn.text("Login failed - retry?");
@@ -92,7 +93,10 @@ function logout() {
 			$('#logged-in').replaceWith(loginButton);
 		},
 		error: function(e) {
-		
+			$('#logged-in p').replaceWith("<p>You may log out manually by visiting <a href=\
+				'https://security.google.com/settings/security/permissions'>https://security.google.com/settings/security/permissions</a></p>"
+			$('#logged-in a').attr('class', 'btn btn-danger');
+			$('#logged-in a').text("Logout failed - retry?");
 		}
 	});
 }
@@ -107,7 +111,7 @@ var workingLabel = "<a class='btn btn-default disabled'>Working...</a>";
 $("#select-div").append(defaultSelect);
 $("#select-div").append(defaultRefreshBtn);
 
-/* Creates the URI for HTTP post requests from a calendar ID. */
+/** Creates the URI for HTTP post requests from a calendar ID. */
 function convertCalId(calId) {
 	return 'https://www.googleapis.com/calendar/v3/calendars/' + calId + '/events';
 }

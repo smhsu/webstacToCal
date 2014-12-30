@@ -160,7 +160,7 @@ function convertDayOption(tdEle) {
 		return '';
 }
 
-/* Returns the INDEX of the first selected day in row of seven checkboxes. */
+/** Returns the INDEX of the first selected day in row of seven checkboxes. */
 function firstSelectedDay(tdEle) {
 	boxes = tdEle.children;
 	for (i = 0; i < 7; i++) {
