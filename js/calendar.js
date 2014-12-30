@@ -100,23 +100,28 @@ var calIds = []
 function makeCalSelect() {
 	calIds = [];
 	
-	return gapi.client.request({
+	return gapi.client.request({ // Request calendars
 		'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
 		'params': {'minAccessRole': 'writer'}
 	}).then( function(response) {
 		select = $(defaultSelect);
 		cals = response.result.items;
 		for (index in cals) {
-			calIds.append(cals[index].id);
+			calIds.push(cals[index].id);
 			select.append("<option>"+cals[index].summary +"</option>");
 		}
 		return select;
 	});
 }
 
+/**
+ * Called when a user presses the "Refresh List" button
+ */
 function refreshCalList() {
 	btn = $("#select-div a");
+	btn.tooltip('destroy');
 	btn.replaceWith(workingLabel);
+	
 	makeCalSelect().then( function(select) {
 		$("#select-div select").replaceWith(select);
 		$("#select-div a").replaceWith(defaultRefreshBtn);
@@ -127,58 +132,6 @@ function refreshCalList() {
 		else // ???
 			reason = "Unexpected exception: " + error;
 		$("#select-div a").replaceWith(makeErrorButton("Fetch failed - retry?", reason, "refreshCalList()"));
-	});
-}
-
-/**
- * Searches for a calendar with summary of 'Classes', and if there isn't one,
- * creates it.  Returns a promise; the success handler will be passed the
- * postUri.
- */
-var postUri = null;
-var promise = null;
-function getClassCal() {
-	if (!promise) {
-		promise = gapi.client.request({ // Get calendar list
-			'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
-			'params': {'minAccessRole': 'owner'}
-		}).then(searchCals)
-			.then(makeNewCal);
-	}
-	
-	return promise;
-}
-
-/**
- * Returns the calendar ID of the calendar with the name of "Classes",
- * or null if there was no such calendar.
- */
-function searchCals(response) {
-	cals = response.result.items;
-	for (index in cals) {
-		if (cals[index].summary == 'Classes') { // Class calendar found
-			postUri = convertCalId(cals[index].id);
-			return postUri;
-		}
-	}
-	return null;
-}
-
-/**
- * If postUri is empty, makes a new calendar with name of "Classes".
- * Returns the postUri, or a promise for it.
- */
-function makeNewCal() {
-	if (postUri)
-		return postUri;
-
-	return gapi.client.request({
-		'path':'https://www.googleapis.com/calendar/v3/calendars',
-		'method': 'POST',
-		'body': {'summary': 'Classes'}
-	}).then( function(response) {
-		postUri = convertCalId(response.result.id);
-		return postUri;
 	});
 }
 
@@ -193,40 +146,28 @@ function postEvent(postUri, body) {
 /**
  * Gets the appropriate calendar, and attempts to add an event to it.  Replaces a button
  * in the class table row depending on success.
+ * postUri: the URI to send the request to
  * request: the request body
  * rowId: the ID of the row in which replace the button
  */
-function sendEventRequest(request, rowId) {
-	getClassCal()
-		.then( function(postUri) {
-			return postEvent(postUri, request);
-		},
-		function(err) { // getClassCal failed
-			promise = null; // Reset getClassCal's promise so we can retry
-			
-			if (err.result) // Whatever happens, let the next error handler take it
-				throw('Error getting your calendar: ' + err.result.error.message);
-			else
-				throw(err);
-		})
+function sendEventRequest(postUri, request, rowId) {
+	postEvent(postUri, request).then( function()
+	{
+		originRow = document.getElementById(rowId);
+		btn = $(originRow.children[4].children[0]);
+		btn.replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
+	},
+	function(err)
+	{
+		if (err.result)
+			reason = 'Error trying post the event: ' + err.result.error.message;
+		else
+			reason = 'Unexpected exception: ' + err;
 		
-		.then ( function() { // Success!
-			originRow = document.getElementById(rowId);
-			btn = $(originRow.children[4].children[0]);
-			btn.replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
-		},
-		function(err) { // All errors eventually find their way here.
-			if (typeof(err) == "string") // Passed from above block
-				reason = err;
-			else if (err.result)
-				reason = 'Error trying post the event: ' + err.result.error.message;
-			else
-				reason = 'Unexpected exception: ' + err;
-			
-			originRow = document.getElementById(rowId);
-			btn = $(originRow.children[4].children[0]);
-			btn.replaceWith(makeErrorButton("Error - retry?", reason, "addBtnPressed('"+rowId+"')"));
-		});
+		originRow = document.getElementById(rowId);
+		btn = $(originRow.children[4].children[0]);
+		btn.replaceWith(makeErrorButton("Error - retry?", reason, "addBtnPressed('"+rowId+"')"));
+	});
 }
 
 /**
@@ -242,17 +183,27 @@ function addBtnPressed(rowId) {
 		return;
 	}
 	
-	originRow = document.getElementById(rowId);
-	originRow.children[1].removeAttribute("style"); // Remove red borders from the catch block
-	originRow.children[2].removeAttribute("style");
-	
 	btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
+	onclick = "addBtnPressed('"+rowId+"')";
+	
+	selectedIndex = $("#select-div select")[0].selectedIndex;
+	if (selectedIndex <= 0) {
+		$("#select-div").attr("style", "border: 3px solid red");
+		btn.replaceWith(makeErrorButton("Error - retry?", "Select a calendar above first.", onclick));
+		return;
+	}
+	else
+		$("#select-div").removeAttr("style");
+	postUri = convertCalId(calIds[selectedIndex - 1]);
+	
+	originRow = document.getElementById(rowId);
+	originRow.children[1].removeAttribute("style"); // Remove red borders that the catch block might have added
+	originRow.children[2].removeAttribute("style");
 	try {
 		request = genRequestBody(originRow); // genRequestBody defined in tableParse.js
 	}
 	catch (badCol) {
-		onclick = "addBtnPressed('"+rowId+"')";
 		if (badCol == 1) { // Days of the week
 			btn.replaceWith(makeErrorButton("Error - retry?", "Select at least one day of the week.", onclick));
 		}
@@ -262,12 +213,12 @@ function addBtnPressed(rowId) {
 		else // ???
 			btn.replaceWith(makeErrorButton("Error - retry?", "Unexpected exception: "+badCol, onclick));
 			
-		originRow.children[badCol].setAttribute("style", "border: 2px solid red;");
+		originRow.children[badCol].setAttribute("style", "border: 3px solid red;");
 		return;
 	}
 	
 	btn.replaceWith(workingLabel);
-	sendEventRequest(request, rowId);
+	sendEventRequest(postUri, request, rowId);
 }
 
 /**
@@ -279,6 +230,6 @@ function makeErrorButton(text, reason, onclick) {
 	errBtn = $("<a class='btn btn-danger' data-toggle='tooltip' data-placement='top'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
 	errBtn.attr("title", reason);
 	errBtn.attr("onclick", onclick);
-	errBtn.tooltip(); // From Bootstrap
+	errBtn.tooltip();
 	return errBtn;
 }
