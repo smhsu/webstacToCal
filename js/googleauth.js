@@ -142,10 +142,13 @@ function sendEventRequest(request, rowId) {
 		.then( function(postUri) {
 			return postEvent(postUri, request);
 		},
-		function(errResponse) { // getClassCal failed
+		function(err) { // getClassCal failed
 			promise = null; // Reset getClassCal's promise so we can retry
-			reason = 'Error getting your calendar: ' + errResponse.result.error.message;
-			throw(reason); // Pass error to next handler
+			
+			if (err.result) // Whatever happens, let the next error handler take it
+				throw('Error getting your calendar: ' + err.result.error.message);
+			else
+				throw(err);
 		})
 		
 		.then ( function() { // Success!
@@ -156,8 +159,10 @@ function sendEventRequest(request, rowId) {
 		function(err) { // All errors eventually find their way here.
 			if (typeof(err) == "string") // Passed from above block
 				reason = err;
-			else
+			else if (err.result)
 				reason = 'Error trying post the event: ' + err.result.error.message;
+			else
+				reason = 'Unexpected exception: ' + err;
 			
 			originRow = document.getElementById(rowId);
 			btn = $(originRow.children[4].children[0]);
@@ -193,14 +198,14 @@ function addBtnPressed(rowId) {
 			btn.replaceWith(makeErrorButton("Start time must be before end time", rowId));
 		}
 		else // ???
-			throw badCol
+			btn.replaceWith(makeErrorButton("Unexpected exception: "+badCol, rowId));
 			
 		originRow.children[badCol].setAttribute("style", "border: 2px solid red;");
 		return;
 	}
 	
 	btn.replaceWith("<a class='btn btn-default disabled'>Working...</a>");
-	sendEventRequest(originRow, rowId);
+	sendEventRequest(request, rowId);
 }
 
 function makeErrorButton(reason, id) {
