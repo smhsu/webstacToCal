@@ -184,11 +184,13 @@ function addBtnPressed(rowId) {
 	}
 	
 	originRow = document.getElementById(rowId);
+	originRow.children[1].removeAttribute("style"); // Remove red borders from the catch block
+	originRow.children[2].removeAttribute("style");
+	
 	btn = $(originRow.children[4].children[0]);
+	btn.tooltip('destroy');
 	try {
 		request = genRequestBody(originRow);
-		originRow.children[1].removeAttribute("style"); // Remove red borders from the catch block
-		originRow.children[2].removeAttribute("style");
 	}
 	catch (badCol) {
 		if (badCol == 1) { // Days of the week
@@ -209,7 +211,7 @@ function addBtnPressed(rowId) {
 }
 
 function makeErrorButton(reason, id) {
-	errBtn = $("<a class='btn btn-danger' onclick= data-toggle='tooltip' data-placement='left'>Error - retry?</a>");
+	errBtn = $("<a class='btn btn-danger' onclick= data-toggle='tooltip' data-placement='top'>Error - retry?</a>");
 	errBtn.attr("title", reason);
 	errBtn.attr("onclick", "addBtnPressed('"+id+"')");
 	errBtn.tooltip(); // From Bootstrap
