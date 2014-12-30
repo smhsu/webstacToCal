@@ -5,7 +5,7 @@
  * Author: Silas Hsu, December 2014
  * PLEASE give acknowledgement if you copy this code.
  ***/
-
+ 
 /***
  * All the authorization functions
  ***/
@@ -79,9 +79,55 @@ function validateToken(token) {
 /***
  * All the API calls
  ***/
+var defaultSelect = " <select><option>Select a calendar...</option></select> ";
+var defaultRefreshBtn = " <a class='btn btn-default' onclick='refreshCalList()'>Refresh list</a> ";
+var workingLabel = "<a class='btn btn-default disabled'>Working...</a>";
+
+$("#select-div").append(defaultSelect);
+$("#select-div").append(defaultRefreshBtn);
+
 /* Creates the URI for HTTP post requests from a calendar ID. */
 function convertCalId(calId) {
 	return 'https://www.googleapis.com/calendar/v3/calendars/' + calId + '/events';
+}
+
+/**
+ * Fetches a user's calendar list and:
+ * 1) Puts all their writeable calendar ids in global array calIds
+ * 2) Returns a promise that returns a select element with the calendar names
+ */
+var calIds = []
+function makeCalSelect() {
+	calIds = [];
+	
+	return gapi.client.request({
+		'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+		'params': {'minAccessRole': 'writer'}
+	}).then( function(response) {
+		select = $(defaultSelect);
+		cals = response.result.items;
+		for (index in cals) {
+			calIds.append(cals[index].id);
+			select.append("<option>"+cals[index].summary +"</option>");
+		}
+		return select;
+	});
+}
+
+function refreshCalList() {
+	btn = $("#select-div a");
+	btn.replaceWith(workingLabel);
+	makeCalSelect().then( function(select) {
+		$("#select-div select").replaceWith(select);
+		$("#select-div a").replaceWith(defaultRefreshBtn);
+	}, function(error) {
+		$("#select-div select").replaceWith(defaultSelect);
+		if (error.result) // Google API error
+			reason = error.result.error.message;
+		else // ???
+			reason = "Unexpected exception: " + error;
+		$("#select-div a").replaceWith(makeErrorButton("Fetch failed - retry?", reason, "refreshCalList()"));
+	});
 }
 
 /**
@@ -179,7 +225,7 @@ function sendEventRequest(request, rowId) {
 			
 			originRow = document.getElementById(rowId);
 			btn = $(originRow.children[4].children[0]);
-			btn.replaceWith(makeErrorButton(reason, rowId));
+			btn.replaceWith(makeErrorButton("Error - retry?", reason, "addBtnPressed('"+rowId+"')"));
 		});
 }
 
@@ -206,20 +252,21 @@ function addBtnPressed(rowId) {
 		request = genRequestBody(originRow); // genRequestBody defined in tableParse.js
 	}
 	catch (badCol) {
+		onclick = "addBtnPressed('"+rowId+"')";
 		if (badCol == 1) { // Days of the week
-			btn.replaceWith(makeErrorButton("Select at least one day of the week.", rowId));
+			btn.replaceWith(makeErrorButton("Error - retry?", "Select at least one day of the week.", onclick));
 		}
 		else if (badCol == 2) { // Start and end time
-			btn.replaceWith(makeErrorButton("Start time must be before end time", rowId));
+			btn.replaceWith(makeErrorButton("Error - retry?", "Start time must be before end time", onclick));
 		}
 		else // ???
-			btn.replaceWith(makeErrorButton("Unexpected exception: "+badCol, rowId));
+			btn.replaceWith(makeErrorButton("Error - retry?", "Unexpected exception: "+badCol, onclick));
 			
 		originRow.children[badCol].setAttribute("style", "border: 2px solid red;");
 		return;
 	}
 	
-	btn.replaceWith("<a class='btn btn-default disabled'>Working...</a>");
+	btn.replaceWith(workingLabel);
 	sendEventRequest(request, rowId);
 }
 
@@ -228,10 +275,10 @@ function addBtnPressed(rowId) {
  * reason: the tooltip contents
  * id: the parameter passed to addBtnPressed()
  */
-function makeErrorButton(reason, id) {
-	errBtn = $("<a class='btn btn-danger' onclick= data-toggle='tooltip' data-placement='top'>Error - retry?</a>");
+function makeErrorButton(text, reason, onclick) {
+	errBtn = $("<a class='btn btn-danger' data-toggle='tooltip' data-placement='top'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
 	errBtn.attr("title", reason);
-	errBtn.attr("onclick", "addBtnPressed('"+id+"')");
+	errBtn.attr("onclick", onclick);
 	errBtn.tooltip(); // From Bootstrap
 	return errBtn;
 }
