@@ -183,10 +183,12 @@ function addBtnPressed(rowId) {
 		return;
 	}
 	
+	originRow = document.getElementById(rowId);
 	btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
 	onclick = "addBtnPressed('"+rowId+"')";
 	
+	// Get which calendar the user has selected
 	selectedIndex = $("#select-div select")[0].selectedIndex;
 	if (selectedIndex <= 0) {
 		$("#select-div").attr("style", "border: 3px solid red");
@@ -197,7 +199,7 @@ function addBtnPressed(rowId) {
 		$("#select-div").removeAttr("style");
 	postUri = convertCalId(calIds[selectedIndex - 1]);
 	
-	originRow = document.getElementById(rowId);
+	// Validate the input before sending it off
 	originRow.children[1].removeAttribute("style"); // Remove red borders that the catch block might have added
 	originRow.children[2].removeAttribute("style");
 	try {
