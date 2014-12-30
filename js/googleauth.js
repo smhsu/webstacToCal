@@ -129,12 +129,40 @@ function makeNewCal() {
 	});
 }
 
-function sendEventReq(postUri, body) {
+function postEvent(postUri, body) {
 	return gapi.client.request({
 		'path': postUri,
 		'method': 'POST',
 		'body': body
 	});
+}
+
+function sendEventRequest(request, rowId) {
+	getClassCal()
+		.then( function(postUri) {
+			return postEvent(postUri, request);
+		},
+		function(errResponse) { // getClassCal failed
+			promise = null; // Reset getClassCal's promise so we can retry
+			reason = 'Error getting your calendar: ' + errResponse.result.error.message;
+			throw(reason); // Pass error to next handler
+		})
+		
+		.then ( function() { // Success!
+			originRow = document.getElementById(rowId);
+			btn = $(originRow.children[4].children[0]);
+			btn.replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
+		},
+		function(err) { // All errors eventually find their way here.
+			if (typeof(err) == "string") // Passed from above block
+				reason = err;
+			else
+				reason = 'Error trying post the event: ' + err.result.error.message;
+			
+			originRow = document.getElementById(rowId);
+			btn = $(originRow.children[4].children[0]);
+			btn.replaceWith(makeErrorButton(reason, rowId));
+		});
 }
 
 /*
@@ -152,33 +180,33 @@ function addBtnPressed(rowId) {
 	
 	originRow = document.getElementById(rowId);
 	btn = $(originRow.children[4].children[0]);
-	btn.replaceWith("<a class='btn btn-default disabled'>Working...</a>");
+	try {
+		request = genRequestBody(originRow);
+		originRow.children[1].removeAttribute("style"); // Remove red borders from the catch block
+		originRow.children[2].removeAttribute("style");
+	}
+	catch (badCol) {
+		if (badCol == 1) { // Days of the week
+			btn.replaceWith(makeErrorButton("Select at least one day of the week.", rowId));
+		}
+		else if (badCol == 2) { // Start and end time
+			btn.replaceWith(makeErrorButton("Start time must be before end time", rowId));
+		}
+		else // ???
+			throw badCol
+			
+		originRow.children[badCol].setAttribute("style", "border: 2px solid red;");
+		return;
+	}
 	
-	getClassCal()
-		.then( function(postUri) {
-			return sendEventReq(postUri, genRequestBody(originRow)); // genRequestBody defined in main.js.  It can throw exceptions.
-		},
-		function(errResponse) { // getClassCal failed
-			promise = null; // Reset getClassCal's promise so we can retry
-			reason = 'Error trying to get the calendar: ' + errResponse.result.error.message;
-			throw(reason); // Pass error to next handler
-		})
-		
-		.then ( function() { // Success!
-			btn.replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
-		},
-		function(err) { // All errors eventually find their way here.
-			console.log(err);
-			if (typeof(err) == "string") // Error from genRequestBody
-				reason = err;
-			else // Error from Google API
-				reason = 'Error trying post the event: ' + err.result.error.message;
-				
-			errBtn = $("<a class='btn btn-danger'>Error - click to retry</a>");
-			btn.replaceWith(errBtn);
-		});
+	btn.replaceWith("<a class='btn btn-default disabled'>Working...</a>");
+	sendEventRequest(originRow, rowId);
 }
 
-function error(reason) {
-	console.log("Error! ", reason);
+function makeErrorButton(reason, id) {
+	errBtn = $("<a class='btn btn-danger' onclick= data-toggle='tooltip' data-placement='left'>Error - retry?</a>");
+	errBtn.attr("title", reason);
+	errBtn.attr("onclick", "addBtnPressed('"+id+"')");
+	errBtn.tooltip(); // From Bootstrap
+	return errBtn;
 }

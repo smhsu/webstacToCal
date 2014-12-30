@@ -184,8 +184,8 @@ function toISOTimeStr(timestr) {
 }
 
 /**
- * Generates the Google Calendar API request body for a user's class.
- * Throws a string describing an error if input fails validation.
+ * Generates the Google Calendar API request body from a row of the table.
+ * Can throw a number describing the input column index that failed validation.
  */
 function genRequestBody(tableRow) {
 	rowCols = tableRow.children; // each element of this array is a td element
@@ -196,7 +196,7 @@ function genRequestBody(tableRow) {
 	// Construct recurrence
 	byDay = convertDayOption(rowCols[1]);
 	if (!byDay)
-		throw "No days are selected.";
+		throw 1;
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].endDate+';BYDAY='+byDay];
 	
 	// Construct start and end
@@ -206,7 +206,7 @@ function genRequestBody(tableRow) {
 	startSel = rowCols[2].children[0];
 	endSel = rowCols[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
-		throw "End time is before start time."
+		throw 2;
 	request.start = {'dateTime': startDate + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
 	request.end = {'dateTime': startDate + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
 	
