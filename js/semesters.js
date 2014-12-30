@@ -1,8 +1,14 @@
 /***
+ * semesters.js
  * Data for WUSTL's various semesters and helper methods to access them.
+ * Author: Silas Hsu, December 2014
+ * PLEASE give acknowledgement if you copy this code.
  ***/
  
-/* Returns a new date that is the specified number of days after this one. */
+/**
+ * Returns a new date that is the specified number of days after this one.
+ * Thank you StackOverflow!  http://stackoverflow.com/questions/563406/add-days-to-datetime
+ */
 Date.prototype.offsetDateBy = function(days) {
     var dat = new Date(this.valueOf());
     dat.setDate(dat.getDate() + days);

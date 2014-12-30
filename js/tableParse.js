@@ -1,7 +1,10 @@
 /***
+ * tableParse.js
  * Parses all of a user's pasted WebSTAC classes and formats them nicely into a
  * table for the user to see.  Also converts the table's contents into valid Google
  * Calendar request bodies.
+ * Author: Silas Hsu, December 2014
+ * PLEASE give acknowledgement if you copy this code.
  ***/
 
 var classTable = 

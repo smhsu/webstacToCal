@@ -1,6 +1,14 @@
-// *
-// All the authorization functions
-// *
+/***
+ * calendar.js
+ * All Google API authorization functions and functions that handle requests
+ * to Google's servers.
+ * Author: Silas Hsu, December 2014
+ * PLEASE give acknowledgement if you copy this code.
+ ***/
+
+/***
+ * All the authorization functions
+ ***/
 var clientId = '958398529813-dsebceuap5kr2pjfdskq7rhrimh7p34n.apps.googleusercontent.com';
 var apiKey = 'AIzaSyDEiPoOLx-XZvaPSJCRwBi9hwebeo_d4fA';
 var scope = 'https://www.googleapis.com/auth/calendar';
@@ -48,7 +56,7 @@ function logout() {
 
 }
 
-/* 
+/**
  * Sends a request to Google's servers to make sure that our access token was
  * not originally issued to a different app.  Returns true if validation
  * succeeded, false if not.  This function is synchronous.
@@ -68,16 +76,15 @@ function validateToken(token) {
 	return (!response.error && response.audience == clientId);
 }
 
-// *
-// All the add to calendar functions below...
-// *
-
+/***
+ * All the API calls
+ ***/
 /* Creates the URI for HTTP post requests from a calendar ID. */
 function convertCalId(calId) {
 	return 'https://www.googleapis.com/calendar/v3/calendars/' + calId + '/events';
 }
 
-/*
+/**
  * Searches for a calendar with summary of 'Classes', and if there isn't one,
  * creates it.  Returns a promise; the success handler will be passed the
  * postUri.
@@ -96,7 +103,7 @@ function getClassCal() {
 	return promise;
 }
 
-/*
+/**
  * Returns the calendar ID of the calendar with the name of "Classes",
  * or null if there was no such calendar.
  */
@@ -111,9 +118,9 @@ function searchCals(response) {
 	return null;
 }
 
-/*
+/**
  * If postUri is empty, makes a new calendar with name of "Classes".
- * Returns the postUri.
+ * Returns the postUri, or a promise for it.
  */
 function makeNewCal() {
 	if (postUri)
@@ -137,6 +144,12 @@ function postEvent(postUri, body) {
 	});
 }
 
+/**
+ * Gets the appropriate calendar, and attempts to add an event to it.  Replaces a button
+ * in the class table row depending on success.
+ * request: the request body
+ * rowId: the ID of the row in which replace the button
+ */
 function sendEventRequest(request, rowId) {
 	getClassCal()
 		.then( function(postUri) {
@@ -170,7 +183,7 @@ function sendEventRequest(request, rowId) {
 		});
 }
 
-/*
+/**
  * Called when a user presses an "Add to Google Calendar" button
  */
 function addBtnPressed(rowId) {
@@ -190,7 +203,7 @@ function addBtnPressed(rowId) {
 	btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
 	try {
-		request = genRequestBody(originRow);
+		request = genRequestBody(originRow); // genRequestBody defined in tableParse.js
 	}
 	catch (badCol) {
 		if (badCol == 1) { // Days of the week
@@ -210,6 +223,11 @@ function addBtnPressed(rowId) {
 	sendEventRequest(request, rowId);
 }
 
+/**
+ * Makes an error button with handy tooltip
+ * reason: the tooltip contents
+ * id: the parameter passed to addBtnPressed()
+ */
 function makeErrorButton(reason, id) {
 	errBtn = $("<a class='btn btn-danger' onclick= data-toggle='tooltip' data-placement='top'>Error - retry?</a>");
 	errBtn.attr("title", reason);
