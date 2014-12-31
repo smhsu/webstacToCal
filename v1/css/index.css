@@ -1,41 +1,31 @@
 .top-container {
-	padding-top: 50px;
-	padding-bottom: 50px;
+	padding-top: 25px;
+	padding-bottom: 20px;
 	background-color: /*rgb(165, 0, 41);*/ rgb(22, 53, 37);
 	color: white;
 	box-shadow: 0px 10px 5px grey;
 	margin-bottom: 15px;
 }
 #main-img {
-	max-height: 150px;
+	max-height: 100px;
 }
 .top-container h1 {
 	font-family: "Impact", serif;
 	text-align: center;
-	margin-bottom: 50px;
 }
 .jumbotron ul {
 	font-size: 21px;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 }
 
 .container-main{
 	background-color: #FDFB8E;
-	padding-right: 0;
-	padding-left: 0;
 }
 
 .jumbotron {
-	background-color: rgb(22, 53, 37);
-	border: 2px solid white;
+	background-color: #FDFB8E;
 }
-.divider {
-	background-color: rgb(165, 0, 41);
-	height: 70px;
-	box-shadow: 0px 10px 5px grey;
-	margin-top: 40px;
-	margin-bottom: 40px;
-}
+
 
 textarea {
 	height: 300px;
