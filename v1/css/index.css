@@ -1,0 +1,82 @@
+.top-container {
+	padding-top: 50px;
+	padding-bottom: 50px;
+	background-color: /*rgb(165, 0, 41);*/ rgb(22, 53, 37);
+	color: white;
+	box-shadow: 0px 10px 5px grey;
+	margin-bottom: 15px;
+}
+#main-img {
+	max-height: 150px;
+}
+.top-container h1 {
+	font-family: "Impact", serif;
+	text-align: center;
+	margin-bottom: 50px;
+}
+.jumbotron ul {
+	font-size: 21px;
+	margin-bottom: 30px;
+}
+
+.container-main{
+	background-color: #FDFB8E;
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.jumbotron {
+	background-color: rgb(22, 53, 37);
+	border: 2px solid white;
+}
+.divider {
+	background-color: rgb(165, 0, 41);
+	height: 70px;
+	box-shadow: 0px 10px 5px grey;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+textarea {
+	height: 300px;
+	width: 100%;
+	white-space: nowrap;
+}
+
+table {
+	border: 1px solid black
+}
+thead {
+	font-weight: bold;
+}
+.classname {
+	width: 35%;
+}
+@media (max-width: 1336px) { /* More width on smaller screen */
+	.classdays {
+		width: 15%;
+	}
+}
+@media (min-width: 1337px) {
+	.classdays {
+		width: 10%;
+	}
+}
+.classtime {
+	width: 20%;
+}
+.classloc {
+	width: 20%;
+}
+input[type="text"] {
+	width: 100%;
+}
+td img {
+	min-height: 18px;
+	min-width: 58px;
+}
+
+.btn-success {
+	pointer-events: none;
+	cursor: not-allowed;
+}
