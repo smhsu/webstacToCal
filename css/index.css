@@ -1,15 +1,102 @@
+body {
+	padding-bottom: 75px;
+}
+
+.pageTop {
+	padding-top: 25px;
+	padding-bottom: 20px;
+	background-color: rgb(22, 53, 37);
+	box-shadow: 0px 10px 5px grey;
+
+	font-family: "Impact", serif;
+	text-align: center;
+	color: white;
+}
+.pageTop img {
+	max-height: 100px;
+}
+
+.jumbotron {
+	margin: 20px;
+	padding: 40px !important;
+	border: 3px solid black;
+	background-color: #FDFB8E;
+}
+.jumbotron p {
+	font-size: 21px;
+}
+.jumbotron ul {
+	margin-bottom: 25px;
+	font-size: 21px;
+}
+
+.alert-info {
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.divider {
+	margin-top: 50px;
+	margin-bottom: 20px;
+	padding: 10px;
+	background-color: rgb(165, 0, 41);
+	
+	font-family: "Caslon", serif;
+	text-align: center;
+	color: white;
+}
+.divider h2 {
+	font-family: "Georgia", "Caslon", serif;
+	font-size: 26px;
+	margin: 0
+}
+
+#login {
+	text-align: center;
+}
+
+#copypaste {
+	text-align: center;
+}
 textarea {
-	height: 300px;
+	border: 2px solid grey;
+	height: 250px;
 	width: 100%;
 	white-space: nowrap;
 }
 
+#step3>div {
+	margin-left: 8px;
+}
+.options {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	
+	margin-top: 30px;
+	border: 1px solid grey;
+	padding: 15px 30px;
+}
+#semester-select {
+	margin-right: 100px;
+	display: inline-block;
+}
+#cal-select {
+	display: inline-block;
+}
+#cal-select a {
+	margin-left: 15px;
+}
+
+/* Lots of table styling */
 table {
-	border: 1px solid black
+	margin-top: 0;
+	border: 3px solid grey;
 }
 thead {
 	font-weight: bold;
 }
+
 .classname {
 	width: 35%;
 }

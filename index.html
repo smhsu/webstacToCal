@@ -18,18 +18,62 @@
 </head>
 
 <body>
-	<!--<script>
-		window.onbeforeunload = function(){
-			return false; // This will stop the redirecting.
-		}
-	</script>-->
+	<div class="container-fluid pageTop">
+		<img src="img/main.png" class="img-responsive center-block" alt="WebSTAC to Calendar"></img>
+		<h1>WebSTAC to Calendar <sup>(alpha)</sup></h1>
+	</div>
 	<div class="container">
-		<h1>Test box</h1>
-		<button class='btn btn-primary' id='login-btn' data-loading-text='Working...' onclick='authorize()'>Log in</button>
-		<textarea id="inputbox" wrap="off"></textarea>
-		<button class="btn btn-primary" onclick="parseClasses()">Detect classes</button><br><br>
-		<label>Select semester: </label> <select><option>SP15</option></select><br>
-		<div id="select-div"><label>Select calendar: </label></div>
+		<div class="jumbotron">
+			<p>Are you tired of manually typing classes into your calendar?  Do you wish there was a faster way?
+			Search no more!  <b>WebSTAC to Calendar</b> automatically converts your WUSTL classes into Google
+			calendar entries!
+			<p><b>WebSTAC to Calendar</b> is...</p>
+			<ul>
+				<li><b>Free.</b></li>
+				<li><b>Fast and easy.</b> Add your classes to your Google calendar in just three steps!</li>
+				<li><b>Safe.</b> I never see even one bit of your calendar or class data.</li>
+			</ul>
+			<a class="btn btn-primary btn-lg" href='#firstStep'>Scroll down to start</a>
+		</div>
+		
+		<div class="alert alert-info" id="firstStep">
+			<p>WebSTAC to Calendar is in <b>alpha</b>.  Expect bugs. If you find any, report its effects and how to
+			reproduce it.  Screenshots are also helpful.  Thanks!<br><br>-Silas</p>
+		</div>
+		
+		<div class="divider">
+			<h2>Step 1: log in</h2>
+		</div>
+		<div id="login"></div>
+		
+		<div class="divider">
+			<h2>Step 2: Copy and paste</h2>
+		</div>
+		<div id="copypaste">
+			<p><a href="https://acadinfo.wustl.edu/apps/ClassSchedule/" target="_blank">Go to WebSTAC</a> and copy and paste your
+			class schedule into this text box.</p>
+			<textarea id="inputbox" wrap="off">Go to WebSTAC >> Courses and Registration >> Class Schedule.
+			Then, copy and paste your class schedule into this box.</textarea>
+		</div>
+		
+		<div class="divider">
+			<h2>Step 3: Review and press buttons!</h2>
+		</div>
+		<div id="step3">
+			<div>
+				<p><a class="btn btn-primary" onclick="parseClasses()">Detect classes</a></p>
+			</div>
+			<div class="options">
+				<div id="semester-select">
+					<label>Select semester: </label>
+					<select><option>SP15</option></select>
+				</div>
+				<div id="cal-select">
+					<label>Select calendar: </label>
+				</div>
+			</div>
+		</div>
+		
 	</div>
 	
 	<script src="js/jquery-2.1.3.min.js"></script>

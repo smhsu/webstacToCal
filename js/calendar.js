@@ -29,8 +29,10 @@ function authorize(event) {
 	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 }
 
-loginButton = "<button class='btn btn-primary' id='login-btn' data-loading-text='Logging in...' onclick='authorize()'>Log in</button>"
-loggedInDiv = "<div id='logged-in'><p>You are logged in.</p><a class='btn btn-default' data-loading-text='Logging out...' onclick='logout()'>Logout</a></div>";
+loginDiv = "<div id='login'><p>Click the button below to allow access to your calendar.</p>\
+	<button class='btn btn-primary' id='login-btn' data-loading-text='Logging in...' onclick='authorize()'>Log in</button></div>";
+loggedInDiv = "<div id='logged-in'><p>You are logged in.</p>\
+	<a class='btn btn-default' id='logout-btn' data-loading-text='Logging out...' onclick='logout()'>Logout</a></div>";
 /** Called after authorize() */
 function handleAuthResult(authResult) {
 	btn = $('#login-btn');
@@ -77,9 +79,13 @@ function validateToken(token) {
  * Called when user presses logout button
  */
 function logout() {
+	btn = $('logout-btn');
+	btn.button('reset');
 	token = gapi.auth.getToken();
 	if (!token)
 		return;
+	
+	btn.button('loading');
 	url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
 	
 	$.ajax({
@@ -90,11 +96,11 @@ function logout() {
 		dataType: 'jsonp',
 		success: function() {
 			loggedin = false;
-			$('#logged-in').replaceWith(loginButton);
+			$('#logged-in').replaceWith(loginDiv);
 		},
 		error: function(e) {
 			$('#logged-in p').replaceWith("<p>You may log out manually by visiting <a href=\
-				'https://security.google.com/settings/security/permissions'>https://security.google.com/settings/security/permissions</a></p>"
+				'https://security.google.com/settings/security/permissions'>https://security.google.com/settings/security/permissions</a></p>");
 			$('#logged-in a').attr('class', 'btn btn-danger');
 			$('#logged-in a').text("Logout failed - retry?");
 		}
@@ -107,9 +113,6 @@ function logout() {
 var defaultSelect = " <select><option>Select a calendar...</option></select> ";
 var defaultRefreshBtn = " <a class='btn btn-default' onclick='refreshCalList()'>Refresh list</a> ";
 var workingLabel = "<a class='btn btn-default disabled'>Working...</a>";
-
-$("#select-div").append(defaultSelect);
-$("#select-div").append(defaultRefreshBtn);
 
 /** Creates the URI for HTTP post requests from a calendar ID. */
 function convertCalId(calId) {
@@ -143,7 +146,7 @@ function makeCalSelect() {
  * Called when a user presses the "Refresh List" button
  */
 function refreshCalList() {
-	btn = $("#select-div a");
+	btn = $("#cal-select a");
 	btn.tooltip('destroy');
 	if (!loggedin) {
 		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", "refreshCalList()"));
@@ -152,15 +155,15 @@ function refreshCalList() {
 	
 	btn.replaceWith(workingLabel);
 	makeCalSelect().then( function(select) {
-		$("#select-div select").replaceWith(select);
-		$("#select-div a").replaceWith(defaultRefreshBtn);
+		$("#cal-select select").replaceWith(select);
+		$("#cal-select a").replaceWith(defaultRefreshBtn);
 	}, function(error) {
-		$("#select-div select").replaceWith(defaultSelect);
+		$("#cal-select select").replaceWith(defaultSelect);
 		if (error.result) // Google API error
 			reason = error.result.error.message;
 		else // ???
 			reason = "Unexpected exception: " + error;
-		$("#select-div a").replaceWith(makeErrorButton("Fetch failed - retry?", reason, "refreshCalList()"));
+		$("#cal-select a").replaceWith(makeErrorButton("Fetch failed - retry?", reason, "refreshCalList()"));
 	});
 }
 
@@ -214,14 +217,14 @@ function addBtnPressed(rowId) {
 	}
 	
 	// Get which calendar the user has selected
-	selectedIndex = $("#select-div select")[0].selectedIndex;
+	selectedIndex = $("#cal-select select")[0].selectedIndex;
 	if (selectedIndex <= 0) {
-		$("#select-div").attr("style", "border: 3px solid red");
+		$("#cal-select").attr("style", "border: 3px solid red");
 		btn.replaceWith(makeErrorButton("Error - retry?", "Select a calendar first.", callback));
 		return;
 	}
 	else
-		$("#select-div").removeAttr("style");
+		$("#cal-select").removeAttr("style");
 	postUri = convertCalId(calIds[selectedIndex - 1]);
 	
 	// Validate the input before making the request
@@ -264,3 +267,7 @@ function makeErrorButton(text, reason, onclick) {
 	errBtn.attr("onclick", onclick);
 	return errBtn;
 }
+
+$("#login").replaceWith(loginDiv);
+$("#cal-select").append(defaultSelect);
+$("#cal-select").append(defaultRefreshBtn);

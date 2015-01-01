@@ -94,7 +94,7 @@ function parseClasses() {
 	input = document.getElementById('inputbox').value;
 	classText = input.match(/[A-Z]\d\d.+/g);
 	if (classText != null)
-		$('.container').append(classTable);
+		$('#step3').append(classTable);
 	
 	var classNum = 0;
 	for (index in classText) {
@@ -199,12 +199,13 @@ function genRequestBody(tableRow) {
 	byDay = convertDayOption(rowCols[1]);
 	if (!byDay)
 		throw 1;
-	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters['SP15'].endDate+';BYDAY='+byDay];
+	semester = $('#semester-select select').val();
+	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters[semester].endDate+';BYDAY='+byDay];
 	
 	// Construct start and end
 	// Warning: only correct if semester starts on a Monday!
 	dayOffset = firstSelectedDay(rowCols[1]);
-	startDate = semesters['SP15'].startDate.offsetDateBy(dayOffset).toISODateStr();
+	startDate = semesters[semester].startDate.offsetDateBy(dayOffset).toISODateStr();
 	startSel = rowCols[2].children[0];
 	endSel = rowCols[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
