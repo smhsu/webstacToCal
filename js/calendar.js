@@ -42,7 +42,7 @@ function handleAuthResult(authResult) {
 	
 		if (validateToken(authResult)) {
 			loggedin = true;
-			$('login').replaceWith(loggedInDiv);
+			$('#login').replaceWith(loggedInDiv);
 			refreshCalList();
 		} else {
 			btn.attr('class', 'btn btn-danger');

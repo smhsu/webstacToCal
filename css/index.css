@@ -1,5 +1,6 @@
 body {
 	padding-bottom: 75px;
+	color: black;
 }
 
 .pageTop {
@@ -55,7 +56,7 @@ body {
 	margin: 0
 }
 
-#login {
+#login, #logged-in {
 	text-align: center;
 }
 
