@@ -25,23 +25,24 @@ function handleClientLoad() {
 /** Called when someone presses the login button */
 function authorize(event) {
 	loggedin = false;
-	$('#login-btn').button('loading');
+	btn = $('#login-btn');
+	btn.addClass('disabled');
+	btn.text('Logging in...');
 	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 }
 
-loginDiv = "<div id='login'><p>Click the button below to allow access to your calendar.</p>\
-	<button class='btn btn-primary' id='login-btn' data-loading-text='Logging in...' onclick='authorize()'>Log in</button></div>";
+loginDiv = "<div id='login'><p>Click the button below to grant access to your Google calendar.</p>\
+	<button class='btn btn-primary' id='login-btn' onclick='authorize()'>Log in</button></div>";
 loggedInDiv = "<div id='logged-in'><p>You are logged in.</p>\
-	<a class='btn btn-default' id='logout-btn' data-loading-text='Logging out...' onclick='logout()'>Logout</a></div>";
+	<a class='btn btn-default' id='logout-btn' onclick='logout()'>Logout</a></div>";
 /** Called after authorize() */
 function handleAuthResult(authResult) {
 	btn = $('#login-btn');
-	btn.button('reset');
 	if (authResult && !authResult.error) {
 	
 		if (validateToken(authResult)) {
 			loggedin = true;
-			btn.replaceWith(loggedInDiv);
+			$('login').replaceWith(loggedInDiv);
 			refreshCalList();
 		} else {
 			btn.attr('class', 'btn btn-danger');
@@ -79,13 +80,16 @@ function validateToken(token) {
  * Called when user presses logout button
  */
 function logout() {
-	btn = $('logout-btn');
-	btn.button('reset');
-	token = gapi.auth.getToken();
-	if (!token)
+	if (!loggedin) {
+		$('#logged-in').replaceWith(loginDiv);
 		return;
+	}
+		
+	btn = $('#logout-btn');
+	btn.addClass('disabled');
+	btn.text('Logging out...');
 	
-	btn.button('loading');
+	token = gapi.auth.getToken();
 	url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
 	
 	$.ajax({

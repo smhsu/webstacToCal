@@ -37,11 +37,15 @@ body {
 
 .divider {
 	margin-top: 50px;
-	margin-bottom: 20px;
+	margin-bottom: 30px;
+	border-radius: 10px;
 	padding: 10px;
 	background-color: rgb(165, 0, 41);
+	background: -webkit-linear-gradient(to bottom, rgb(255, 0, 41), rgb(104, 0, 26));
+	background: -moz-linear-gradient(to bottom, rgb(255, 0, 41), rgb(104, 0, 26));
+	background: linear-gradient(to bottom, rgb(255, 0, 41), rgb(104, 0, 26));
+	box-shadow: 5px 10px 5px grey;
 	
-	font-family: "Caslon", serif;
 	text-align: center;
 	color: white;
 }
@@ -65,15 +69,16 @@ textarea {
 	white-space: nowrap;
 }
 
-#step3>div {
+.push-right {
 	margin-left: 8px;
+}
+.tip {
+	margin-top: 30px;
 }
 .options {
 	position: relative;
 	top: 1px;
 	display: inline-block;
-	
-	margin-top: 30px;
 	border: 1px solid grey;
 	padding: 15px 30px;
 }
@@ -86,6 +91,9 @@ textarea {
 }
 #cal-select a {
 	margin-left: 15px;
+}
+.parse-failed {
+	margin-top: 20px;
 }
 
 /* Lots of table styling */

@@ -1,10 +1,6 @@
 TODO:
-	logout button
 	test other errors
-	multiple error tooltips?
 	test on other browsers
-	test on other accounts
-	make the rest of the page!
 	browser checker, scripts enabled checker
 
 Promises: callback can return a value, which the next then can access, or you can return a promise, which the next then will wait on.

@@ -7,7 +7,7 @@
  * PLEASE give acknowledgement if you copy this code.
  ***/
 
-var classTable = 
+var tableHead = 
 "<table class='table table-hover'>\
 	<thead>\
 		<tr>\
@@ -26,6 +26,9 @@ var checkboxColStr = "<td class='classdays'><input type='checkbox' class='mon'/>
 var timeSelect = "<select><option></option><option>8:00 AM</option><option>8:30 AM</option><option>9:00 AM</option><option>9:30 AM</option><option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option><option>1:30 PM</option><option>2:00 PM</option><option>2:30 PM</option><option>3:00 PM</option><option>3:30 PM</option><option>4:00 PM</option><option>4:30 PM</option><option>5:00 PM</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>9:00 PM</option><option>9:30 PM</option><option>10:00 PM</option><option>10:30 PM</option><option>11:00 PM</option><option>11:30 PM</option></select>";
 var classlocColStr = "<td class='classloc'><input type='text'></input></td>";
 var btnColStr = "<td class='btncol'><a><img class='img-responsive' src='img/gcbutton.gif'/></a>";
+var parseFailedAlert = "<div class='alert alert-danger parse-failed'>\
+	<p>We weren't able to detect any of your classes.  Be sure you're pasting your entire class schedule, including Course IDs.</p></div>";
+var reminder = "<p class='push-right' id='reminder'>All done?  Don't forget to <a href='https://www.google.com/calendar/' target='_blank'>visit your calendar</a> to make sure everything's correct!";
 
 /**
  * Given a 'days of the week' string from WebSTAC, example 'M-W----', makes a
@@ -90,12 +93,17 @@ function makeTimeSelect(timeStr) {
  */
 function parseClasses() {
 	$('table').remove();
+	$('#reminder').remove();
+	$('.parse-failed').remove();
 
 	input = document.getElementById('inputbox').value;
 	classText = input.match(/[A-Z]\d\d.+/g);
-	if (classText != null)
-		$('#step3').append(classTable);
+	if (classText == null) {
+		$('#step3').append(parseFailedAlert);
+		return;
+	}
 	
+	table = $(tableHead);
 	var classNum = 0;
 	for (index in classText) {
 		cols = classText[index].split('\t');
@@ -133,9 +141,14 @@ function parseClasses() {
 		btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
 		newrow.append(btn);
 		
-		$('#classtable').append(newrow);
-		
+		table.append(newrow);
 		classNum++;
+	}
+	if (classNum == 0) // The loop terminated early
+		$('#step3').append(parseFailedAlert);
+	else {
+		$('#step3').append(table);
+		$('#step3').append(reminder);
 	}
 }
 

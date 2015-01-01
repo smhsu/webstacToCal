@@ -36,7 +36,7 @@
 			<a class="btn btn-primary btn-lg" href='#firstStep'>Scroll down to start</a>
 		</div>
 		
-		<div class="alert alert-info" id="firstStep">
+		<div class="jumbotron" id="firstStep">
 			<p>WebSTAC to Calendar is in <b>alpha</b>.  Expect bugs. If you find any, report its effects and how to
 			reproduce it.  Screenshots are also helpful.  Thanks!<br><br>-Silas</p>
 		</div>
@@ -60,10 +60,10 @@
 			<h2>Step 3: Review and press buttons!</h2>
 		</div>
 		<div id="step3">
-			<div>
-				<p><a class="btn btn-primary" onclick="parseClasses()">Detect classes</a></p>
-			</div>
-			<div class="options">
+			<p class="push-right"><a class="btn btn-primary" onclick="parseClasses()">Detect classes</a></p>
+			<p class="push-right tip"><i>Tip: you can go to <a href="https://www.google.com/calendar/" target="_blank">www.google.com/calendar</a>,
+			create a new calendar there, and then press "Refresh list"</i></p>
+			<div class="options push-right">
 				<div id="semester-select">
 					<label>Select semester: </label>
 					<select><option>SP15</option></select>
@@ -74,7 +74,7 @@
 			</div>
 		</div>
 		
-	</div>
+	</div> <!--End div class container-->
 	
 	<script src="js/jquery-2.1.3.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
@@ -82,6 +82,7 @@
 	<script src="js/tableParse.js"></script>
 	<script src="js/calendar.js"></script>
 	<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+	<script>window.onunload = logout;</script>
 	
 </body>
 </html>
