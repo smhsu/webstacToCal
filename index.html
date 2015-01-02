@@ -20,7 +20,7 @@
 <body>
 	<div class="container-fluid pageTop">
 		<img src="img/main.png" class="img-responsive center-block" alt="WebSTAC to Calendar"></img>
-		<h1>WebSTAC to Calendar <sup>(alpha)</sup></h1>
+		<h1>WebSTAC to Calendar <sup>alpha</sup></h1>
 	</div>
 	<div class="container">
 		<div class="jumbotron yellow-back">
@@ -49,7 +49,33 @@
 			<p>WebSTAC to Calendar does not support Internet Explorer.  Sorry about that.  :-(</p>
 		</div>
 		
-		<div id="main" style="display: none;">
+		<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+				
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h3 class="modal-title">Step 2: Copy and paste</h3>
+					</div>
+					<div class="modal-body row">
+						<div class="col-md-3">
+							<p>2a. Once you've logged into <a href="https://acadinfo.wustl.edu/">WebSTAC</a>, click the indicated button to get to your class schedule.</p>
+							<img src="img/help1.jpg" class="img-responsive" alt="Select Courses and Registration >> Class Schedule"></img>
+						</div>
+						<div class="col-md-9">
+							<p>2b. Highlight the indicated portion, and copy the text.  Close this dialogue and paste it into the text box.</p>
+							<img src="img/help2.gif" class="img-responsive" alt="Select Courses and Registration >> Class Schedule"></img>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+		<div id="main" style="display: none;"> <!--MAIN-->
 		<div class="divider">
 			<h2>Step 1: log in</h2>
 		</div>
@@ -61,8 +87,11 @@
 		<div id="copypaste">
 			<p><a href="https://acadinfo.wustl.edu/apps/ClassSchedule/" target="_blank">Go to WebSTAC</a> and copy and paste your
 			class schedule into this text box.</p>
-			<textarea id="inputbox" wrap="off">Go to WebSTAC >> Courses and Registration >> Class Schedule.
-			Then, copy and paste your class schedule into this box.</textarea>
+			<p><button type="button" class="btn btn-default" data-toggle="modal" data-target="#helpModal" style="margin-bottom: 20px;">More help</button></p>
+			<textarea id="inputbox" wrap="off">
+				Go to WebSTAC >> Courses and Registration >> Class Schedule.
+				Then, copy and paste your class schedule into this box.
+			</textarea>
 		</div>
 		
 		<div class="divider">
