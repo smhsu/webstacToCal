@@ -23,7 +23,7 @@
 		<h1>WebSTAC to Calendar <sup>(alpha)</sup></h1>
 	</div>
 	<div class="container">
-		<div class="jumbotron">
+		<div class="jumbotron yellow-back">
 			<p>Are you tired of manually typing classes into your calendar?  Do you wish there was a faster way?
 			Search no more!  <b>WebSTAC to Calendar</b> automatically converts your WUSTL classes into Google
 			calendar entries!
@@ -36,11 +36,20 @@
 			<a class="btn btn-primary btn-lg" href='#firstStep'>Scroll down to start</a>
 		</div>
 		
-		<div class="jumbotron" id="firstStep">
+		<div class="jumbotron alert alert-info" id="firstStep">
 			<p>WebSTAC to Calendar is in <b>alpha</b>.  Expect bugs. If you find any, report its effects and how to
 			reproduce it.  Screenshots are also helpful.  Thanks!<br><br>-Silas</p>
 		</div>
 		
+		<div class="jumbotron alert alert-danger" id="no-script-warning">
+			<p>You must enable scripts to use WebSTAC to Calendar.  Please look in your browser's settings to enable
+			them, then reload the page.</p>
+		</div>
+		<div class="jumbotron alert alert-danger" id="ie-warning">
+			<p>WebSTAC to Calendar does not support Internet Explorer.  Sorry about that.  :-(</p>
+		</div>
+		
+		<div id="main" style="display: none;">
 		<div class="divider">
 			<h2>Step 1: log in</h2>
 		</div>
@@ -73,6 +82,7 @@
 				</div>
 			</div>
 		</div>
+		</div> <!--End div class main-->
 		
 	</div> <!--End div class container-->
 	
@@ -83,6 +93,32 @@
 	<script src="js/calendar.js"></script>
 	<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 	<script>window.onunload = logout;</script>
+	<script> <!--Detect if Javascript enabled and IE-->
+		$('#no-script-warning').remove();
+		
+		function detectIE() { // Thanks to StackOverflow for this code!  http://stackoverflow.com/questions/19999388/jquery-check-if-user-is-using-ie
+			var ua = window.navigator.userAgent;
+			var msie = ua.indexOf('MSIE ');
+			var trident = ua.indexOf('Trident/');
+			if (msie > 0) {
+				// IE 10 or older => return version number
+				//return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+				return true;
+			}
+			if (trident > 0) {
+				// IE 11 (or newer) => return version number
+				//var rv = ua.indexOf('rv:');
+				//return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+				return true;
+			}
+			// other browser
+			return false;
+		}
+		if (!detectIE()) {
+			$('#ie-warning').remove();
+			$('#main').removeAttr('style');
+		}
+	</script>
 	
 </body>
 </html>
