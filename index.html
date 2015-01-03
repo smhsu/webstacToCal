@@ -18,9 +18,9 @@
 </head>
 
 <body>
-	<div class="container-fluid pageTop">
+	<div class="container-fluid pageTop center">
 		<img src="img/main.png" class="img-responsive center-block" alt="WebSTAC to Calendar"></img>
-		<h1>WebSTAC to Calendar <sup>alpha</sup></h1>
+		<h1>WebSTAC to Calendar <sup>beta</sup></h1>
 	</div>
 	<div class="container">
 		<div class="jumbotron yellow-back">
@@ -34,10 +34,11 @@
 				<li><b>Safe.</b> I never see even one bit of your calendar or class data.</li>
 			</ul>
 			<a class="btn btn-primary btn-lg" href='#firstStep'>Scroll down to start</a>
+			<a class="btn btn-default btn-lg" href="#about">About this site</a>
 		</div>
 		
 		<div class="jumbotron alert alert-info" id="firstStep">
-			<p>WebSTAC to Calendar is in <b>alpha</b>.  Expect bugs. If you find any, report its effects and how to
+			<p>WebSTAC to Calendar is in <b>beta</b>.  Expect bugs. If you find any, report its effects and how to
 			reproduce it.  Screenshots are also helpful.  Thanks!<br><br>-Silas</p>
 		</div>
 		
@@ -84,7 +85,7 @@
 		<div class="divider">
 			<h2>Step 2: Copy and paste</h2>
 		</div>
-		<div id="copypaste">
+		<div class="center">
 			<p><a href="https://acadinfo.wustl.edu/apps/ClassSchedule/" target="_blank">Go to WebSTAC</a> and copy and paste your
 			class schedule into this text box.</p>
 			<p><button type="button" class="btn btn-default" data-toggle="modal" data-target="#helpModal" style="margin-bottom: 20px;">More help</button></p>
@@ -114,6 +115,27 @@
 		</div> <!--End div class main-->
 		
 	</div> <!--End div class container-->
+	<div class="container-fluid about" id="about">
+		<div class="container">
+			<h1>About this site</h1>
+			<p>Hi!  I'm Silas, a third-year student at Washington University double majoring in computer science and music.  Even
+			though I spent much more time coding this site than I would have spent manually typing all my future classes into my 
+			calendar, I chose to create this site for the betterment of Wash U's community.  I hope this saves you a few minutes
+			of your time!</p>
+			
+			<p>If you need help creating a website of your own, or you need a pianist, contact me and we'll talk!</p>
+			
+			<p>WebSTAC to Calendar is not affiliated with Google or Washington University in St. Louis.</p>
+			
+			<div class="center">
+				<div class="center contactInfo">
+					<h3><b>Questions?  Bugs?  Comments?</b></h3>
+					<p>Feel free to shoot me an email at <b><u>shoe.hsuman@gmail.com</u></b></p>
+				</div>
+			</div>
+			<h6 class="center">Copyright © 2015 Silas Hsu</h6>
+		</div>
+	</div>
 	
 	<script src="js/jquery-2.1.3.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>

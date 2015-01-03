@@ -1,6 +1,14 @@
 body {
-	padding-bottom: 75px;
 	color: black;
+}
+h1 {
+	font-family: "Impact", serif;
+}
+h2, h3 {
+	font-family: "Georgia", "Caslon", serif;
+}
+.center {
+	text-align: center;
 }
 
 .pageTop {
@@ -9,8 +17,6 @@ body {
 	background-color: rgb(22, 53, 37);
 	box-shadow: 0px 10px 5px grey;
 
-	font-family: "Impact", serif;
-	text-align: center;
 	color: white;
 }
 .pageTop img {
@@ -21,7 +27,6 @@ body {
 	margin: 20px;
 	padding: 40px !important;
 	border: 3px solid black;
-
 }
 .jumbotron p {
 	font-size: 21px;
@@ -29,6 +34,9 @@ body {
 .jumbotron ul {
 	margin-bottom: 25px;
 	font-size: 21px;
+}
+.jumbotron a {
+	margin-right: 10px;
 }
 .yellow-back {
 	background-color: #FDFB8E;
@@ -54,16 +62,6 @@ body {
 	margin: 0
 }
 
-#login, #logged-in {
-	text-align: center;
-}
-
-#copypaste {
-	text-align: center;
-}
-#helpModal h3 {
-	font-family: "Georgia", "Caslon", serif;
-}
 #helpModal img {
 	max-height: 300px;
 }
@@ -155,4 +153,30 @@ td img {
 }
 .btn-default {
 	border: 2px solid grey;
+}
+
+.about {
+	margin-top: 75px;
+	padding-bottom: 15px;
+	
+	background-color: rgb(22, 53, 37);
+	background: -webkit-linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+	background: -moz-linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+	background: linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+	box-shadow: 0px -10px 5px grey;
+
+	color: white;
+}
+.about h1 {
+	margin-bottom: 30px;
+}
+.about p {
+	margin-bottom: 20px;
+}
+.contactInfo {
+	display: inline-block;
+	margin: 30px 0;
+	border: 2px solid white;
+	border-radius: 10px;
+	padding: 0 40px;
 }

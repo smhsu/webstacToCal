@@ -31,9 +31,9 @@ function authorize(event) {
 	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 }
 
-loginDiv = "<div id='login'><p>Click the button below to grant access to your Google calendar.</p>\
+loginDiv = "<div id='login' class='center'><p>Click the button below to grant access to your Google calendar.</p>\
 	<button class='btn btn-primary' id='login-btn' onclick='authorize()'>Log in</button></div>";
-loggedInDiv = "<div id='logged-in'><p>You are logged in.</p>\
+loggedInDiv = "<div id='logged-in' class='center'><p>You are logged in.</p>\
 	<a class='btn btn-default' id='logout-btn' onclick='logout()'>Logout</a></div>";
 /** Called after authorize() */
 function handleAuthResult(authResult) {
