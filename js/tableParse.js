@@ -225,11 +225,16 @@ function parseBtnPressed() {
 	numParsed = parseClasses(tbody);
 	numParsed += parseFinals(tbody);
 	
-	if (numParsed == 0)
+	if (numParsed == 0) {
 		$('#step3').append(parseFailedAlert);
+		$('#add-all-btn').addClass('disabled');
+		$('#add-all-btn').text('Nothing detected');
+	}
 	else {
 		$('#step3').append(table);
 		$('#step3').append(reminder);
+		$('#add-all-btn').removeClass('disabled');
+		$('#add-all-btn').text('Add all to Google Calendar');
 	}
 }
 

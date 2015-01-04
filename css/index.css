@@ -97,13 +97,10 @@ textarea {
 	border: 1px solid grey;
 	padding: 15px 30px;
 }
-#semester-select {
-	margin-right: 100px;
-	display: inline-block;
+#add-all-btn {
+	margin-top: 10px;
 }
-#cal-select {
-	display: inline-block;
-}
+
 #cal-select a {
 	margin-left: 15px;
 }

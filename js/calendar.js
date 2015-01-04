@@ -277,6 +277,12 @@ function makeErrorButton(text, reason, onclick) {
 	return errBtn;
 }
 
+function addAll() {
+	$('table a').click();
+	$('#add-all-btn').addClass('disabled');
+	setTimeout(function () { $('#add-all-btn').removeClass('disabled'); }, 2000);
+}
+
 $("#login").replaceWith(loginDiv);
 $("#cal-select").append(defaultSelect);
 $("#cal-select").append(defaultRefreshBtn);
