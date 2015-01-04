@@ -88,7 +88,7 @@ textarea {
 	margin-left: 8px;
 }
 .tip {
-	margin-top: 30px;
+	margin-top: 40px;
 }
 .options {
 	position: relative;
@@ -119,7 +119,12 @@ table {
 thead {
 	font-weight: bold;
 }
-
+.yellow {
+	background-color: #FDFB8E;
+}
+.yellow:hover {
+	background-color: #F1EE6D !important;
+}
 .classname {
 	width: 35%;
 }
@@ -141,6 +146,11 @@ thead {
 }
 input[type="text"] {
 	width: 100%;
+}
+input[type="date"] {
+	font-size: 11px;
+	max-width: 115px;
+	max-height: 25px;
 }
 td img {
 	min-height: 18px;

@@ -8,17 +8,17 @@
  ***/
 
 var tableHead = 
-"<table class='table table-hover'>\
+"<table class='table table-hover' id='classtable'>\
 	<thead>\
 		<tr>\
-			<td>Class name</td>\
+			<td>Class/final name</td>\
 			<td>Days <br> (MTWTFSS)</td>\
 			<td>Time <br> (start - end)</td>\
 			<td>Location</td>\
 			<td>Add to calendar</td>\
 		</tr>\
 	</thead>\
-	<tbody id='classtable'></tbody>\
+	<tbody></tbody>\
 </table>";
 
 var classnameColStr = "<td class='classname'><input type='text'></input></td>";
@@ -27,8 +27,8 @@ var timeSelect = "<select><option></option><option>8:00 AM</option><option>8:30 
 var classlocColStr = "<td class='classloc'><input type='text'></input></td>";
 var btnColStr = "<td class='btncol'><a><img class='img-responsive' src='img/gcbutton.gif'/></a>";
 var parseFailedAlert = "<div class='alert alert-danger parse-failed'>\
-	<p>We weren't able to detect any of your classes.  Be sure you're pasting your entire class schedule, including Course IDs.</p></div>";
-var reminder = "<p class='push-right' id='reminder'>All done?  Don't forget to <a href='https://www.google.com/calendar/' target='_blank'>visit your calendar</a> to make sure everything's correct!";
+	<p>We weren't able to detect any of your classes or finals.  Be sure you're pasting your entire class schedule, including Course IDs.</p></div>";
+var reminder = "<p class='push-right parse-success'>All done?  Don't forget to <a href='https://www.google.com/calendar/' target='_blank'>visit your calendar</a> to make sure everything's correct!";
 
 /**
  * Given a 'days of the week' string from WebSTAC, example 'M-W----', makes a
@@ -36,7 +36,7 @@ var reminder = "<p class='push-right' id='reminder'>All done?  Don't forget to <
  * all be unchecked.
  */
 function makeCheckboxes(dayStr) {
-	boxes = $(checkboxColStr);
+	var boxes = $(checkboxColStr);
 	if (!dayStr || dayStr.length != 7)
 		return boxes;
 		
@@ -53,36 +53,37 @@ function makeCheckboxes(dayStr) {
  * a pair of pre-filled selection boxes for the start and end times.
  */
 function makeTimeSelect(timeStr) {
-	col = $("<td class='classtime'></td>")
-	start = $(timeSelect);
-	end = $(timeSelect);
+	var col = $("<td class='classtime'></td>")
+	var start = $(timeSelect);
+	var end = $(timeSelect);
 	col.append(start);
 	col.append(' - ');
 	col.append(end);
 	if (!timeStr)
 		return col;
 		
-	split = timeStr.split('-'); // Parse time
+	var split = timeStr.split('-'); // Parse time
 	if (split.length != 2)
 		return col;
 	split[0] = split[0].toLowerCase();
 	split[1] = split[1].toLowerCase();
-	startTxt = split[0].match(/\d\d?:\d\d[ap]/);
-	endTxt = split[1].match(/\d\d?:\d\d[ap]/);
+	var startTxt = split[0].match(/\d\d?:\d\d[ap]/);
+	var endTxt = split[1].match(/\d\d?:\d\d[ap]/);
 	if (!startTxt || !endTxt)
 		return col;
 	
-	if (split[0].charAt(split[0].length - 1) == 'a') // Set start
+	var ampm;
+	if (startTxt[0].charAt(startTxt[0].length - 1) == 'a') // Set start
 		ampm = ' AM';
 	else
 		ampm = ' PM';
-	start.val(split[0].slice(0, split[0].length - 1) + ampm);
+	start.val(startTxt[0].slice(0, startTxt[0].length - 1) + ampm);
 	
-	if (split[1].charAt(split[1].length - 1) == 'a') // Set end
+	if (endTxt[0].charAt(endTxt[0].length - 1) == 'a') // Set end
 		ampm = ' AM';
 	else
 		ampm = ' PM';
-	end.val(split[1].slice(0, split[1].length - 1) + ampm);
+	end.val(endTxt[0].slice(0, endTxt[0].length - 1) + ampm);
 	
 	return col;
 }
@@ -91,60 +92,137 @@ function makeTimeSelect(timeStr) {
  * Parses all of a user's pasted WebSTAC classes and formats them nicely into a
  * table for the user to see.
  */
-function parseClasses() {
-	$('table').remove();
-	$('#reminder').remove();
-	$('.parse-failed').remove();
-
-	input = document.getElementById('inputbox').value;
-	classText = input.match(/[A-Z]\d\d.+/g);
-	if (classText == null) {
-		$('#step3').append(parseFailedAlert);
-		return;
-	}
+function parseClasses(insertTable) {
+	var input = document.getElementById('inputbox').value;
+	var classText = input.match(/[A-Z]\d\d.+/g);
 	
-	table = $(tableHead);
 	var classNum = 0;
 	for (index in classText) {
-		cols = classText[index].split('\t');
+		var cols = classText[index].split('\t');
 		if (cols.length < 5)
 			continue;
-		name = cols[1];
+		var name = cols[1];
 		
-		time = cols[4].split(' ');
+		var time = cols[4].split(' ');
 		if (time.length < 2)
 			time.push(null);
 
+		var loc = null;
 		if (cols.length >= 6)
 			loc = cols[5];
-		else
-			loc = null;
 
-		newrow = $("<tr></tr>");
+		var newrow = $("<tr></tr>");
 		newrow.attr('id', 'class'+classNum);
 		
-		classname = $(classnameColStr);
+		var classname = $(classnameColStr);
 		classname.children()[0].value = name;
 		newrow.append(classname);
 		
-		checkboxes = makeCheckboxes(time[0]);
+		var checkboxes = makeCheckboxes(time[0]);
 		newrow.append(checkboxes);
 		
-		classtime = makeTimeSelect(time[1]);
+		var classtime = makeTimeSelect(time[1]);
 		newrow.append(classtime);
 		
-		classloc = $(classlocColStr);
+		var classloc = $(classlocColStr);
 		classloc.children()[0].value = loc;
 		newrow.append(classloc);
 		
-		btn = $(btnColStr);
+		var btn = $(btnColStr);
 		btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
 		newrow.append(btn);
 		
-		table.append(newrow);
+		insertTable.append(newrow);
 		classNum++;
 	}
-	if (classNum == 0) // The loop terminated early
+	return classNum;
+}
+
+/**
+ * Parses WebSTAC finals and puts them into a the specified table
+ * insertTable - a table element which final entries will be inserted into.  Will also be used to 
+ * find the locations of the finals.
+ * returns: the number of finals that were successfully parsed.
+ */
+monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Dec':'12'};
+function parseFinals(insertTable) { 
+	var input = document.getElementById('inputbox').value;
+	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\nExam Building \/ Room:\t.*/g);
+	
+	var finalNum = 0;
+	var toInsert = [];
+	for (index in finals) {
+		var lines = finals[index].split('\n');
+		var line1 = lines[0].split('\t');
+		var line2 = lines[1].split('\t');
+		if (line1.length < 3 || line2.length < 2)
+			continue;
+			
+		var newrow = $("<tr class='yellow'></tr>")
+		newrow.attr('id', 'class'+finalNum);
+
+		// Name
+		var nameCol = $(classnameColStr);
+		var finalName = line1[2];
+		nameCol.children()[0].value = finalName + " Final";
+		newrow.append(nameCol);
+		
+		// Date and time
+		var dateTime = line1[0].split(' '); // Example to split: "Dec 11 2014 8:00AM - 10:00AM"
+		var dateCol = $("<td class='classdays'><input type='date' size='9'></input></td>");
+		var timeCol = makeTimeSelect('');
+		if (dateTime.length == 6) {
+			var month = monthToNum[dateTime[0]];
+			var day = dateTime[1];
+			if (day.length == 1)
+				day = '0'+day;
+			var year = dateTime[2];
+			dateCol.children()[0].value = year+'-'+month+'-'+day;
+			timeCol = makeTimeSelect(dateTime[3]+dateTime[4]+dateTime[5]);
+		}
+		newrow.append(dateCol);
+		newrow.append(timeCol);
+		
+		// Location
+		var finalLoc = line2[1]; // Should always have a len of at least 2 because of the regex
+		if (line2[1] == "Same / Same") { // Try to find the location in classes parsed before
+			var rows = insertTable.find('tbody tr');
+			for (index in rows) {
+				var row = rows[index];
+				var className = row.children[0].firstChild.value;
+				var classLoc = row.children[3].firstChild.value;
+				if (finalName == className) {
+					finalLoc = classLoc;
+					break;
+				}
+			}
+		}
+		var locCol = $(classlocColStr);
+		locCol.children()[0].value = finalLoc;
+		newrow.append(locCol);
+		
+		// Button
+		var btn = $(btnColStr);
+		btn.children().attr('onclick', "addBtnPressed('final"+finalNum+"')");
+		newrow.append(btn);
+		
+		toInsert.push(newrow); // classname date time location button
+		finalNum++;
+	}
+	insertTable.append(toInsert);
+	return finalNum;
+}
+
+function parseBtnPressed() {
+	$('#classtable').remove();
+	$('.parse-success').remove();
+	$('.parse-failed').remove();
+	
+	table = $(tableHead);
+	numParsed = parseClasses(table);
+	numParsed += parseFinals(table);
+	
+	if (numParsed == 0) // The loop terminated early
 		$('#step3').append(parseFailedAlert);
 	else {
 		$('#step3').append(table);
