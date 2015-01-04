@@ -147,12 +147,12 @@ function parseClasses(insertBody) {
 monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Dec':'12'};
 function parseFinals(insertBody) { 
 	var input = document.getElementById('inputbox').value;
-	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\n(\n\t)?Exam Building \/ Room:\t.*/g);
+	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\n(\t\n)?Exam Building \/ Room:\t.*/g);
 	
 	var finalNum = 0;
 	var toInsert = [];
 	for (index in finals) {
-		var lines = finals[index].split(/\n(\n\t)?/);
+		var lines = finals[index].split(/\n(\t\n)?/);
 		var line1 = lines[0].split('\t');
 		var line2 = lines[1].split('\t');
 		if (line1.length < 3 || line2.length < 2)
