@@ -11,7 +11,7 @@ var tableHead =
 "<table class='table table-hover' id='classtable'>\
 	<thead>\
 		<tr>\
-			<td>Class/final name</td>\
+			<td>Class or final name</td>\
 			<td>Days <br> (MTWTFSS)</td>\
 			<td>Time <br> (start - end)</td>\
 			<td>Location</td>\
@@ -152,14 +152,14 @@ function parseFinals(insertBody) {
 	var finalNum = 0;
 	var toInsert = [];
 	for (index in finals) {
-		var lines = finals[index].split(/\n(\t\n)?/);
+		var lines = finals[index].split(/\n(?:\t\n)?/);
 		var line1 = lines[0].split('\t');
 		var line2 = lines[1].split('\t');
 		if (line1.length < 3 || line2.length < 2)
 			continue;
 			
 		var newrow = $("<tr class='yellow'></tr>")
-		newrow.attr('id', 'class'+finalNum);
+		newrow.attr('id', 'final'+finalNum);
 
 		// Name
 		var nameCol = $(classnameColStr);
@@ -169,7 +169,7 @@ function parseFinals(insertBody) {
 		
 		// Date and time
 		var dateTime = line1[0].split(' '); // Example to split: "Dec 11 2014 8:00AM - 10:00AM"
-		var dateCol = $("<td class='classdays'><input type='date'></input></td>");
+		var dateCol = $("<td class='classdays'><input type='text'></input></td>");
 		var timeCol = makeTimeSelect('');
 		if (dateTime.length == 6) {
 			var month = monthToNum[dateTime[0]];
@@ -272,27 +272,34 @@ function toISOTimeStr(timestr) {
 	if (!timestr)
 		return '';
 	var hrMin = timestr.split(':');
-	var hr = parseInt(hrMin[0]);
+	var hr = parseInt(hrMin[0], 10);
 	if (hr < 12 && timestr.charAt(timestr.length - 2) == 'P') // PM
 		hr += 12;
 	
 	return (hr + ':' + hrMin[1].substr(0, 2) + ':00');
 }
 
+/** Thrown by the functions that generate request bodies */
+function validationError(badCol, reason) {
+	this.badCol = badCol;
+	this.reason = reason;
+}
+
 /**
  * Generates the Google Calendar API request body from a row of the table.
- * Can throw a number describing the input column index that failed validation.
+ * Assumes the row describes someone's class.
+ * Throws validationError.
  */
-function genRequestBody(tableRow) {
+function genClassRequestBody(tableRow) {
 	var rowCols = tableRow.children; // each element of this array is a td element
 	
-	var request = {}
-	request.summary = rowCols[0].firstChild.value; 
+	var request = {};
+	request.summary = rowCols[0].firstChild.value;
 	
 	// Construct recurrence
 	var byDay = convertDayOption(rowCols[1]);
 	if (!byDay)
-		throw 1;
+		throw new validationError(1, "Select at least one day of the week.");
 	var semester = $('#semester-select select').val();
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters[semester].endDate+';BYDAY='+byDay];
 	
@@ -303,10 +310,43 @@ function genRequestBody(tableRow) {
 	var startSel = rowCols[2].children[0];
 	var endSel = rowCols[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
-		throw 2;
+		throw new validationError(2, "Start time must be before end time.");
 	request.start = {'dateTime': startDate + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
 	request.end = {'dateTime': startDate + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
 	
+	request.location = rowCols[3].firstChild.value;
+	request.description = 'Created by WebSTAC to Calendar';
+	
+	return request;
+}
+
+/**
+ * Generates the Google Calendar API request body from a row of the table.
+ * Assumes the row describes someone's final.
+ * Throws validationError.
+ */
+function genFinalRequestBody(tableRow) {
+	var rowCols = tableRow.children; // each element of this array is a td element
+	
+	var request = {};
+	request.summary = rowCols[0].firstChild.value;
+	
+	var date = rowCols[1].children[0].value;
+	if (date.length != 10 || !date.match(/\d\d\d\d-\d\d-\d\d/))
+		throw new validationError(1, "Enter a valid date (yyyy-mm-dd).");
+	var split = date.split('-')
+	var month = split[1];
+	var day = split[2];
+	if (month <= 0 || month > 12 || day <= 0 || day > 31)
+		throw new validationError(1, "Enter a valid date (yyyy-mm-dd).");
+	
+	var startSel = rowCols[2].children[0];
+	var endSel = rowCols[2].children[1];
+	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
+		throw new validationError(2, "Start time must be before end time.");
+	
+	request.start = {'dateTime': date + 'T' + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
+	request.end = {'dateTime': date + 'T' + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
 	request.location = rowCols[3].firstChild.value;
 	request.description = 'Created by WebSTAC to Calendar';
 	

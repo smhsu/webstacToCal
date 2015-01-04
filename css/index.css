@@ -147,11 +147,6 @@ thead {
 input[type="text"] {
 	width: 100%;
 }
-input[type="date"] {
-	font-size: 11px;
-	max-width: 115px;
-	max-height: 25px;
-}
 td img {
 	min-height: 18px;
 	min-width: 58px;

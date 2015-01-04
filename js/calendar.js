@@ -237,19 +237,22 @@ function addBtnPressed(rowId) {
 	originRow.children[1].removeAttribute("style"); // Remove red borders that the catch block might have added
 	originRow.children[2].removeAttribute("style");
 	try {
-		request = genRequestBody(originRow); // genRequestBody defined in tableParse.js
+		var request;
+		if (rowId.search('class') >= 0)
+			request = genClassRequestBody(originRow); // genRequestBody defined in tableParse.js
+		else if (rowId.search('final') >= 0)
+			request = genFinalRequestBody(originRow);
+		else
+			throw ("Bad button ID");
 	}
-	catch (badCol) {
-		if (badCol == 1) { // Days of the week
-			btn.replaceWith(makeErrorButton("Error - retry?", "Select at least one day of the week.", callback));
+	catch (err) {
+		if (err instanceof validationError) {
+			originRow.children[err.badCol].setAttribute("style", "border: 3px solid red;");
+			btn.replaceWith(makeErrorButton("Error - retry?", err.reason, callback));
 		}
-		else if (badCol == 2) { // Start and end time
-			btn.replaceWith(makeErrorButton("Error - retry?", "Start time must be before end time.", callback));
-		}
-		else // ???
-			btn.replaceWith(makeErrorButton("Error - retry?", "Unexpected exception: "+badCol, callback));
-			
-		originRow.children[badCol].setAttribute("style", "border: 3px solid red;");
+		else
+			btn.replaceWith(makeErrorButton("Error - retry?", "Unexpected exception: "+err, callback));
+
 		return;
 	}
 	

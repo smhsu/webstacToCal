@@ -14,7 +14,7 @@ An example request body:
 	'end': {'dateTime':'2014-12-26T13:00:00', 'timeZone':'America/Chicago'},
 	'recurrence': [ // Make sure it's the day AFTER semester ends
 		'RRULE:FREQ=WEEKLY;UNTIL=20150107;BYDAY=TU,TH',
-		'EXDATE:20150106' // Must be in same format as start!
+		'EXDATE:20150106T000000,20150107T000000'
 	],
 	'location': 'Event location',
 	'description': 'Created by WebSTAC to Calendar'
