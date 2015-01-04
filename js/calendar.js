@@ -25,19 +25,19 @@ function handleClientLoad() {
 /** Called when someone presses the login button */
 function authorize(event) {
 	loggedin = false;
-	btn = $('#login-btn');
+	var btn = $('#login-btn');
 	btn.addClass('disabled');
 	btn.text('Logging in...');
 	gapi.auth.authorize({client_id: clientId, scope: scope, immediate: false}, handleAuthResult);
 }
 
-loginDiv = "<div id='login' class='center'><p>Click the button below to grant access to your Google calendar.</p>\
+var loginDiv = "<div id='login' class='center'><p>Click the button below to grant access to your Google calendar.</p>\
 	<button class='btn btn-primary' id='login-btn' onclick='authorize()'>Log in</button></div>";
-loggedInDiv = "<div id='logged-in' class='center'><p>You are logged in.</p>\
+var loggedInDiv = "<div id='logged-in' class='center'><p>You are logged in.</p>\
 	<a class='btn btn-default' id='logout-btn' onclick='logout()'>Logout</a></div>";
 /** Called after authorize() */
 function handleAuthResult(authResult) {
-	btn = $('#login-btn');
+	var btn = $('#login-btn');
 	if (authResult && !authResult.error) {
 	
 		if (validateToken(authResult)) {
@@ -65,9 +65,9 @@ function validateToken(token) {
 	if (!token)
 		return false;
 
-	url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+	var url = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 	url += token.access_token;
-	xmlhttp = new XMLHttpRequest();
+	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET", url, false);
 	xmlhttp.send();
 	
@@ -85,12 +85,12 @@ function logout() {
 		return;
 	}
 		
-	btn = $('#logout-btn');
+	var btn = $('#logout-btn');
 	btn.addClass('disabled');
 	btn.text('Logging out...');
 	
-	token = gapi.auth.getToken();
-	url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
+	var token = gapi.auth.getToken();
+	var url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
 	
 	$.ajax({
 		type: 'GET',
@@ -136,8 +136,8 @@ function makeCalSelect() {
 		'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
 		'params': {'minAccessRole': 'writer'}
 	}).then( function(response) {
-		select = $(defaultSelect);
-		cals = response.result.items;
+		var select = $(defaultSelect);
+		var cals = response.result.items;
 		for (index in cals) {
 			calIds.push(cals[index].id);
 			select.append("<option>"+cals[index].summary +"</option>");
@@ -150,7 +150,7 @@ function makeCalSelect() {
  * Called when a user presses the "Refresh List" button
  */
 function refreshCalList() {
-	btn = $("#cal-select a");
+	var btn = $("#cal-select a");
 	btn.tooltip('destroy');
 	if (!loggedin) {
 		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", "refreshCalList()"));
@@ -163,6 +163,7 @@ function refreshCalList() {
 		$("#cal-select a").replaceWith(defaultRefreshBtn);
 	}, function(error) {
 		$("#cal-select select").replaceWith(defaultSelect);
+		var reason;
 		if (error.result) // Google API error
 			reason = error.result.error.message;
 		else // ???
@@ -189,19 +190,20 @@ function postEvent(postUri, body) {
 function sendEventRequest(postUri, request, rowId) {
 	postEvent(postUri, request).then( function()
 	{
-		originRow = document.getElementById(rowId);
-		btn = $(originRow.children[4].children[0]);
+		var originRow = document.getElementById(rowId);
+		var btn = $(originRow.children[4].children[0]);
 		btn.replaceWith("<a class='btn btn-success'><span class='glyphicon glyphicon-ok'></span> Added</a>");
 	},
 	function(err)
 	{
+		var reason;
 		if (err.result)
 			reason = 'Error trying post the event: ' + err.result.error.message;
 		else
 			reason = 'Unexpected exception: ' + err;
 		
-		originRow = document.getElementById(rowId);
-		btn = $(originRow.children[4].children[0]);
+		var originRow = document.getElementById(rowId);
+		var btn = $(originRow.children[4].children[0]);
 		btn.replaceWith(makeErrorButton("Error - retry?", reason, "addBtnPressed('"+rowId+"')"));
 	});
 }
@@ -210,10 +212,10 @@ function sendEventRequest(postUri, request, rowId) {
  * Called when a user presses an "Add to Google Calendar" button
  */
 function addBtnPressed(rowId) {
-	originRow = document.getElementById(rowId);
-	btn = $(originRow.children[4].children[0]);
+	var originRow = document.getElementById(rowId);
+	var btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
-	callback = "addBtnPressed('"+rowId+"')";
+	var callback = "addBtnPressed('"+rowId+"')";
 	
 	if (!loggedin) {
 		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", callback));
@@ -221,7 +223,7 @@ function addBtnPressed(rowId) {
 	}
 	
 	// Get which calendar the user has selected
-	selectedIndex = $("#cal-select select")[0].selectedIndex;
+	var selectedIndex = $("#cal-select select")[0].selectedIndex;
 	if (selectedIndex <= 0) {
 		$("#cal-select").attr("style", "border: 3px solid red");
 		btn.replaceWith(makeErrorButton("Error - retry?", "Select a calendar first.", callback));
@@ -229,7 +231,7 @@ function addBtnPressed(rowId) {
 	}
 	else
 		$("#cal-select").removeAttr("style");
-	postUri = convertCalId(calIds[selectedIndex - 1]);
+	var postUri = convertCalId(calIds[selectedIndex - 1]);
 	
 	// Validate the input before making the request
 	originRow.children[1].removeAttribute("style"); // Remove red borders that the catch block might have added
@@ -262,7 +264,7 @@ function addBtnPressed(rowId) {
  * id: the parameter passed to addBtnPressed()
  */
 function makeErrorButton(text, reason, onclick) {
-	errBtn = $("<a class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
+	var errBtn = $("<a class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
 	if (reason) {
 		errBtn.attr("data-toggle", "tooltip");
 		errBtn.attr("title", reason);

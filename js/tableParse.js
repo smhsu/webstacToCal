@@ -89,10 +89,11 @@ function makeTimeSelect(timeStr) {
 }
 
 /**
- * Parses all of a user's pasted WebSTAC classes and formats them nicely into a
- * table for the user to see.
+ * Parses a user's pasted WebSTAC classes and puts them into the specified tbody element.
+ * insertBody - a tbody element
+ * returns: the number of classes that were successfully parsed.
  */
-function parseClasses(insertTable) {
+function parseClasses(insertBody) {
 	var input = document.getElementById('inputbox').value;
 	var classText = input.match(/[A-Z]\d\d.+/g);
 	
@@ -132,27 +133,26 @@ function parseClasses(insertTable) {
 		btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
 		newrow.append(btn);
 		
-		insertTable.append(newrow);
+		insertBody.append(newrow);
 		classNum++;
 	}
 	return classNum;
 }
 
 /**
- * Parses WebSTAC finals and puts them into a the specified table
- * insertTable - a table element which final entries will be inserted into.  Will also be used to 
- * find the locations of the finals.
+ * Parses WebSTAC finals and puts them into into the specified tbody element.
+ * insertBody - a tbody element
  * returns: the number of finals that were successfully parsed.
  */
 monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Dec':'12'};
-function parseFinals(insertTable) { 
+function parseFinals(insertBody) { 
 	var input = document.getElementById('inputbox').value;
-	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\nExam Building \/ Room:\t.*/g);
+	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\n\n?Exam Building \/ Room:\t.*/g);
 	
 	var finalNum = 0;
 	var toInsert = [];
 	for (index in finals) {
-		var lines = finals[index].split('\n');
+		var lines = finals[index].split(/\n\n?/);
 		var line1 = lines[0].split('\t');
 		var line2 = lines[1].split('\t');
 		if (line1.length < 3 || line2.length < 2)
@@ -186,14 +186,16 @@ function parseFinals(insertTable) {
 		// Location
 		var finalLoc = line2[1]; // Should always have a len of at least 2 because of the regex
 		if (line2[1] == "Same / Same") { // Try to find the location in classes parsed before
-			var rows = insertTable.find('tbody tr');
-			for (index in rows) {
-				var row = rows[index];
-				var className = row.children[0].firstChild.value;
-				var classLoc = row.children[3].firstChild.value;
-				if (finalName == className) {
-					finalLoc = classLoc;
-					break;
+			var rows = insertBody.find('tr');
+			if (rows.length > 0) {
+				for (index in rows) {
+					var row = rows[index];
+					var className = row.children[0].firstChild.value;
+					var classLoc = row.children[3].firstChild.value;
+					if (finalName == className) {
+						finalLoc = classLoc;
+						break;
+					}
 				}
 			}
 		}
@@ -209,7 +211,7 @@ function parseFinals(insertTable) {
 		toInsert.push(newrow); // classname date time location button
 		finalNum++;
 	}
-	insertTable.append(toInsert);
+	insertBody.append(toInsert);
 	return finalNum;
 }
 
@@ -218,11 +220,12 @@ function parseBtnPressed() {
 	$('.parse-success').remove();
 	$('.parse-failed').remove();
 	
-	table = $(tableHead);
-	numParsed = parseClasses(table);
-	numParsed += parseFinals(table);
+	var table = $(tableHead);
+	var tbody = table.find('tbody');
+	numParsed = parseClasses(tbody);
+	numParsed += parseFinals(tbody);
 	
-	if (numParsed == 0) // The loop terminated early
+	if (numParsed == 0)
 		$('#step3').append(parseFailedAlert);
 	else {
 		$('#step3').append(table);
@@ -238,8 +241,8 @@ function parseBtnPressed() {
  */
 conversion = ['MO,','TU,','WE,','TH,','FR,','SA,','SU,'];
 function convertDayOption(tdEle) {
-	ans = '';
-	boxes = tdEle.children;
+	var ans = '';
+	var boxes = tdEle.children;
 	for (i = 0; i < 7; i++) {
 		if (boxes[i].checked)
 			ans += conversion[i];
@@ -253,7 +256,7 @@ function convertDayOption(tdEle) {
 
 /** Returns the INDEX of the first selected day in row of seven checkboxes. */
 function firstSelectedDay(tdEle) {
-	boxes = tdEle.children;
+	var boxes = tdEle.children;
 	for (i = 0; i < 7; i++) {
 		if (boxes[i].checked)
 			return i;
@@ -268,8 +271,8 @@ function firstSelectedDay(tdEle) {
 function toISOTimeStr(timestr) {
 	if (!timestr)
 		return '';
-	hrMin = timestr.split(':');
-	hr = parseInt(hrMin[0]);
+	var hrMin = timestr.split(':');
+	var hr = parseInt(hrMin[0]);
 	if (hr < 12 && timestr.charAt(timestr.length - 2) == 'P') // PM
 		hr += 12;
 	
@@ -281,24 +284,24 @@ function toISOTimeStr(timestr) {
  * Can throw a number describing the input column index that failed validation.
  */
 function genRequestBody(tableRow) {
-	rowCols = tableRow.children; // each element of this array is a td element
+	var rowCols = tableRow.children; // each element of this array is a td element
 	
-	request = {}
+	var request = {}
 	request.summary = rowCols[0].firstChild.value; 
 	
 	// Construct recurrence
-	byDay = convertDayOption(rowCols[1]);
+	var byDay = convertDayOption(rowCols[1]);
 	if (!byDay)
 		throw 1;
-	semester = $('#semester-select select').val();
+	var semester = $('#semester-select select').val();
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters[semester].endDate+';BYDAY='+byDay];
 	
 	// Construct start and end
 	// Warning: only correct if semester starts on a Monday!
-	dayOffset = firstSelectedDay(rowCols[1]);
-	startDate = semesters[semester].startDate.offsetDateBy(dayOffset).toISODateStr();
-	startSel = rowCols[2].children[0];
-	endSel = rowCols[2].children[1];
+	var dayOffset = firstSelectedDay(rowCols[1]);
+	var startDate = semesters[semester].startDate.offsetDateBy(dayOffset).toISODateStr();
+	var startSel = rowCols[2].children[0];
+	var endSel = rowCols[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
 		throw 2;
 	request.start = {'dateTime': startDate + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
