@@ -1,6 +1,4 @@
 TODO:
-	finals
-	help button for step 2
 
 Promises: callback can return a value, which the next then can access, or you can return a promise, which the next then will wait on.
 
