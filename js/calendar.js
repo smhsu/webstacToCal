@@ -140,7 +140,9 @@ function makeCalSelect() {
 		var cals = response.result.items;
 		for (index in cals) {
 			calIds.push(cals[index].id);
-			select.append("<option>"+cals[index].summary +"</option>");
+			var newOption = $("<option></option>");
+			newOption.text(cals[index].summary);
+			select.append(newOption);
 		}
 		return select;
 	});
@@ -267,7 +269,8 @@ function addBtnPressed(rowId) {
  * id: the parameter passed to addBtnPressed()
  */
 function makeErrorButton(text, reason, onclick) {
-	var errBtn = $("<a class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span> "+text+"</a>");
+	var errBtn = $("<a class='btn btn-danger'><span class='glyphicon glyphicon-remove'></span> </a>");
+	errBtn.append(document.createTextNode(text));
 	if (reason) {
 		errBtn.attr("data-toggle", "tooltip");
 		errBtn.attr("title", reason);
