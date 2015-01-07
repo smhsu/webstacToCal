@@ -191,15 +191,13 @@ function parseFinals(insertBody) {
 		var finalLoc = line2[1]; // Should always have a len of at least 2 because of the regex
 		if (line2[1] == "Same / Same") { // Try to find the location in classes parsed before
 			var rows = insertBody.find('tr');
-			if (rows.length > 0) {
-				for (index in rows) {
-					var row = rows[index];
-					var className = row.children[0].firstChild.value;
-					var classLoc = row.children[3].firstChild.value;
-					if (finalName == className) {
-						finalLoc = classLoc;
-						break;
-					}
+			for (var i = 0; i < rows.length; i++) {
+				var row = rows[i];
+				var className = row.children[0].firstChild.value;
+				var classLoc = row.children[3].firstChild.value;
+				if (finalName == className) {
+					finalLoc = classLoc;
+					break;
 				}
 			}
 		}
