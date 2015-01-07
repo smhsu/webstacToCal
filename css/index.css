@@ -124,6 +124,7 @@ thead {
 }
 .classname {
 	width: 35%;
+	min-width: 150px;
 }
 @media (max-width: 1336px) { /* More width on smaller screen */
 	.classdays {
@@ -140,6 +141,7 @@ thead {
 }
 .classloc {
 	width: 20%;
+	min-width: 150px;
 }
 input[type="text"] {
 	width: 100%;

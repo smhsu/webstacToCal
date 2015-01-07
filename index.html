@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+<html lang="en">
 <head>
 	<meta charset="utf-8"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -21,7 +21,7 @@
 
 <body>
 	<div class="container-fluid pageTop center">
-		<img src="img/main.png" class="img-responsive center-block" alt="WebSTAC to Calendar"></img>
+		<img src="img/main.png" class="img-responsive center-block" alt="WebSTAC to Calendar"/>
 		<h1>WebSTAC to Calendar</h1>
 	</div>
 	<div class="container">
@@ -47,23 +47,23 @@
 			<p>WebSTAC to Calendar does not support Internet Explorer.  Sorry about that.  :-(</p>
 		</div>
 		
-		<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalTitle" aria-hidden="true">
+		<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 				
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h3 class="modal-title">Step 2: Copy and paste</h3>
+						<h3 class="modal-title" id="helpModalLabel">Step 2: Copy and paste</h3>
 					</div>
 					<div class="modal-body row">
 						<div class="col-md-3">
 							<p>2a. Once you've logged into <a href="https://acadinfo.wustl.edu/">WebSTAC</a>, click the indicated button to get to your class schedule.</p>
-							<img src="img/help1.JPG" class="img-responsive" alt="Select Courses and Registration >> Class Schedule"></img>
+							<img src="img/help1.JPG" class="img-responsive" alt="Select Courses and Registration >> Class Schedule"/>
 						</div>
 						<div class="col-md-9">
 							<p>2b. <b>Easy way</b>: select all (CTRL+A), and copy.  Close this dialogue and paste into the text box.</p>
 							<p><b>Important:</b> make sure you copied your schedule in LIST view, not grid view.</p>
-							<img src="img/help2.gif" class="img-responsive" alt="Copy the entire table"></img>
+							<img src="img/help2.gif" class="img-responsive" alt="Copy the entire table"/>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -87,7 +87,7 @@
 			<p><a href="https://acadinfo.wustl.edu/apps/ClassSchedule/" target="_blank">Go to WebSTAC</a>, and copy and paste your class and finals schedule
 			into this text box.</p>
 			<p><button type="button" class="btn btn-default" data-toggle="modal" data-target="#helpModal" style="margin-bottom: 20px;">More help</button></p>
-			<textarea id="inputbox" wrap="off">
+			<textarea id="inputbox">
 				Go to WebSTAC >> Courses and Registration >> Class Schedule.
 				Then, SELECT ALL the text, including finals schedule, and copy and paste it into this box.
 			</textarea>
@@ -98,7 +98,7 @@
 		</div>
 		<div id="step3">
 			<p class="push-right" style="display:inline; margin-right: 10px;"><a class="btn btn-primary" onclick="parseBtnPressed()">Detect classes and finals</a></p>
-			<p style="display:inline">(Your finals will be highlighted in <b>yellow</b> <a class="btn" style="border: 1px solid black; background-color:yellow; pointer-events: none;"></a>.)</span></p>
+			<p style="display:inline">(Your finals will be highlighted in <b>yellow</b> <a class="btn" style="border: 1px solid black; background-color:yellow; pointer-events: none;"></a>.)</p>
 			
 			<p class="push-right tip"><i>Tip: you can go to <a href="https://www.google.com/calendar/" target="_blank">www.google.com/calendar</a>,
 			create a new calendar there, and then press "Refresh list"</i></p>

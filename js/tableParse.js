@@ -27,7 +27,11 @@ var timeSelect = "<select><option></option><option>8:00 AM</option><option>8:30 
 var classlocColStr = "<td class='classloc'><input type='text'></input></td>";
 var btnColStr = "<td class='btncol'><a><img class='img-responsive' src='img/gcbutton.gif'/></a>";
 var parseFailedAlert = "<div class='alert alert-danger parse-failed'>\
-	<p>We weren't able to detect any of your classes or finals.  Be sure you're pasting your entire class schedule, including Course IDs.</p></div>";
+	<p>We weren't able to detect any of your classes or finals.</p>\
+	<ul>\
+		<li>Be sure you're pasting your entire class schedule, including Course IDs.</li>\
+		<li>You could be using an unsupported browser.  Try copying WebSTAC from the desktop version of Chrome, Firefox, Safari, or Opera.</li>\
+	</ul></div>";
 var reminder = "<p class='push-right parse-success'>All done?  Don't forget to <a href='https://www.google.com/calendar/' target='_blank'>visit your calendar</a> to make sure everything's correct!";
 
 /**
