@@ -29,5 +29,9 @@ semesters = {
 	'SP15': {
 		'startDate': new Date(2015,0,12), // 0 = January
 		'endDate': '20150425'
+	},
+	'FL15': {
+		'startDate': new Date(2015, 07, 24),
+		'endDate': '20151205'
 	}
 }
