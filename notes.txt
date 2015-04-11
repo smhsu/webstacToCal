@@ -1,5 +1,7 @@
 TODO:
-	EXDATE
+	EXDATE - exclude holidays, and stuff
+	Add class button
+	Automatic fetch of classes
 
 Promises: callback can return a value, which the next then can access, or you can return a promise, which the next then will wait on.
 

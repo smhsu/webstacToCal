@@ -323,6 +323,7 @@ function genClassRequestBody(tableRow) {
 	
 	request.location = rowCols[3].firstChild.value;
 	request.description = 'Created by WebSTAC to Calendar';
+	request.reminders = { 'useDefault': false };
 	
 	return request;
 }
