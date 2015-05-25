@@ -44,7 +44,7 @@
 			them, then reload the page.</p>
 		</div>
 		<div class="jumbotron alert alert-danger" id="ie-warning">
-			<p>WebSTAC to Calendar does not support Internet Explorer.  Sorry about that.  :-(</p>
+			<p>You appear to be using Internet Explorer.  WebSTAC to Calendar does not support IE.  Sorry about that.  :-(</p>
 		</div>
 		
 		<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
@@ -112,7 +112,27 @@
 				</div>
 				<p><a class="btn btn-primary disabled" id="add-all-btn" onclick="addAll()">Nothing detected</a></p>
 			</div>
-		</div>
+			
+			<table class='table table-hover' id='classtable'>
+				<thead>
+					<tr>
+						<td>Class or final name</td>
+						<td>Days <br> (MTWTFSS)</td>
+						<td>Time <br> (start - end)</td>
+						<td>Location</td>
+						<td>Add to calendar</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="5">
+							<button class="circular" onclick="manualAddBtnPressed()"><span class="glyphicon glyphicon-plus"></span></button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div> <!--End step3-->
+		
 		</div> <!--End div class main-->
 		
 	</div> <!--End div class container-->

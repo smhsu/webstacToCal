@@ -7,20 +7,6 @@
  * PLEASE give acknowledgement if you copy this code.
  ***/
 
-var tableHead = 
-"<table class='table table-hover' id='classtable'>\
-	<thead>\
-		<tr>\
-			<td>Class or final name</td>\
-			<td>Days <br> (MTWTFSS)</td>\
-			<td>Time <br> (start - end)</td>\
-			<td>Location</td>\
-			<td>Add to calendar</td>\
-		</tr>\
-	</thead>\
-	<tbody></tbody>\
-</table>";
-
 var classnameColStr = "<td class='classname'><input type='text'></input></td>";
 var checkboxColStr = "<td class='classdays'><input type='checkbox' class='mon'/><input type='checkbox' class='tue'/><input type='checkbox' class='wed'/><input type='checkbox' class='thu'/><input type='checkbox' class='fri'/><input type='checkbox' class='sat'/><input type='checkbox' class='sun'/></td>";
 var timeSelect = "<select><option></option><option>8:00 AM</option><option>8:30 AM</option><option>9:00 AM</option><option>9:30 AM</option><option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option><option>1:30 PM</option><option>2:00 PM</option><option>2:30 PM</option><option>3:00 PM</option><option>3:30 PM</option><option>4:00 PM</option><option>4:30 PM</option><option>5:00 PM</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>9:00 PM</option><option>9:30 PM</option><option>10:00 PM</option><option>10:30 PM</option><option>11:00 PM</option><option>11:30 PM</option></select>";
@@ -54,7 +40,8 @@ function makeCheckboxes(dayStr) {
 
 /**
  * Given a 'class time' string from WebSTAC, example '10:00a-11:30a', makes
- * a pair of pre-filled selection boxes for the start and end times.
+ * a pair of pre-filled selection boxes for the start and end times.  If there
+ * is a parse error, returns the boxes with nothing selected.
  */
 function makeTimeSelect(timeStr) {
 	var col = $("<td class='classtime'></td>")
@@ -92,16 +79,48 @@ function makeTimeSelect(timeStr) {
 	return col;
 }
 
+function manualAddBtnPressed() {
+	addEmptyClass($('#classtable tbody'));
+	$('#add-all-btn').removeClass('disabled');
+	$('#add-all-btn').text('Add all to Google Calendar');
+}
+
 /**
- * Parses a user's pasted WebSTAC classes and puts them into the specified tbody element.
+ * Adds a new row to the user's class table with no info filled out.
+ * Modified global variable classNum.
+ *
+ * insertBody - a tbody element
+ */
+var classNum = 0;
+function addEmptyClass(insertBody) {
+	var newrow = $("<tr></tr>");
+	newrow.attr('id', 'class'+classNum);
+	
+	newrow.append($(classnameColStr));
+	newrow.append(makeCheckboxes());
+	newrow.append(makeTimeSelect());
+	newrow.append($(classlocColStr));
+	var btn = $(btnColStr);
+	btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
+	newrow.append(btn);
+	
+	insertBody.find("tr:last").before(newrow);
+	classNum++;
+}
+
+/**
+ * Parses a user's pasted WebSTAC classes and puts them into the specified tbody element,
+ * one class per row.  Tries its best to pre-fill class metadata.
+ * Modifies global variable classNum.
+ *
  * insertBody - a tbody element
  * returns: the number of classes that were successfully parsed.
  */
-function parseClasses(insertBody) {
+function parseAndAddClasses(insertBody) {
 	var input = document.getElementById('inputbox').value;
 	var classText = input.match(/[A-Z]\d\d.+/g);
 	
-	var classNum = 0;
+	var numSuccess = 0;
 	for (index in classText) {
 		var cols = classText[index].split('\t');
 		if (cols.length < 5)
@@ -116,7 +135,7 @@ function parseClasses(insertBody) {
 		if (cols.length >= 6)
 			loc = cols[5];
 
-		var newrow = $("<tr></tr>");
+		var newrow = $("<tr class='autoadd'></tr>");
 		newrow.attr('id', 'class'+classNum);
 		
 		var classname = $(classnameColStr);
@@ -137,10 +156,11 @@ function parseClasses(insertBody) {
 		btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
 		newrow.append(btn);
 		
-		insertBody.append(newrow);
+		insertBody.find("tr:last").before(newrow);
 		classNum++;
+		numSuccess++;
 	}
-	return classNum;
+	return numSuccess;
 }
 
 /**
@@ -148,8 +168,8 @@ function parseClasses(insertBody) {
  * insertBody - a tbody element
  * returns: the number of finals that were successfully parsed.
  */
-monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Dec':'12'};
-function parseFinals(insertBody) { 
+var monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Dec':'12'}; // I'm only putting months in which I expect finals
+function parseAndAddFinals(insertBody) { 
 	var input = document.getElementById('inputbox').value;
 	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\n(\t\n)?Exam Building \/ Room:\t.*/g);
 	
@@ -162,7 +182,7 @@ function parseFinals(insertBody) {
 		if (line1.length < 3 || line2.length < 2)
 			continue;
 			
-		var newrow = $("<tr class='yellow'></tr>")
+		var newrow = $("<tr class='yellow autoadd'></tr>")
 		newrow.attr('id', 'final'+finalNum);
 
 		// Name
@@ -213,27 +233,23 @@ function parseFinals(insertBody) {
 		toInsert.push(newrow); // classname date time location button
 		finalNum++;
 	}
-	insertBody.append(toInsert);
+	insertBody.find("tr:last").before(toInsert);
 	return finalNum;
 }
 
 function parseBtnPressed() {
-	$('#classtable').remove();
+	$('.autoadd').remove();
 	$('.parse-success').remove();
 	$('.parse-failed').remove();
 	
-	var table = $(tableHead);
-	var tbody = table.find('tbody');
-	numParsed = parseClasses(tbody);
-	numParsed += parseFinals(tbody);
+	var tbody = $('#classtable tbody');
+	var numParsed = parseAndAddClasses(tbody);
+	numParsed += parseAndAddFinals(tbody);
 	
 	if (numParsed == 0) {
 		$('#step3').append(parseFailedAlert);
-		$('#add-all-btn').addClass('disabled');
-		$('#add-all-btn').text('Nothing detected');
 	}
 	else {
-		$('#step3').append(table);
 		$('#step3').append(reminder);
 		$('#add-all-btn').removeClass('disabled');
 		$('#add-all-btn').text('Add all to Google Calendar');

@@ -108,6 +108,9 @@ textarea {
 	margin-top: 20px;
 }
 
+.circular {
+	border-radius:100%;
+}
 /* Lots of table styling */
 table {
 	margin-top: 0;

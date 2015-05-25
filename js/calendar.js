@@ -280,6 +280,9 @@ function makeErrorButton(text, reason, onclick) {
 	return errBtn;
 }
 
+/**
+ * Automatically clicks all the <a> tags in all tables.  Disables the add-all button for 2 seconds.
+ */
 function addAll() {
 	$('table a').click();
 	$('#add-all-btn').addClass('disabled');
