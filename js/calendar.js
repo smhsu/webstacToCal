@@ -287,6 +287,7 @@ function addAll() {
 	$('table a').click();
 	$('#add-all-btn').addClass('disabled');
 	setTimeout(function () { $('#add-all-btn').removeClass('disabled'); }, 2000);
+	ga('send', 'event', 'add-all-button', 'click'); // Send click to Google Analytics
 }
 
 $("#login").replaceWith(loginDiv);
