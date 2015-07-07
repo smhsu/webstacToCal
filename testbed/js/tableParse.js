@@ -169,7 +169,7 @@ function parseAndAddClasses(insertBody) {
  * returns: the number of finals that were successfully parsed.
  */
 var monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Dec':'12'}; // I'm only putting months in which I expect finals
-function parseAndAddFinals(insertBody) { 
+function parseAndAddFinals(insertBody) {
 	var input = document.getElementById('inputbox').value;
 	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\n(\t\n)?Exam Building \/ Room:\t.*/g);
 	
@@ -253,6 +253,7 @@ function parseBtnPressed() {
 		$('#step3').append(reminder);
 		$('#add-all-btn').removeClass('disabled');
 		$('#add-all-btn').text('Add all to Google Calendar');
+		ga('send', 'event', 'parse-button', 'click'); // Send click to Google Analytics
 	}
 }
 
