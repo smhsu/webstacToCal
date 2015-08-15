@@ -12,13 +12,6 @@ var checkboxColStr = "<td class='classdays'><input type='checkbox' class='mon'/>
 var timeSelect = "<select><option></option><option>8:00 AM</option><option>8:30 AM</option><option>9:00 AM</option><option>9:30 AM</option><option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option><option>1:30 PM</option><option>2:00 PM</option><option>2:30 PM</option><option>3:00 PM</option><option>3:30 PM</option><option>4:00 PM</option><option>4:30 PM</option><option>5:00 PM</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>9:00 PM</option><option>9:30 PM</option><option>10:00 PM</option><option>10:30 PM</option><option>11:00 PM</option><option>11:30 PM</option></select>";
 var classlocColStr = "<td class='classloc'><input type='text'></input></td>";
 var btnColStr = "<td class='btncol'><a><img class='img-responsive' src='img/gcbutton.gif'/></a>";
-var parseFailedAlert = "<div class='alert alert-danger parse-failed'>\
-	<p>We weren't able to detect any of your classes or finals.</p>\
-	<ul>\
-		<li>Be sure you're pasting your entire class schedule, including Course IDs.</li>\
-		<li>You could be using an unsupported browser.  Try copying WebSTAC from the desktop version of Chrome, Firefox, Safari, or Opera.</li>\
-	</ul></div>";
-var reminder = "<p class='push-right parse-success'>All done?  Don't forget to <a href='https://www.google.com/calendar/' target='_blank'>visit your calendar</a> to make sure everything's correct!";
 
 /**
  * Given a 'days of the week' string from WebSTAC, example 'M-W----', makes a
@@ -135,7 +128,7 @@ function parseAndAddClasses(insertBody) {
 		if (cols.length >= 6)
 			loc = cols[5];
 
-		var newrow = $("<tr class='autoadd'></tr>");
+		var newrow = $("<tr class='autoadded'></tr>");
 		newrow.attr('id', 'class'+classNum);
 		
 		var classname = $(classnameColStr);
@@ -182,7 +175,7 @@ function parseAndAddFinals(insertBody) {
 		if (line1.length < 3 || line2.length < 2)
 			continue;
 			
-		var newrow = $("<tr class='yellow autoadd'></tr>")
+		var newrow = $("<tr class='yellow autoadded'></tr>")
 		newrow.attr('id', 'final'+finalNum);
 
 		// Name
@@ -238,19 +231,19 @@ function parseAndAddFinals(insertBody) {
 }
 
 function parseBtnPressed() {
-	$('.autoadd').remove();
-	$('.parse-success').remove();
-	$('.parse-failed').remove();
+	$('.autoadded').remove();
+	$('.parse-failed').addClass('hidden');
+	$('.parse-success').addClass('hidden');
 	
 	var tbody = $('#classtable tbody');
 	var numParsed = parseAndAddClasses(tbody);
 	numParsed += parseAndAddFinals(tbody);
 	
 	if (numParsed == 0) {
-		$('#step3').append(parseFailedAlert);
+		$('.parse-failed').removeClass('hidden');
 	}
 	else {
-		$('#step3').append(reminder);
+		$('.parse-success').removeClass('hidden');
 		$('#add-all-btn').removeClass('disabled');
 		$('#add-all-btn').text('Add all to Google Calendar');
 		ga('send', 'event', 'parse-button', 'click'); // Send click to Google Analytics

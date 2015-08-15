@@ -62,21 +62,6 @@ h2, h3 {
 	margin: 0
 }
 
-#helpModal img {
-	max-height: 300px;
-}
-#helpModal .col-md-3 {
-	border-right: 2px solid grey;
-}
-@media (max-width: 992px) {
-	#helpModal .col-md-3 {
-		border-right: 0;
-		border-bottom: 2px solid grey;
-		padding-bottom: 40px;
-		margin-bottom: 20px;
-	}
-}
-
 textarea {
 	border: 2px solid grey;
 	height: 250px;

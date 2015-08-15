@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
+	<meta name="description" content="A utility to quickly put WUSTL classes from WebSTAC into your Google calendar.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<meta property="og:title" content="WebSTAC to Calendar"/>
@@ -32,10 +33,10 @@
 			<p><b>WebSTAC to Calendar</b> is...</p>
 			<ul>
 				<li><b>Free.</b></li>
-				<li><b>Fast and easy.</b> Add classes and finals to your Google calendar in just three steps!</li>
-				<li><b>Safe.</b> I never see even one bit of your calendar or class data.</li>
+				<li><b>Fast and easy.</b> Only three steps required!</li>
+				<li><b>Safe.</b> I never see any of your calendar or class data.</li>
 			</ul>
-			<a class="btn btn-primary btn-lg" href='#main'>Scroll down to start</a>
+			<a class="btn btn-primary btn-lg" href="#main">Scroll down to start</a>
 			<a class="btn btn-default btn-lg" href="#about">About this site</a>
 		</div>
 		
@@ -48,19 +49,19 @@
 		</div>
 		
 		<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog">
 				<div class="modal-content">
 				
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<h3 class="modal-title" id="helpModalLabel">Step 2: Copy and paste</h3>
 					</div>
-					<div class="modal-body row">
-						<div class="col-md-3">
-							<p>2a. Once you've logged into <a href="https://acadinfo.wustl.edu/">WebSTAC</a>, click the indicated button to get to your class schedule.</p>
+					<div class="modal-body">
+						<div>
+							<p>2a. Once you've logged into <a href="https://acadinfo.wustl.edu/">WebSTAC</a>, select Courses & Registration >> Class Schedule.</p>
 							<img src="img/help1.JPG" class="img-responsive" alt="Select Courses and Registration >> Class Schedule"/>
 						</div>
-						<div class="col-md-9">
+						<div style="margin-top: 30px">
 							<p>2b. <b>Easy way</b>: select all (CTRL+A), and copy.  Close this dialogue and paste into the text box.</p>
 							<p><b>Important:</b> make sure you copied your schedule in LIST view, not grid view.</p>
 							<img src="img/help2.gif" class="img-responsive" alt="Copy the entire table"/>
@@ -74,7 +75,7 @@
 			</div>
 		</div>
 		
-		<div id="main" style="display: none;"> <!--MAIN-->
+		<div id="main" class="hidden"> <!--MAIN-->
 		<div class="divider">
 			<h2>Step 1: Log in</h2>
 		</div>
@@ -113,7 +114,7 @@
 				<p><a class="btn btn-primary disabled" id="add-all-btn" onclick="addAll()">Nothing detected</a></p>
 			</div>
 			
-			<table class='table table-hover' id='classtable'>
+			<table class="table table-hover" id="classtable">
 				<thead>
 					<tr>
 						<td>Class or final name</td>
@@ -131,6 +132,15 @@
 					</tr>
 				</tbody>
 			</table>
+			
+			<div class="alert alert-danger parse-failed hidden">
+				<p>We weren't able to detect any of your classes or finals.</p>
+				<ul>
+					<li>Be sure you're pasting your entire class schedule, including Course IDs.</li>
+					<li>You could be using an unsupported browser.  Try copying WebSTAC from the desktop version of Chrome, Firefox, Safari, Opera, or Edge.</li>
+				</ul>
+			</div>
+			<p class="push-right parse-success hidden">All done?  Don't forget to <a href="https://www.google.com/calendar/" target="_blank">visit your calendar</a> to make sure everything's correct!</p>
 		</div> <!--End step3-->
 		
 		</div> <!--End div class main-->
@@ -139,7 +149,7 @@
 	<div class="container-fluid about" id="about">
 		<div class="container">
 			<h1>About this site</h1>
-			<p>Hi!  I'm Silas, a third-year student at Washington University double majoring in computer science and music.  Even
+			<p>Hi!  I'm Silas, a fourth-year student at Washington University double majoring in computer science and music.  Even
 			though I spent much more time coding this site than I would have spent manually typing all my future classes into my 
 			calendar, I chose to create this site and provide it for free for the betterment of Wash U's community.  I hope this
 			saves you a few minutes of your time!</p>
@@ -195,7 +205,7 @@
 		}
 		if (!detectIE()) {
 			$('#ie-warning').remove();
-			$('#main').removeAttr('style');
+			$('#main').removeClass('hidden');
 		}
 	</script>
 	<script>
