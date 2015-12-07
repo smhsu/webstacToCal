@@ -21,8 +21,8 @@ Date.prototype.toISODateStr = function() {
 }
 
 /*
- * 'startdate' must be a Javascript Date.
- * 'enddate' must be a string formatted as YYYYMMDD
+ * 'startDate' must be a Javascript Date.
+ * 'endDate' must be a string formatted as YYYYMMDD
  * Warning: if startDate is not a Monday, it could has issues.  See warning in tableParse.js
  */
 semesters = {
@@ -35,7 +35,15 @@ semesters = {
 		'endDate': '20151205'
 	},
 	'SP16': {
-		'startdate': new Date(2016,0,19).
+		'startDate': new Date(2016,0,19),
 		'endDate': '20160430'
+	},
+	'FL16': {
+		'startDate': new Date(2016,07,29),
+		'endDate': '20161210'
+	},
+	'SP17': {
+		'startDate': new Date(2017,0,17),
+		'endDate':'20170429'
 	}
 }
