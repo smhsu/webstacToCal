@@ -35,7 +35,7 @@ semesters = {
 		'endDate': '20151205'
 	},
 	'SP16': {
-		'startdate': new Date(2016,0,19),
+		'startDate': new Date(2016,0,19),
 		'endDate': '20160430'
 	}
 }
