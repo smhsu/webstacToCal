@@ -23,7 +23,6 @@ Date.prototype.toISODateStr = function() {
 /*
  * 'startdate' must be a Javascript Date.
  * 'enddate' must be a string formatted as YYYYMMDD
- * Warning: if startDate is not a Monday, it could has issues.  See warning in tableParse.js
  */
 semesters = {
 	'SP15': {

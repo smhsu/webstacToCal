@@ -271,12 +271,23 @@ function convertDayOption(tdEle) {
 		return '';
 }
 
-/** Returns the INDEX of the first selected day in row of seven checkboxes. */
-function firstSelectedDay(tdEle) {
+/**
+ * Starting from the day of the week denoted by dayOfTheWeek, counts forward the number of days
+ * until the first day of the week that is selected in tdEle.  Monday is encoded by 0.  Returns -1 if no
+ * boxes are selected.
+ *
+ * Examples:
+ *   tdEle has MW selected, afterDayOfWeek = 0 --> returns 0
+ *   tdEle has MW selected, afterDayOfWeek = 2 --> returns 0
+ *   tdEle has M selected, afterDayOfWeek = 4 --> returns 3
+ */
+function firstSelectedDay(tdEle, afterDayOfWeek) {
 	var boxes = tdEle.children;
+	var boxIndex = afterDayOfWeek;
 	for (i = 0; i < 7; i++) {
-		if (boxes[i].checked)
+		if (boxes[boxIndex].checked)
 			return i;
+		boxIndex = (boxIndex + 1) % 7;
 	}
 	return -1;
 }
@@ -321,8 +332,9 @@ function genClassRequestBody(tableRow) {
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters[semester].endDate+';BYDAY='+byDay];
 	
 	// Construct start and end
-	// Warning: only correct if semester starts on a Monday!
-	var dayOffset = firstSelectedDay(rowCols[1]);
+	var startDayOfWeek = semesters[semester].startDate.getDay();
+	startDayOfWeek = (startDayOfWeek - 1) % 7 // So that Monday = 0
+	var dayOffset = firstSelectedDay(rowCols[1], startDayOfWeek);
 	var startDate = semesters[semester].startDate.offsetDateBy(dayOffset).toISODateStr();
 	var startSel = rowCols[2].children[0];
 	var endSel = rowCols[2].children[1];
