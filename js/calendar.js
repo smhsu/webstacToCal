@@ -5,7 +5,7 @@
  * Author: Silas Hsu, December 2014
  * PLEASE give acknowledgement if you copy this code.
  ***/
- 
+
 /***
  * All the authorization functions
  ***/
@@ -39,7 +39,7 @@ var loggedInDiv = "<div id='logged-in' class='center'><p>You are logged in.</p>\
 function handleAuthResult(authResult) {
 	var btn = $('#login-btn');
 	if (authResult && !authResult.error) {
-	
+
 		if (validateToken(authResult)) {
 			loggedin = true;
 			$('#login').replaceWith(loggedInDiv);
@@ -70,7 +70,7 @@ function validateToken(token) {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET", url, false);
 	xmlhttp.send();
-	
+
 	try { response = jQuery.parseJSON(xmlhttp.responseText); }
 	catch (err) { return false; }
 	return (!response.error && response.audience == clientId);
@@ -84,14 +84,14 @@ function logout() {
 		$('#logged-in').replaceWith(loginDiv);
 		return;
 	}
-		
+
 	var btn = $('#logout-btn');
 	btn.addClass('disabled');
 	btn.text('Logging out...');
-	
+
 	var token = gapi.auth.getToken();
 	var url = "https://accounts.google.com/o/oauth2/revoke?token="+token.access_token;
-	
+
 	$.ajax({
 		type: 'GET',
 		url: url,
@@ -131,7 +131,7 @@ function convertCalId(calId) {
 var calIds = []
 function makeCalSelect() {
 	calIds = [];
-	
+
 	return gapi.client.request({ // Request calendars
 		'path':'https://www.googleapis.com/calendar/v3/users/me/calendarList',
 		'params': {'minAccessRole': 'writer'}
@@ -158,7 +158,7 @@ function refreshCalList() {
 		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", "refreshCalList()"));
 		return;
 	}
-	
+
 	btn.replaceWith(workingLabel);
 	makeCalSelect().then( function(select) {
 		$("#cal-select select").replaceWith(select);
@@ -203,7 +203,7 @@ function sendEventRequest(postUri, request, rowId) {
 			reason = 'Error trying post the event: ' + err.result.error.message;
 		else
 			reason = 'Unexpected exception: ' + err;
-		
+
 		var originRow = document.getElementById(rowId);
 		var btn = $(originRow.children[4].children[0]);
 		btn.replaceWith(makeErrorButton("Error - retry?", reason, "addBtnPressed('"+rowId+"')"));
@@ -218,12 +218,12 @@ function addBtnPressed(rowId) {
 	var btn = $(originRow.children[4].children[0]);
 	btn.tooltip('destroy');
 	var callback = "addBtnPressed('"+rowId+"')";
-	
+
 	if (!loggedin) {
 		btn.replaceWith(makeErrorButton("Login required", "Scroll up to step 1, and click here to try again", callback));
 		return;
 	}
-	
+
 	// Get which calendar the user has selected
 	var selectedIndex = $("#cal-select select")[0].selectedIndex;
 	if (selectedIndex <= 0) {
@@ -234,7 +234,7 @@ function addBtnPressed(rowId) {
 	else
 		$("#cal-select").removeAttr("style");
 	var postUri = convertCalId(calIds[selectedIndex - 1]);
-	
+
 	// Validate the input before making the request
 	originRow.children[1].removeAttribute("style"); // Remove red borders that the catch block might have added
 	originRow.children[2].removeAttribute("style");
@@ -257,7 +257,7 @@ function addBtnPressed(rowId) {
 
 		return;
 	}
-	
+
 	btn.replaceWith(workingLabel);
 	sendEventRequest(postUri, request, rowId);
 }
@@ -289,7 +289,3 @@ function addAll() {
 	setTimeout(function () { $('#add-all-btn').removeClass('disabled'); }, 2000);
 	ga('send', 'event', 'add-all-button', 'click'); // Send click to Google Analytics
 }
-
-$("#login").replaceWith(loginDiv);
-$("#cal-select").append(defaultSelect);
-$("#cal-select").append(defaultRefreshBtn);

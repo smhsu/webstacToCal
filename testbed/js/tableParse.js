@@ -22,12 +22,12 @@ function makeCheckboxes(dayStr) {
 	var boxes = $(checkboxColStr);
 	if (!dayStr || dayStr.length != 7)
 		return boxes;
-		
+
 	for (i = 0; i < 7; i++) {
 		if (dayStr.charAt(i) != '-')
 			boxes.children()[i].checked = true;
 	}
-	
+
 	return boxes;
 }
 
@@ -45,7 +45,7 @@ function makeTimeSelect(timeStr) {
 	col.append(end);
 	if (!timeStr)
 		return col;
-		
+
 	var split = timeStr.split('-'); // Parse time
 	if (split.length != 2)
 		return col;
@@ -55,20 +55,20 @@ function makeTimeSelect(timeStr) {
 	var endTxt = split[1].match(/\d\d?:\d\d[ap]/);
 	if (!startTxt || !endTxt)
 		return col;
-	
+
 	var ampm;
 	if (startTxt[0].charAt(startTxt[0].length - 1) == 'a') // Set start
 		ampm = ' AM';
 	else
 		ampm = ' PM';
 	start.val(startTxt[0].slice(0, startTxt[0].length - 1) + ampm);
-	
+
 	if (endTxt[0].charAt(endTxt[0].length - 1) == 'a') // Set end
 		ampm = ' AM';
 	else
 		ampm = ' PM';
 	end.val(endTxt[0].slice(0, endTxt[0].length - 1) + ampm);
-	
+
 	return col;
 }
 
@@ -88,7 +88,7 @@ var classNum = 0;
 function addEmptyClass(insertBody) {
 	var newrow = $("<tr></tr>");
 	newrow.attr('id', 'class'+classNum);
-	
+
 	newrow.append($(classnameColStr));
 	newrow.append(makeCheckboxes());
 	newrow.append(makeTimeSelect());
@@ -96,7 +96,7 @@ function addEmptyClass(insertBody) {
 	var btn = $(btnColStr);
 	btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
 	newrow.append(btn);
-	
+
 	insertBody.find("tr:last").before(newrow);
 	classNum++;
 }
@@ -112,14 +112,14 @@ function addEmptyClass(insertBody) {
 function parseAndAddClasses(insertBody) {
 	var input = document.getElementById('inputbox').value;
 	var classText = input.match(/[A-Z]\d\d.+/g);
-	
+
 	var numSuccess = 0;
 	for (index in classText) {
 		var cols = classText[index].split('\t');
 		if (cols.length < 5)
 			continue;
 		var name = cols[1];
-		
+
 		var time = cols[4].split(' ');
 		if (time.length < 2)
 			time.push(null);
@@ -130,25 +130,25 @@ function parseAndAddClasses(insertBody) {
 
 		var newrow = $("<tr class='autoadded'></tr>");
 		newrow.attr('id', 'class'+classNum);
-		
+
 		var classname = $(classnameColStr);
 		classname.children()[0].value = name;
 		newrow.append(classname);
-		
+
 		var checkboxes = makeCheckboxes(time[0]);
 		newrow.append(checkboxes);
-		
+
 		var classtime = makeTimeSelect(time[1]);
 		newrow.append(classtime);
-		
+
 		var classloc = $(classlocColStr);
 		classloc.children()[0].value = loc;
 		newrow.append(classloc);
-		
+
 		var btn = $(btnColStr);
 		btn.children().attr('onclick', "addBtnPressed('class"+classNum+"')");
 		newrow.append(btn);
-		
+
 		insertBody.find("tr:last").before(newrow);
 		classNum++;
 		numSuccess++;
@@ -165,7 +165,7 @@ var monthToNum = {'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08
 function parseAndAddFinals(insertBody) {
 	var input = document.getElementById('inputbox').value;
 	var finals = input.match(/(Apr|May|Jun|Jul|Aug|Dec) \d\d? \d\d\d\d.*\n(\t\n)?Exam Building \/ Room:\t.*/g);
-	
+
 	var finalNum = 0;
 	var toInsert = [];
 	for (index in finals) {
@@ -174,7 +174,7 @@ function parseAndAddFinals(insertBody) {
 		var line2 = lines[1].split('\t');
 		if (line1.length < 3 || line2.length < 2)
 			continue;
-			
+
 		var newrow = $("<tr class='yellow autoadded'></tr>")
 		newrow.attr('id', 'final'+finalNum);
 
@@ -183,7 +183,7 @@ function parseAndAddFinals(insertBody) {
 		var finalName = line1[2];
 		nameCol.children()[0].value = finalName + " Final";
 		newrow.append(nameCol);
-		
+
 		// Date and time
 		var dateTime = line1[0].split(' '); // Example to split: "Dec 11 2014 8:00AM - 10:00AM"
 		var dateCol = $("<td class='classdays'><input type='text'></input></td>");
@@ -199,7 +199,7 @@ function parseAndAddFinals(insertBody) {
 		}
 		newrow.append(dateCol);
 		newrow.append(timeCol);
-		
+
 		// Location
 		var finalLoc = line2[1]; // Should always have a len of at least 2 because of the regex
 		if (line2[1] == "Same / Same") { // Try to find the location in classes parsed before
@@ -217,12 +217,12 @@ function parseAndAddFinals(insertBody) {
 		var locCol = $(classlocColStr);
 		locCol.children()[0].value = finalLoc;
 		newrow.append(locCol);
-		
+
 		// Button
 		var btn = $(btnColStr);
 		btn.children().attr('onclick', "addBtnPressed('final"+finalNum+"')");
 		newrow.append(btn);
-		
+
 		toInsert.push(newrow); // classname date time location button
 		finalNum++;
 	}
@@ -230,15 +230,15 @@ function parseAndAddFinals(insertBody) {
 	return finalNum;
 }
 
-function parseBtnPressed() {
+function parse() {
 	$('.autoadded').remove();
 	$('.parse-failed').addClass('hidden');
 	$('.parse-success').addClass('hidden');
-	
+
 	var tbody = $('#classtable tbody');
 	var numParsed = parseAndAddClasses(tbody);
 	numParsed += parseAndAddFinals(tbody);
-	
+
 	if (numParsed == 0) {
 		$('.parse-failed').removeClass('hidden');
 	}
@@ -250,10 +250,21 @@ function parseBtnPressed() {
 	}
 }
 
+var parseEventQueued = false
+function pastedTextChanged() {
+	if (!parseEventQueued) {
+		parseEventQueued = true;
+		window.setTimeout(function() {
+			parseEventQueued = false;
+			parse();
+		}, 1000);
+	}
+}
+
 /**
  * Converts the values of the row of seven checkboxes into a comma-separated string,
  * like 'MO,TU,WE'.  Used for recurrence requests to Google Calendar API.
- * 
+ *
  * Expects the appropriate td element as input.
  */
 conversion = ['MO,','TU,','WE,','TH,','FR,','SA,','SU,'];
@@ -264,7 +275,7 @@ function convertDayOption(tdEle) {
 		if (boxes[i].checked)
 			ans += conversion[i];
 	}
-	
+
 	if (ans)
 		return ans.substring(0, ans.length - 1); // slice off the ending comma
 	else
@@ -303,7 +314,7 @@ function toISOTimeStr(timestr) {
 	var hr = parseInt(hrMin[0], 10);
 	if (hr < 12 && timestr.charAt(timestr.length - 2) == 'P') // PM
 		hr += 12;
-	
+
 	return (hr + ':' + hrMin[1].substr(0, 2) + ':00');
 }
 
@@ -320,17 +331,17 @@ function validationError(badCol, reason) {
  */
 function genClassRequestBody(tableRow) {
 	var rowCols = tableRow.children; // each element of this array is a td element
-	
+
 	var request = {};
 	request.summary = rowCols[0].firstChild.value;
-	
+
 	// Construct recurrence
 	var byDay = convertDayOption(rowCols[1]);
 	if (!byDay)
 		throw new validationError(1, "Select at least one day of the week.");
 	var semester = $('#semester-select select').val();
 	request.recurrence = ['RRULE:FREQ=WEEKLY;UNTIL='+semesters[semester].endDate+';BYDAY='+byDay];
-	
+
 	// Construct start and end
 	var startDayOfWeek = semesters[semester].startDate.getDay();
 	startDayOfWeek = (startDayOfWeek - 1) % 7 // So that Monday = 0
@@ -342,11 +353,11 @@ function genClassRequestBody(tableRow) {
 		throw new validationError(2, "Start time must be before end time.");
 	request.start = {'dateTime': startDate + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
 	request.end = {'dateTime': startDate + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
-	
+
 	request.location = rowCols[3].firstChild.value;
 	request.description = 'Created by WebSTAC to Calendar';
 	request.reminders = { 'useDefault': false };
-	
+
 	return request;
 }
 
@@ -357,10 +368,10 @@ function genClassRequestBody(tableRow) {
  */
 function genFinalRequestBody(tableRow) {
 	var rowCols = tableRow.children; // each element of this array is a td element
-	
+
 	var request = {};
 	request.summary = rowCols[0].firstChild.value;
-	
+
 	var date = rowCols[1].children[0].value;
 	if (date.length != 10 || !date.match(/\d\d\d\d-\d\d-\d\d/))
 		throw new validationError(1, "Enter a valid date (yyyy-mm-dd).");
@@ -369,16 +380,16 @@ function genFinalRequestBody(tableRow) {
 	var day = split[2];
 	if (month <= 0 || month > 12 || day <= 0 || day > 31)
 		throw new validationError(1, "Enter a valid date (yyyy-mm-dd).");
-	
+
 	var startSel = rowCols[2].children[0];
 	var endSel = rowCols[2].children[1];
 	if (endSel.selectedIndex <= startSel.selectedIndex || startSel.selectedIndex <= 0 )
 		throw new validationError(2, "Start time must be before end time.");
-	
+
 	request.start = {'dateTime': date + 'T' + toISOTimeStr(startSel.value), 'timeZone':'America/Chicago'};
 	request.end = {'dateTime': date + 'T' + toISOTimeStr(endSel.value), 'timeZone':'America/Chicago'};
 	request.location = rowCols[3].firstChild.value;
 	request.description = 'Created by WebSTAC to Calendar';
-	
+
 	return request;
 }

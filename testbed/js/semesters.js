@@ -4,7 +4,7 @@
  * Author: Silas Hsu, December 2014
  * PLEASE give acknowledgement if you copy this code.
  ***/
- 
+
 /**
  * Returns a new date that is the specified number of days after this one.
  * Thank you StackOverflow!  http://stackoverflow.com/questions/563406/add-days-to-datetime
@@ -25,16 +25,8 @@ Date.prototype.toISODateStr = function() {
  * 'enddate' must be a string formatted as YYYYMMDD
  */
 semesters = {
-	'SP15': {
-		'startDate': new Date(2015,0,12), // 0 = January
-		'endDate': '20150425'
-	},
-	'FL15': {
-		'startDate': new Date(2015, 07, 24),
-		'endDate': '20151205'
-	},
-	'SP16': {
-		'startDate': new Date(2016,0,19),
-		'endDate': '20160430'
+	'FL16': {
+		'startDate': new Date(2016,07,29), // 0 = January
+		'endDate': '20161209'
 	}
 }
