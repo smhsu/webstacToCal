@@ -25,8 +25,8 @@ Date.prototype.toISODateStr = function() {
  * 'enddate' must be a string formatted as YYYYMMDD
  */
 semesters = {
-	'FL16': {
-		'startDate': new Date(2016,07,29), // 0 = January
-		'endDate': '20161209'
+	'SP17': {
+		'startDate': new Date(2017,00,17), // 0 = January
+		'endDate': '20170428'
 	}
 }
