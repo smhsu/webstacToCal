@@ -22,11 +22,11 @@ Date.prototype.toISODateStr = function() {
 
 /*
  * 'startdate' must be a Javascript Date.
- * 'enddate' must be a string formatted as YYYYMMDD
+ * 'enddate' must be a string formatted as YYYYMMDD, and should be the day AFTER the last day of classes.
  */
 semesters = {
-	'SP17': {
-		'startDate': new Date(2017,00,17), // 0 = January
-		'endDate': '20170428'
-	}
+	'FL17': {
+		'startDate': new Date(2017, 07, 28), // 00 = January
+		'endDate': '20171209',
+	},
 }
