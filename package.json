@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/gapi": "0.0.35",
+    "@types/gapi.auth2": "0.0.43",
+    "@types/gapi.calendar": "^3.0.2",
     "@types/jest": "^20.0.8",
+    "@types/jquery": "^3.2.12",
     "@types/node": "^8.0.25",
     "@types/react": "^16.0.5",
     "@types/react-dom": "^15.5.4",
+    "jquery": "^3.2.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-scripts-ts": "2.6.0"
@@ -16,5 +21,6 @@
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
-  }
+  },
+  "devDependencies": {}
 }
