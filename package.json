@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/bootstrap": "^3.3.36",
     "@types/gapi": "0.0.35",
     "@types/gapi.auth2": "0.0.43",
     "@types/gapi.calendar": "^3.0.2",

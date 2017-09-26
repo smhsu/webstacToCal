@@ -25,9 +25,16 @@
         "max-line-length": [ true, 120 ],
         "member-ordering": [
             true,
-            "public-before-private",
-            "static-before-instance",
-            "variables-before-functions"
+            {
+                "order": [
+                    "static-field",
+                    "instance-field",
+                    "constructor",
+                    "public-instance-method",
+                    "protected-instance-method",
+                    "private-instance-method"
+                ]
+            }
         ],
         "no-any": true,
         "no-arg": true,
@@ -61,13 +68,10 @@
             "check-open-brace",
             "check-whitespace"
         ],
-        "quotemark": [true, "single", "jsx-double"],
+        "quotemark": [true, "double"],
         "radix": true,
         "semicolon": [true, "always"],
         "switch-default": true,
-
-        "trailing-comma": false,
-
         "triple-equals": [ true, "allow-null-check" ],
         "typedef": [
             true,
