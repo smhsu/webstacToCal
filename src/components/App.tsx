@@ -1,6 +1,6 @@
 import "./App.css";
 import { ApiHttpError, CalendarApi } from "../CalendarAPI";
-import AddClassesTable from "./AddClassesTable";
+import EventTable from "./EventTable";
 import AuthButton from "./AuthButton";
 import * as React from "react";
 
@@ -11,6 +11,7 @@ interface AppState {
     apiLoadError: string;
     isAuthError: boolean;
     authErrorMessage: string;
+    rawClassInput: string;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -21,6 +22,7 @@ class App extends React.Component<{}, AppState> {
             apiLoadError: "",
             isAuthError: false,
             authErrorMessage: "",
+            rawClassInput: ""
         };
         CalendarApi.getInstance()
             .then(api => this.setState({calendarApi: api}))
@@ -57,7 +59,7 @@ class App extends React.Component<{}, AppState> {
     }
 
     render() {
-        let inputBoxPlaceholder = "Go to WebSTAC >> Courses and Registration >> Class Schedule.\n" +
+        const INPUT_BOX_PLACEHOLDER = "Go to WebSTAC >> Courses and Registration >> Class Schedule.\n" +
             "Then, SELECT ALL the text, including finals schedule, and copy and paste it into this box.";
 
         return (
@@ -81,8 +83,8 @@ class App extends React.Component<{}, AppState> {
                 /> : null
             }
             </div>
-            <textarea placeholder={inputBoxPlaceholder} onChange={console.log}/>
-            <AddClassesTable />
+            <textarea placeholder={INPUT_BOX_PLACEHOLDER} onChange={console.log}/>
+            <EventTable calendarApi={this.state.calendarApi || undefined} rawInput={this.state.rawClassInput} />
         </div>
         );
     }
