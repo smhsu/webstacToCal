@@ -1,0 +1,32 @@
+Class Schedule as of Sunday, October 01, 2017
+Silas Hsu (ID: 423402)
+Semester  
+Printer Friendly
+Class Schedule  Switch to Grid View
+	Course ID	Title	Units	Opt	Day / Time	Building / Room	Instructor
+Enrolled	E81 CSE 431S 01	Translation of Computer Languages 	3.0	C	M-W---- 4:00p-5:30p	McMillan Hall / G052 	Cytron
+	Actions:
+Enrolled	E81 CSE 450A 01	Video Game Programming 	3.0	C	--W---- 5:30p-8:30p	Whitaker / 218 	Coster, Sam, Coster, Seth
+	Actions:
+Enrolled	E81 CSE 515T 01	Bayesian Methods in Machine Learning 	3.0	C	-T-R--- 2:30p-4:00p	Whitaker / 218 	Garnett
+	Actions:
+Enrolled	E81 CSE 516A 01	Multi-Agent Systems 	3.0	C	-T-R--- 11:30a-1:00p	Louderman / 458 	Das
+	Actions:
+Enrolled Units: 12.0 Waitlist Units: 0.0 Total Units: 12.0
+
+The Washington University Campus Store is pleased to offer students the opportunity to purchase course books on-line through wubookstore.com Booknow. By Clicking the button below, you are authorizing WU to send Follett Higher Education Group a list of the courses for which you are registered. You will then be taken to the wubookstore.com Booknow website from which you can proceed to place your book orders. The Campus Store will notify you by email when your order is ready to be shipped or picked up.
+Note: Textbook orders will use the Home course number for cross-listed classes.
+
+Final Exam Schedule  Hide
+	Date	Course ID	Title
+	May 5 2017 6:00PM - 8:00PM	E81 CSE 431S 01	Translation of Computer Languages
+	
+Exam Building / Room:	Same / Same
+	May 10 2017 3:30PM - 5:30PM	E81 CSE 515T 01	Bayesian Methods in Machine Learning
+	
+Exam Building / Room:	Same / Same
+	See Department	E81 CSE 450A 01	Video Game Programming
+	See Instructor	E81 CSE 516A 01	Multi-Agent Systems
+Please note: If you are an AR, BU, EN, FA, LA, or SU student and enrolled in any courses that meet after 6:00 pm, such classes may conflict with special evening exams scheduled by instructors from your daytime classes.
+
+© 2014 Washington University in St. Louis, Information Services & Technology

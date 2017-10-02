@@ -4,18 +4,36 @@ import ParsedEventModel from "../ParsedEventModel";
 import * as React from "react";
 
 interface EventTableProps {
+    courses: ParsedEventModel[];
+    exams: ParsedEventModel[];
     calendarApi?: CalendarApi;
-    rawInput: string;
+    rawInput?: string;
 }
 
-class EventTable extends React.Component<EventTableProps, {}> {
+interface EventTableState {
+    courses: ParsedEventModel[];
+    exams: ParsedEventModel[];
+}
+
+class EventTable extends React.Component<EventTableProps, EventTableState> {
+    constructor(props: EventTableProps) {
+        super(props);
+        this.state = {
+            courses: props.courses,
+            exams: props.exams
+        };
+    }
+
+    componentWillReceiveProps(nextProps: EventTableProps) {
+        if (this.props.courses !== nextProps.courses || this.props.exams !== nextProps.exams) {
+            this.setState({
+                courses: nextProps.courses,
+                exams: nextProps.exams
+            });
+        }
+    }
+
     render(): JSX.Element {
-        let dummyEvent = new ParsedEventModel();
-        dummyEvent.name = "my class";
-        dummyEvent.repeatingDays[2] = true;
-        dummyEvent.startTime = "asdf";
-        dummyEvent.endTime = "asd2f";
-        dummyEvent.location = "my location";
         return (
         <table className="table table-hover table-sm table-responsive">
             <thead>
@@ -28,7 +46,8 @@ class EventTable extends React.Component<EventTableProps, {}> {
                 </tr>
             </thead>
             <tbody>
-                <EventTableRow model={dummyEvent}/>
+                {this.state.courses.map((course, index) => <EventTableRow key={index} model={course} />)}
+                {this.state.exams.map((course, index) => <EventTableRow key={index} model={course} isExam={true} />)}
             </tbody>
         </table>
         );

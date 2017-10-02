@@ -3,11 +3,13 @@ class ParsedEventModel {
 
     name: string = "";
     location: string = "";
-    repeatingDays: boolean[] = Array(ParsedEventModel.DAYS_PER_WEEK).fill(false);
+    
+    date: string = "";
     startTime: string = "";
     endTime: string = "";
-    startDate: string = "";
-    endDate: string = "";
+    
+    repeatingDays: boolean[] = Array(ParsedEventModel.DAYS_PER_WEEK).fill(false);
+    endRepeat: string = "";
 }
 
 export default ParsedEventModel;

@@ -1,18 +1,41 @@
 import ParsedEventModel from "./ParsedEventModel";
 
+/*
+A course looks like this:
+E81 CSE 515T 01	Bayesian Methods in Machine Learning	3.0	C	-T-R--- 2:30p-4:00p	Whitaker / 218	Garnett
+*/
+const COURSE_REGEX = /[A-Z]\d\d.+/g; // Match something that looks like department letter and course number
+// Something that looks like "M-W---- 10:00a-11:30p"
+const DAYS_AND_TIME_REGEX = /([\w-]+) (\d\d?:\d\d[ap])-(\d\d?:\d\d[ap])/;
+const DAYS_PER_WEEK = ParsedEventModel.DAYS_PER_WEEK;
+
 const columnIndices = {
-    MIN_REQUIRED: 5,
+    MIN_EXPECTED: 5,
     NAME: 1,
     DAYS_AND_TIME: 4,
     LOCATION: 5
 };
 
-const COURSE_REGEX = /[A-Z]\d\d.+/g;
-const DAYS_PER_WEEK = ParsedEventModel.DAYS_PER_WEEK;
+const daysAndTimeCaptureGroups = {
+    DAYS: 1,
+    START_TIME: 2,
+    END_TIME: 3,
+};
 
+/**
+ * Parses courses from WebSTAC.
+ * 
+ * @author Silas Hsu
+ */
 class CourseParser {
+    /**
+     * Parses courses from WebSTAC, returning them in an array of ParsedEventModel.  Returns an empty array if no
+     * courses could be parsed.
+     * 
+     * @param {string} rawInput - class schedule copy-pasted from WebSTAC
+     * @return {ParsedEventModel[]} array of parsed courses
+     */
     parseCourses(rawInput: string): ParsedEventModel[] {
-        // Match things that look like a course ID, along with the rest of the line.
         let fuzzyCourseMatches = rawInput.match(COURSE_REGEX);
         if (!fuzzyCourseMatches) {
             return [];
@@ -21,26 +44,18 @@ class CourseParser {
         let eventModels = [];
         for (let fuzzyCourseMatch of fuzzyCourseMatches) {
             let columns = fuzzyCourseMatch.split("\t");
-            if (columns.length < columnIndices.MIN_REQUIRED) {
+            if (columns.length < columnIndices.MIN_EXPECTED) {
                 continue;
             }
 
-            // Something that looks like "M-W---- 10:00a-11:30p"
-            let daysAndTime = columns[columnIndices.DAYS_AND_TIME].split(" ");
-            let days = daysAndTime[0] || ""; // "M-W----"
-            let times = daysAndTime[1] || "-"; // "10:00a-11:30p"
-
-            let splitTimes = times.split("-"); // In case there were no times, "-".split("-") will result in ["", ""].
-            let startTime = splitTimes[0]; // "10:00a"
-            let endTime = splitTimes[1] || ""; // "11:30p"
+            let daysAndTimeMatch = columns[columnIndices.DAYS_AND_TIME].match(DAYS_AND_TIME_REGEX) || [];
 
             let eventModel = new ParsedEventModel();
-            eventModel.name = columns[columnIndices.NAME];
-            // Unlike the other columns, location is not guaranteed to exist, which is why we "||" it.
+            eventModel.name = columns[columnIndices.NAME].trim() || "";
             eventModel.location = columns[columnIndices.LOCATION] || "";
-            eventModel.repeatingDays = this.parseCourseDays(days);
-            eventModel.startTime = startTime;
-            eventModel.endTime = endTime;
+            eventModel.repeatingDays = this.parseCourseDays(daysAndTimeMatch[daysAndTimeCaptureGroups.DAYS] || "");
+            eventModel.startTime = daysAndTimeMatch[daysAndTimeCaptureGroups.START_TIME] || "";
+            eventModel.endTime = daysAndTimeMatch[daysAndTimeCaptureGroups.END_TIME] || "";
             
             eventModels.push(eventModel);
         }
