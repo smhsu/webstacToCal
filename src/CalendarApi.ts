@@ -32,7 +32,7 @@ export class CalendarApi {
                 throw new Error("Required environment variables not set during build time.  Refer to README.md for " +
                   "more details.");
             }
-            if (!gapi.client.init) { // Should be loaded in a <script> in the HTML
+            if (!gapi.client) { // Should be loaded in a <script> in the HTML
                 throw new Error("Google client library is required in global scope.  Be sure it has loaded and " +
                     "executed completely.");
             }

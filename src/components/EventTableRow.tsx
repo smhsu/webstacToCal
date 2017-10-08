@@ -5,9 +5,7 @@ import * as _ from "lodash";
 interface EventTableRowProps {
     model: ParsedEventModel;
     isExam?: boolean;
-    isRepeatError?: boolean;
-    isTimeError?: boolean;
-    errorButtonTooltip?: string;
+    error?: boolean;
     onModelChangeRequested?(newModel: ParsedEventModel): void;
     onAddButtonPressed?(): void;
 }

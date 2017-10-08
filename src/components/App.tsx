@@ -1,7 +1,7 @@
 import "./App.css";
-import { ApiHttpError, CalendarApi } from "../CalendarAPI";
+import CalendarApi from "../CalendarApi";
 import EventTable from "./EventTable";
-import AuthButton from "./AuthButton";
+import AuthPanel from "./AuthPanel";
 import ParsedEventModel from "../ParsedEventModel";
 import CourseParser from "../CourseParser";
 import ExamParser from "../ExamParser";
@@ -43,38 +43,15 @@ class App extends React.Component<{}, AppState> {
             .then(api => this.setState({calendarApi: api}))
             .catch(error => this.setState({apiLoadError: error.toString()}));
 
-        this.signIn = this.signIn.bind(this);
-        this.signOut = this.signOut.bind(this);
+        this.authStatusChanged = this.authStatusChanged.bind(this);
         this.parseSchedule = this.parseSchedule.bind(this);
 
         this.courseParser = new CourseParser();
         this.examParser = new ExamParser();
     }
 
-    signIn(): Promise<void> {
-        if (this.state.calendarApi === null) {
-            return Promise.reject(new Error("Calendar API not loaded yet"));
-        }
-        return this.handleAuthResult(this.state.calendarApi.signIn());
-    }
-
-    signOut(): Promise<void> {
-        if (this.state.calendarApi === null) {
-            return Promise.reject(new Error("Calendar API not loaded yet"));
-        }
-        return this.handleAuthResult(this.state.calendarApi.signOut());
-    }
-
-    handleAuthResult(authPromise: Promise<void>): Promise<void> {
-        return authPromise
-            .then(() => this.setState({isAuthError: false}))
-            .catch((error) => {
-                window.console.error(error);
-                this.setState({
-                    isAuthError: true,
-                    authErrorMessage: error instanceof ApiHttpError ? error.message : ""
-                });
-            });
+    authStatusChanged(): void {
+        this.setState({});
     }
 
     parseSchedule(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -102,16 +79,15 @@ class App extends React.Component<{}, AppState> {
             <p className="App-intro">
                 To get started, edit <code>src/App.tsx</code> and save to reload.
             </p>
+            
             <div>
             {
                 this.state.calendarApi !== null ?
-                <AuthButton
-                    isSignedIn={this.state.calendarApi.getIsSignedIn()}
-                    onSignIn={this.signIn}
-                    onSignOut={this.signOut}
-                    isAuthError={this.state.isAuthError}
-                    authErrorMessage={this.state.authErrorMessage}
-                /> : null
+                <AuthPanel
+                    calendarApi={this.state.calendarApi}
+                    onAuthStatusChange={this.authStatusChanged}
+                />
+                : null
             }
             </div>
             <textarea
