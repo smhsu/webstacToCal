@@ -1,11 +1,13 @@
-import "./App.css";
-import CalendarApi from "../CalendarApi";
-import EventTable from "./EventTable";
-import AuthPanel from "./AuthPanel";
-import ParsedEventModel from "../ParsedEventModel";
+import * as React from "react";
 import CourseParser from "../CourseParser";
 import ExamParser from "../ExamParser";
-import * as React from "react";
+import EventTable from "./EventTable";
+import EventInputModel from "../EventInputModel";
+
+import AuthPanel from "./AuthPanel";
+import CalendarApi from "../CalendarApi";
+
+import "./App.css";
 
 const logo = require("../logo.svg");
 
@@ -17,15 +19,13 @@ interface AppState {
     apiLoadError: string;
     isAuthError: boolean;
     authErrorMessage: string;
-
     inputSchedule: string;
-    courses: ParsedEventModel[];
-    exams: ParsedEventModel[];
 }
 
 class App extends React.Component<{}, AppState> {
     courseParser: CourseParser;
     examParser: ExamParser;
+    parsedEvents: EventInputModel[];
 
     constructor(props: {}) {
         super(props);
@@ -34,39 +34,35 @@ class App extends React.Component<{}, AppState> {
             apiLoadError: "",
             isAuthError: false,
             authErrorMessage: "",
-
             inputSchedule: "",
-            courses: [],
-            exams: []
         };
+        this.courseParser = new CourseParser();
+        this.examParser = new ExamParser();
+        this.parsedEvents = [];
+
         CalendarApi.getInstance()
             .then(api => this.setState({calendarApi: api}))
             .catch(error => this.setState({apiLoadError: error.toString()}));
 
         this.authStatusChanged = this.authStatusChanged.bind(this);
-        this.parseSchedule = this.parseSchedule.bind(this);
-
-        this.courseParser = new CourseParser();
-        this.examParser = new ExamParser();
+        this.inputScheduleChanged = this.inputScheduleChanged.bind(this);
     }
 
     authStatusChanged(): void {
         this.setState({});
     }
 
-    parseSchedule(event: React.ChangeEvent<HTMLTextAreaElement>) {
-        let courses = this.courseParser.parseCourses(event.target.value);
-        let exams = this.examParser.parseExams(event.target.value, courses);
-        this.setState({
-            courses: courses,
-            exams: exams
-        });
+    inputScheduleChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
+        let parsedCourses = this.courseParser.parseCourses(event.target.value);
+        let parsedExams = this.examParser.parseExams(event.target.value, parsedCourses);
+        this.parsedEvents = parsedCourses.concat(parsedExams);
+        this.setState({inputSchedule: event.target.value});
     }
 
     render() {
         let eventsParsedNotification = null;
         if (this.state.inputSchedule.length > 0) {
-            let numEvents = this.state.courses.length + this.state.exams.length;
+            let numEvents = this.parsedEvents.length;
             eventsParsedNotification = <p>{`${numEvents} events parsed.`}</p>;
         }
 
@@ -79,27 +75,21 @@ class App extends React.Component<{}, AppState> {
             <p className="App-intro">
                 To get started, edit <code>src/App.tsx</code> and save to reload.
             </p>
-            
+
             <div>
             {
                 this.state.calendarApi !== null ?
-                <AuthPanel
-                    calendarApi={this.state.calendarApi}
-                    onAuthStatusChange={this.authStatusChanged}
-                />
-                : null
+                    <AuthPanel calendarApi={this.state.calendarApi} onAuthStatusChange={this.authStatusChanged} />
+                    : null
             }
             </div>
             <textarea
                 placeholder={INPUT_BOX_PLACEHOLDER}
-                onChange={this.parseSchedule}
+                value={this.state.inputSchedule}
+                onChange={this.inputScheduleChanged}
             />
             {eventsParsedNotification}
-            <EventTable
-                calendarApi={this.state.calendarApi || undefined}
-                courses={this.state.courses}
-                exams={this.state.exams}
-            />
+            <EventTable calendarApi={this.state.calendarApi || undefined} events={this.parsedEvents} />
         </div>
         );
     }

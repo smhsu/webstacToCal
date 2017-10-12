@@ -27,7 +27,7 @@ class AuthPanel extends React.Component<AuthPanelProps, {}> {
     render(): JSX.Element {
         return (
         <div>
-            {
+        {
             !this.props.calendarApi.getIsSignedIn() ?
                 <AsyncButtonVoid
                     className="btn btn-primary"
@@ -46,7 +46,7 @@ class AuthPanel extends React.Component<AuthPanelProps, {}> {
                 >
                     End session
                 </AsyncButtonVoid>
-            }
+        }
         </div>
         );
     }

@@ -1,4 +1,4 @@
-import ParsedEventModel from "./ParsedEventModel";
+import EventInputModel from "./EventInputModel";
 
 /*
 An exam looks like this; it takes up two lines:
@@ -32,15 +32,15 @@ const captureGroups = {
  */
 class ExamParser {
     /**
-     * Parses exams from WebSTAC, returning them in an array of ParsedEventModel.  Optionally takes an array of parsed
+     * Parses exams from WebSTAC, returning them in an array of EventInputModel.  Optionally takes an array of parsed
      * courses which will be used to get locations for exams that are in the same location as the class. Returns an
      * empty array if no exams could be parsed.
      * 
      * @param {string} rawInput - class schedule copy-pasted from WebSTAC
-     * @param {ParsedEventModel[]} [parsedCourses] - clues for determining exam locations
-     * @return {ParsedEventModel[]} array of parsed exams
+     * @param {EventInputModel[]} [parsedCourses] - clues for determining exam locations
+     * @return {EventInputModel[]} array of parsed exams
      */
-    parseExams(rawInput: string, parsedCourses: ParsedEventModel[] = []): ParsedEventModel[] {
+    parseExams(rawInput: string, parsedCourses: EventInputModel[] = []): EventInputModel[] {
         let courseToLocationMap: object = parsedCourses.reduce((map, course) => {
             map[course.name] = course.location;
             return map;
@@ -49,7 +49,9 @@ class ExamParser {
         let eventModels = [];
         let examMatch = EXAM_REGEX.exec(rawInput);
         while (examMatch !== null) {
-            let eventModel = new ParsedEventModel();
+            let eventModel = new EventInputModel();
+            eventModel.isCourse = false;
+
             let courseName = examMatch[captureGroups.NAME];
             eventModel.name = courseName + " Final";
 

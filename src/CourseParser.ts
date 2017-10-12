@@ -1,4 +1,4 @@
-import ParsedEventModel from "./ParsedEventModel";
+import EventInputModel from "./EventInputModel";
 
 /*
 A course looks like this:
@@ -7,7 +7,7 @@ E81 CSE 515T 01	Bayesian Methods in Machine Learning	3.0	C	-T-R--- 2:30p-4:00p	W
 const COURSE_REGEX = /[A-Z]\d\d.+/g; // Match something that looks like department letter and course number
 // Something that looks like "M-W---- 10:00a-11:30p"
 const DAYS_AND_TIME_REGEX = /([\w-]+) (\d\d?:\d\d[ap])-(\d\d?:\d\d[ap])/;
-const DAYS_PER_WEEK = ParsedEventModel.DAYS_PER_WEEK;
+const DAYS_PER_WEEK = EventInputModel.DAYS_PER_WEEK;
 
 const columnIndices = {
     MIN_EXPECTED: 5,
@@ -29,13 +29,13 @@ const daysAndTimeCaptureGroups = {
  */
 class CourseParser {
     /**
-     * Parses courses from WebSTAC, returning them in an array of ParsedEventModel.  Returns an empty array if no
-     * courses could be parsed.
+     * Parses courses from WebSTAC, returning them in an array of EventInputModel.  Returns an empty array if no courses
+     * could be parsed.
      * 
      * @param {string} rawInput - class schedule copy-pasted from WebSTAC
-     * @return {ParsedEventModel[]} array of parsed courses
+     * @return {EventInputModel[]} array of parsed courses
      */
-    parseCourses(rawInput: string): ParsedEventModel[] {
+    parseCourses(rawInput: string): EventInputModel[] {
         let fuzzyCourseMatches = rawInput.match(COURSE_REGEX);
         if (!fuzzyCourseMatches) {
             return [];
@@ -50,7 +50,8 @@ class CourseParser {
 
             let daysAndTimeMatch = columns[columnIndices.DAYS_AND_TIME].match(DAYS_AND_TIME_REGEX) || [];
 
-            let eventModel = new ParsedEventModel();
+            let eventModel = new EventInputModel();
+            eventModel.isCourse = true;
             eventModel.name = columns[columnIndices.NAME].trim() || "";
             eventModel.location = columns[columnIndices.LOCATION] || "";
             eventModel.repeatingDays = this.parseCourseDays(daysAndTimeMatch[daysAndTimeCaptureGroups.DAYS] || "");

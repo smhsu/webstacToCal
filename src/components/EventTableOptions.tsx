@@ -1,15 +1,13 @@
 import * as React from "react";
 import AsyncButton from "./AsyncButton";
 import CalendarApi from "../CalendarApi";
-import { Semester, semesters } from "../semesters";
+import semester from "../Semester";
 
 interface Calendar extends gapi.client.calendar.CalendarListEntry {} // Just an alias
 
 interface EventTableOptionsProps {
     calendarApi?: CalendarApi;
-    selectedSemester: Semester | null;
     selectedCalendar: Calendar | null;
-    onSemesterSelected?(semester: Semester): void;
     onCalendarSelected?(calendar: Calendar | null): void;
 }
 
@@ -29,7 +27,6 @@ class EventTableOptions extends React.Component<EventTableOptionsProps, EventTab
         this.fetchCalendars = this.fetchCalendars.bind(this);
         this.setCalendarList = this.setCalendarList.bind(this);
         this.calendarSelectChanged = this.calendarSelectChanged.bind(this);
-        this.semesterSelectChanged = this.semesterSelectChanged.bind(this);
         if (this.getIsLoggedIn()) {
             this.fetchCalendars().then(this.setCalendarList);
         }
@@ -77,20 +74,7 @@ class EventTableOptions extends React.Component<EventTableOptionsProps, EventTab
         }
     }
 
-    semesterSelectChanged(changeEvent: React.ChangeEvent<HTMLSelectElement>) {
-        if (this.props.onSemesterSelected) {
-            let matchingSemester = semesters.find(semester => semester.name === changeEvent.target.value);
-            if (matchingSemester) {
-                this.props.onSemesterSelected(matchingSemester);
-            }
-        }
-    }
-
     render() {
-        const selectedSemesterValue = this.props.selectedSemester ? this.props.selectedSemester.name : "";
-        const semesterOptions = semesters.map(semester =>
-            <option key={semester.name} value={semester.name}>{semester.name}</option>
-        );
         let selectedCalendarValue = this.props.selectedCalendar ? this.props.selectedCalendar.id : "";
         let calendarOptions = this.state.calendars.map(calendar =>
             <option key={calendar.id} value={calendar.id}>{calendar.summary}</option>
@@ -104,8 +88,8 @@ class EventTableOptions extends React.Component<EventTableOptionsProps, EventTab
             </p>
             <p>
                 Select semester:
-                <select value={selectedSemesterValue} onChange={this.semesterSelectChanged}>
-                    {semesterOptions}
+                <select>
+                    <option key={semester.name} value={semester.name}>{semester.name}</option>
                 </select>
             </p>
             <p>

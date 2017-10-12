@@ -1,3 +1,5 @@
+import EventInputModel from "./EventInputModel";
+
 const API_SCOPE = "https://www.googleapis.com/auth/calendar";
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 // https://developers.google.com/api-client-library/javascript/reference/referencedocs
@@ -100,10 +102,23 @@ export class CalendarApi {
         }).then(response => response.result.items);
     }
 
-    makeNewEvent(calendarId: string, mymodel: Object): Promise<void> {
-        return Promise.resolve();
-    }
+    createEvent(calendarId: string, model: EventInputModel): Promise<string> {
+        try {
+            let request = gapi.client.calendar.events.insert({
+                calendarId: calendarId,
+                resource: model.generateEventObject()
+            });
 
+            return new Promise<string>((resolve, reject) => {
+                request.then(
+                    success => resolve(success.result.htmlLink),
+                    error => reject(ApiHttpError.tryToConvert(error) || error)
+                );
+            });
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }
 
 export default CalendarApi;
@@ -113,7 +128,7 @@ export default CalendarApi;
 ////////////////
 
 /**
- * Google API throws these objects.  This is a more specific version of {@link gapi.client.HttpRequestRejected}.
+ * Google API throws these objects.  It loosely extends {@link gapi.client.HttpRequestRejected}.
  */
 interface GoogleError {
     result: {
@@ -156,6 +171,7 @@ export class ApiHttpError extends Error {
     constructor(reason: string, statusCode: number | null | undefined) {
         let preface = (statusCode != null) ? "HTTP " + statusCode : "No response -- check connection";
         super(`${preface}: ${reason}`);
+        this.name = "ApiHttpError";
     }
 
     /**
