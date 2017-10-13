@@ -3,6 +3,8 @@ import AsyncButton from "./AsyncButton";
 import CalendarApi from "../CalendarApi";
 import semester from "../Semester";
 
+import "./EventTableOptions.css";
+
 interface Calendar extends gapi.client.calendar.CalendarListEntry {} // Just an alias
 
 interface EventTableOptionsProps {
@@ -81,39 +83,37 @@ class EventTableOptions extends React.Component<EventTableOptionsProps, EventTab
         );
 
         return (
-        <div>
-            <p>
-                Tip: you can go to <a href="https://www.google.com/calendar/" target="_blank">www.google.com/calendar
-                </a>, create a new calendar there, and then press "Refresh list"
-            </p>
-            <p>
-                Select semester:
+        <div className="EventTableOptions">
+            <div>
+                <label>Select semester:</label>
                 <select>
                     <option key={semester.name} value={semester.name}>{semester.name}</option>
                 </select>
-            </p>
-            <p>
-                Select calendar:
+            </div>
+            <div>
+                <label>Select calendar:</label>
                 <select value={selectedCalendarValue} onChange={this.calendarSelectChanged}>
                     <option value="">Select a calendar...</option>
                     {calendarOptions}
                 </select>
+                <span className="EventTableOptions-refresh-list-button">
                 {
-                this.getIsLoggedIn() ?
-                    <FetchCalendarsButton
-                        className="btn btn-light"
-                        onClick={this.fetchCalendars}
-                        onPromiseResolved={this.setCalendarList}
-                    >
-                        Refresh list
-                    </FetchCalendarsButton> :
-                    null
-                }
-            </p>
+                    this.getIsLoggedIn() ?
+                        <FetchCalendarsButton
+                            className="btn btn-secondary"
+                            onClick={this.fetchCalendars}
+                            onPromiseResolved={this.setCalendarList}
+                        >
+                            Refresh list
+                        </FetchCalendarsButton>
+                        :
+                        null
+                    }
+                </span>
+            </div>
         </div>
         );
     }
-    
 }
 
 export default EventTableOptions;

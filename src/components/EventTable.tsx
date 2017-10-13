@@ -7,6 +7,8 @@ import EventTableRow from "./EventTableRow";
 import { EventInputModel, EventInputButtonState } from "../EventInputModel";
 import { ValidationError, ValidationErrorReason } from "../ValidationError";
 
+import "./EventTable.css";
+
 interface EventTableProps {
     events: EventInputModel[];
     calendarApi?: CalendarApi;
@@ -165,13 +167,20 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         }
 
         return (
-        <div>
-            <EventTableOptions
-                calendarApi={this.props.calendarApi}
-                selectedCalendar={this.state.selectedCalendar}
-                onCalendarSelected={calendar => this.setState({selectedCalendar: calendar})}
-            />
-            <p>{addAllButton}</p>
+        <div className="EventTable">
+            <div className="EventTable-options-container">
+                <p>
+                    Tip: you can go to <a href="https://www.google.com/calendar/" target="_blank">
+                        www.google.com/calendar
+                    </a>, create a new calendar there, and then press "Refresh list"
+                </p>
+                <EventTableOptions
+                    calendarApi={this.props.calendarApi}
+                    selectedCalendar={this.state.selectedCalendar}
+                    onCalendarSelected={calendar => this.setState({selectedCalendar: calendar})}
+                />
+                <p>{addAllButton}</p>
+            </div>
             <table className="table table-hover table-sm table-responsive">
                 <thead>
                     <tr>

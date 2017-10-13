@@ -25,10 +25,10 @@ class AuthPanel extends React.Component<AuthPanelProps, {}> {
     }
 
     render(): JSX.Element {
-        return (
-        <div>
-        {
-            !this.props.calendarApi.getIsSignedIn() ?
+        if (!this.props.calendarApi.getIsSignedIn()) {
+            return (
+            <div>
+                <p>Click the button to grant access to your Google calendar.</p>
                 <AsyncButtonVoid
                     className="btn btn-primary"
                     onClick={this.signInClicked}
@@ -36,8 +36,13 @@ class AuthPanel extends React.Component<AuthPanelProps, {}> {
                     errorContent="Permission failed - retry?"
                 >
                     Grant permission 
-                </AsyncButtonVoid> :
-
+                </AsyncButtonVoid>
+            </div>
+            );
+        } else {
+            return (
+            <div>
+                <p>You have granted access to your calendar.</p>
                 <AsyncButtonVoid
                     className="btn btn-light"
                     onClick={this.signOutClicked}
@@ -46,9 +51,9 @@ class AuthPanel extends React.Component<AuthPanelProps, {}> {
                 >
                     End session
                 </AsyncButtonVoid>
+            </div>
+            );
         }
-        </div>
-        );
     }
 }
 

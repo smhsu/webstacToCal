@@ -5,13 +5,12 @@ import EventTable from "./EventTable";
 import EventInputModel from "../EventInputModel";
 
 import AuthPanel from "./AuthPanel";
+import Step2Help from "./Step2Help";
 import CalendarApi from "../CalendarApi";
 
 import "./App.css";
 
-const logo = require("../logo.svg");
-
-const INPUT_BOX_PLACEHOLDER = "Go to WebSTAC >> Courses and Registration >> Class Schedule.\n" +
+const INPUT_BOX_PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\n" +
     "Then, SELECT ALL the text, including finals schedule, and copy and paste it into this box.";
 
 interface AppState {
@@ -68,32 +67,32 @@ class App extends React.Component<{}, AppState> {
 
         return (
         <div className="App">
-            <div className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <h2>Welcome to React</h2>
-            </div>
-            <p className="App-intro">
-                To get started, edit <code>src/App.tsx</code> and save to reload.
-            </p>
-
-            <div>
-            {
+            <div className="App-step App-step-1">
+                <h3>1 Permission</h3>
+                {
                 this.state.calendarApi !== null ?
                     <AuthPanel calendarApi={this.state.calendarApi} onAuthStatusChange={this.authStatusChanged} />
                     : null
-            }
+                }
             </div>
-            <textarea
-                placeholder={INPUT_BOX_PLACEHOLDER}
-                value={this.state.inputSchedule}
-                onChange={this.inputScheduleChanged}
-            />
-            {eventsParsedNotification}
-            <EventTable calendarApi={this.state.calendarApi || undefined} events={this.parsedEvents} />
+            <div className="App-step App-step-2">
+                <h3>2 CopyPaste</h3>
+                <Step2Help />
+                <textarea
+                    className="App-input-box"
+                    placeholder={INPUT_BOX_PLACEHOLDER}
+                    value={this.state.inputSchedule}
+                    onChange={this.inputScheduleChanged}
+                />
+                {eventsParsedNotification}
+            </div>
+            <div className="App-step App-step-3">
+                <h3>3 Confirm</h3>
+                <EventTable calendarApi={this.state.calendarApi || undefined} events={this.parsedEvents} />
+            </div>
         </div>
         );
     }
-    
 }
 
 export default App;

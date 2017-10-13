@@ -67,7 +67,7 @@ function EventTableRow(props: EventTableRowProps): JSX.Element {
             break;
         case EventInputButtonState.normal:
         default:
-            button = <button onClick={props.onAddButtonPressed}>Add!</button>;
+            button = <button onClick={props.onAddButtonPressed}><img src="img/gcbutton.gif" /></button>;
     }
 
     return (

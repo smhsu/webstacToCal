@@ -1,0 +1,17 @@
+.EventTableOptions {
+    margin: 10px 0px;
+}
+
+.EventTableOptions label {
+    margin-right: 5px;
+}
+
+@media all and (max-width: 600px){
+    .EventTableOptions select {
+       width: 100%; max-width: 100%;
+    }
+}
+
+.EventTableOptions-refresh-list-button {
+    margin-left: 10px;
+}
