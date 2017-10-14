@@ -1,10 +1,9 @@
 import * as React from "react";
 
-/* tslint:disable: max-line-length */
 const htmlContent = `
 <p>
   <a href="https://acadinfo.wustl.edu/apps/ClassSchedule/" target="_blank">
-    Click here to go to your WebSTAC class schedule table.
+    Click here to go to your WebSTAC class schedule.
   </a> Then, SELECT ALL and copy and paste everything into this text box.
 </p>
 <div class="modal fade" id="help-modal" >
@@ -41,7 +40,6 @@ const htmlContent = `
 </div>
 <button class="btn btn-secondary" data-toggle="modal" data-target="#help-modal">More help</button>
 `;
-/* tslint:enable: max-line-length */
 
 function Step2Help(props: {}) {
     return <div dangerouslySetInnerHTML={{__html: htmlContent}} />;

@@ -21,6 +21,11 @@ interface EventTableState {
     isAddingAll: boolean;
 }
 
+/**
+ * Table that displays events to add to Google calendar.
+ * 
+ * @author Silas Hsu
+ */
 class EventTable extends React.Component<EventTableProps, EventTableState> {
     constructor(props: EventTableProps) {
         super(props);
@@ -39,7 +44,12 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         this.renderEventTableRows = this.renderEventTableRows.bind(this);
     }
 
-    componentWillReceiveProps(nextProps: EventTableProps) {
+    /**
+     * If new events are incoming via props, replaces all non-custom events in the table with them.
+     * 
+     * @param {EventTableProps} nextProps - next props the component will receive
+     */
+    componentWillReceiveProps(nextProps: EventTableProps): void {
         if (this.props.events !== nextProps.events) {
             let customEvents = this.state.events.filter(event => event.isCustom);
             let newEvents = nextProps.events.concat(customEvents);
@@ -47,7 +57,13 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         }
     }
 
-    updateOneEvent<K extends keyof EventInputModel>(propsToChange: Pick<EventInputModel, K>, index: number) {
+    /**
+     * Changes, without mutation, one event of this.state.events, then sets state.
+     * 
+     * @param {Pick<EventInputModel, K>} propsToChange - props to merge into the event to change
+     * @param {number} index - the index of the event to change
+     */
+    updateOneEvent<K extends keyof EventInputModel>(propsToChange: Pick<EventInputModel, K>, index: number): void {
         const newEvent = _.cloneDeep(this.state.events[index]);
         if (!newEvent) {
             return;
@@ -57,10 +73,23 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         this.setState({events: newEvents});
     }
 
+    /**
+     * @callback eventUpdateFilter
+     * @param {EventInputModel} model - the event to test
+     * @return {boolean} whether the event should update
+     */
+
+    /**
+     * Changes, without mutation, each event of this.state.events, then sets state.  Accepts a filter function so only
+     * certain events update.  By default, all events update.
+     * 
+     * @param {Pick<EventInputModel, K>} propsToChange - props to merge into the events
+     * @param {eventUpdateFilter} [eventShouldUpdate=event => true] - filter for which events to update
+     */
     updateAllEvents<K extends keyof EventInputModel>(
         propsToChange: Pick<EventInputModel, K>,
         eventShouldUpdate: (model: EventInputModel) => boolean = event => true
-    ) {
+    ): void {
         const newEvents = this.state.events.map(event => {
             if (eventShouldUpdate(event)) {
                 const newEvent = _.cloneDeep(event);
@@ -72,6 +101,12 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         this.setState({events: newEvents});
     }
 
+    /**
+     * Examines state and determines if events are ready to be added to calendar.  Returns a ValidationError if there is
+     * a problem, and null if there is not.
+     * 
+     * @return {ValidationError | null} error object if events are not ready to be added to calendar; null otherwise
+     */
     validateOptions(): ValidationError | null {
         if (!this.props.calendarApi || !this.props.calendarApi.getIsSignedIn()) {
             return new ValidationError(ValidationErrorReason.PERMISSION_DENIED);
@@ -82,7 +117,13 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         return null;
     }
 
-    addButtonPressed(index: number) {
+    /**
+     * Callback for when a "add to calendar" button is pressed.  Attempts to add an event to the user's calendar.  This
+     * method sets state.
+     * 
+     * @param {number} index - the index of the event in this.state.events to add to the user's calendar
+     */
+    addButtonPressed(index: number): void {
         const event = this.state.events[index];
         if (!event || !event.getIsReadyToAdd()) {
             return;
@@ -97,23 +138,35 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         }
     }
 
-    addAllButtonPressed() {
+    /**
+     * Callback for when the "add all to calendar" button is pressed.  Attempts to add all events to the user's
+     * calendar.  This method sets state.
+     */
+    addAllButtonPressed(): void {
         const error = this.validateOptions();
         if (error) {
             this.updateAllEvents(
                 {buttonState: EventInputButtonState.error, error: error}, event => event.getIsReadyToAdd()
             );
-            return Promise.resolve();
+            return;
         }
 
         this.setState({isAddingAll: true});
         this.updateAllEvents(
             {buttonState: EventInputButtonState.loading, error: null}, event => event.getIsReadyToAdd()
         );
-        return Promise.all(this.state.events.map((event, index) => this.addModelToCalendar(index)))
+        Promise.all(this.state.events.map((event, index) => this.addModelToCalendar(index)))
             .then(() => this.setState({isAddingAll: false}));
     }
 
+    /**
+     * Calls on the CalendarApi specified through props and attempts to add an event to the user's calendar.  Returns a
+     * Promise that resolves when the task is finished, whether there is an error or not; it never rejects.  Does not
+     * set state immediately, but does set state asynchronously.
+     * 
+     * @param index - the index of the event in this.state.events to add to the user's calendar
+     * @return {Promise<void>} a Promise that resolves when the task is done
+     */
     addModelToCalendar(index: number): Promise<void> {
         if (!this.props.calendarApi || !this.state.selectedCalendar) {
             window.console.warn("Cannot add event to calendar: API not loaded or no selected calendar.");
@@ -140,7 +193,10 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
             });
     }
 
-    renderEventTableRows() {
+    /**
+     * @return an array of table rows
+     */
+    renderEventTableRows(): JSX.Element[] {
         return this.state.events.map((event, index) => (
             <EventTableRow
                 key={index}

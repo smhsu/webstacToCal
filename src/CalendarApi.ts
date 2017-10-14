@@ -93,6 +93,9 @@ export class CalendarApi {
         });
     }
 
+    /**
+     * @return {Promise<CalendarListEntry[]>} a Promise for the user's **editable** calendars
+     */
     getCalendarList(): Promise<CalendarListEntry[]> {
         return new Promise<RequestFulfilled<CalendarList>>((resolve, reject) => {
             gapi.client.calendar.calendarList.list({minAccessRole: "writer"}).then(
@@ -102,6 +105,13 @@ export class CalendarApi {
         }).then(response => response.result.items);
     }
 
+    /**
+     * Posts an event to the specified calendar.  Returns a Promise that resolves with a URL to the created event.
+     * 
+     * @param {string} calendarId - the calendar to which to add the event
+     * @param {EventInputModel} model - object that can generate the event request object
+     * @return {Promise<string>} a Promise for the URL to the created event
+     */
     createEvent(calendarId: string, model: EventInputModel): Promise<string> {
         try {
             let request = gapi.client.calendar.events.insert({

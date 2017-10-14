@@ -7,6 +7,10 @@ export enum ValidationErrorReason {
     REPEAT_REQUIRED = "Select at least one day of the week.",
 }
 
+/**
+ * 
+ * @author Silas Hsu
+ */
 export class ValidationError extends Error {
     constructor(reason: ValidationErrorReason) {
         super(reason);

@@ -71,7 +71,12 @@ class App extends React.Component<{}, AppState> {
                 <h3>1 Permission</h3>
                 {
                 this.state.calendarApi !== null ?
-                    <AuthPanel calendarApi={this.state.calendarApi} onAuthStatusChange={this.authStatusChanged} />
+                    <AuthPanel
+                        isSignedIn={this.state.calendarApi.getIsSignedIn()}
+                        onSignInRequested={this.state.calendarApi.signIn}
+                        onSignOutRequested={this.state.calendarApi.signOut}
+                        onAuthChangeComplete={this.authStatusChanged}
+                    />
                     : null
                 }
             </div>

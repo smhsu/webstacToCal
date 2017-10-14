@@ -4,13 +4,12 @@ export interface Semester {
     name: string;
 
     /**
-     * Format as YYYYMMDD.
+     * Start date of the semester; i.e. the first day of classes
      */
     startDate: moment.Moment;
 
     /**
-     * Format as YYYYMMDD.  This will be used in the calendar request's recurrance field.  No user enters this, so we
-     * can use a Moment object directly.  It should be set to the day AFTER classes end.
+     * This will be used in the calendar request's recurrance field.  It should be set to the day AFTER classes end.
      */
     endDate: moment.Moment; 
 }

@@ -5,9 +5,9 @@ import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 
 window.onload = () => {
-  ReactDOM.render(
-    <App />,
-    document.getElementById("root") as HTMLElement
-  );
+    ReactDOM.render(
+        <App />,
+        document.getElementById("root") as HTMLElement
+    );
 };
 registerServiceWorker();
