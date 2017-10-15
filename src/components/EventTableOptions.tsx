@@ -3,7 +3,7 @@ import AsyncButton from "./AsyncButton";
 import CalendarApi from "../CalendarApi";
 import semester from "../Semester";
 
-import "./EventTableOptions.css";
+import "./css/EventTableOptions.css";
 
 interface Calendar extends gapi.client.calendar.CalendarListEntry {} // Just an alias
 
@@ -133,13 +133,13 @@ class EventTableOptions extends React.Component<EventTableOptionsProps, EventTab
 
         return (
         <div className="EventTableOptions">
-            <div>
+            <div className="EventTableOptions-row">
                 <label>Select semester:</label>
                 <select>
                     <option key={semester.name} value={semester.name}>{semester.name}</option>
                 </select>
             </div>
-            <div>
+            <div className="EventTableOptions-row">
                 <label>Select calendar:</label>
                 <select value={selectedCalendarValue} onChange={this.calendarSelectChanged}>
                     <option value="">Select a calendar...</option>

@@ -4,6 +4,8 @@ import ErrorButton from "./ErrorButton";
 import { ApiHttpError } from "../CalendarApi";
 import ValidationError from "../ValidationError";
 
+import "./css/EventTableRow.css";
+
 interface EventTableRowProps {
     /**
      * Object containing all the information needed to render.
@@ -57,11 +59,16 @@ function EventTableRow(props: EventTableRowProps): JSX.Element {
         );
     };
 
+    let trClassName = "EventTableRow";
+    if (!model.isCourse) {
+        trClassName += " EventTableRow-final";
+    }
     return (
-    <tr>
+    <tr className={trClassName}>
         <td> {/* Name */}
             <input
                 type="text"
+                className="EventTableRow-full-width"
                 value={model.name}
                 size={inputSizes.NAME}
                 onChange={event => modelChangeCallback({name: event.target.value})}
@@ -98,6 +105,7 @@ function EventTableRow(props: EventTableRowProps): JSX.Element {
         <td> {/* Location */}
             <input
                 type="text"
+                className="EventTableRow-full-width"
                 value={model.location}
                 size={inputSizes.LOCATION}
                 onChange={event => modelChangeCallback({location: event.target.value})}

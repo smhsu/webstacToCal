@@ -5,7 +5,8 @@
 .EventTable table {
     margin-top: 0;
     border: 3px solid grey;
-    text-align: center
+    text-align: center;
+    background-color: white;
 }
 .EventTable thead {
     font-weight: bold;
@@ -14,8 +15,10 @@
 .EventTable-options-container {
     display: inline-block;
     margin-left: 20px;
+    margin-top: 20px;
     border-width: 1px 1px 0px 1px;
     border-style: solid;
     border-color: grey;
     padding: 10px 20px;
+    background-color: white;
 }

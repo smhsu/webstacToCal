@@ -7,7 +7,7 @@ import EventTableRow from "./EventTableRow";
 import { EventInputModel, EventInputButtonState } from "../EventInputModel";
 import { ValidationError, ValidationErrorReason } from "../ValidationError";
 
-import "./EventTable.css";
+import "./css/EventTable.css";
 
 interface EventTableProps {
     events: EventInputModel[];

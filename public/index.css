@@ -6,8 +6,15 @@ h1 {
     font-weight: bold;
 }
 
+.fa {
+    margin-right: 0.5em;
+}
 .center {
     text-align: center;
+}
+.jumbotron {
+    margin: 20px;
+    padding: 20px;
 }
 
 .header {
@@ -22,8 +29,8 @@ h1 {
 }
 
 .footer {
-	margin-top: 75px;
-	padding: 10px;
+    margin-top: 40px;
+    padding: 10px;
     
     background-color: rgb(22, 53, 37);
     background: -webkit-linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
@@ -43,23 +50,3 @@ h1 {
     border-radius: 10px;
     padding: 10px 40px;
 }
-
-.jumbotron {
-    margin: 20px;
-    padding: 20px;
-}
-
-
-/* Lots of table styling */
-/*
-.yellow {
-    background-color: #FDFB8E;
-}
-.yellow:hover {
-    background-color: #F1EE6D !important;
-}
-td img {
-    min-height: 18px;
-    min-width: 58px;
-}
-*/

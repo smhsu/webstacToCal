@@ -6,12 +6,16 @@
     margin-right: 5px;
 }
 
-@media all and (max-width: 600px){
+.EventTableOptions select {
+    margin-right: 10px;
+ }
+
+@media (max-width: 991px){
     .EventTableOptions select {
        width: 100%; max-width: 100%;
     }
-}
 
-.EventTableOptions-refresh-list-button {
-    margin-left: 10px;
+    .EventTableOptions-row {
+        margin: 20px 0px;
+    }
 }
