@@ -2,6 +2,10 @@
     text-align: center;
 }
 
+.App-api-load-failed {
+    display: inline-block;
+}
+
 .App-step {
     border-top: 1px solid gray;
     padding: 20px;

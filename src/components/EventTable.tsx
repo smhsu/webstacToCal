@@ -57,6 +57,7 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         };
         this.analytics = new Analytics();
 
+        this.addCustomEvent = this.addCustomEvent.bind(this);
         this.updateOneEvent = this.updateOneEvent.bind(this);
         this.updateAllEvents = this.updateAllEvents.bind(this);
         this.validateOptions = this.validateOptions.bind(this);
@@ -77,6 +78,20 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
             let newEvents = nextProps.events.concat(customEvents);
             this.setState({events: newEvents});
         }
+    }
+
+    /**
+     * Adds a custom course to the table.
+     */
+    addCustomEvent(): void {
+        const newEvent = new EventInputModel();
+        newEvent.isCustom = true;
+
+        const newEvents = this.state.events.slice();
+        newEvents.push(newEvent);
+        
+        this.analytics.sendEvent({category: "Buttons", action: "Custom event"});
+        this.setState({events: newEvents});
     }
 
     /**
@@ -284,6 +299,11 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
                 </thead>
                 <tbody>
                     {this.renderEventTableRows()}
+                    <tr onClick={this.addCustomEvent}>
+                        <td colSpan={5}>
+                            <i className="fa fa-plus-circle EventTable-add-custom-event" aria-hidden="true" />
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

@@ -22,3 +22,7 @@
     padding: 10px 20px;
     background-color: white;
 }
+
+.EventTable-add-custom-event {
+    font-size: 2em;
+}

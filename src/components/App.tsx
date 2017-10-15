@@ -14,7 +14,7 @@ import "./css/App.css";
 
 interface AppState {
     calendarApi: CalendarApi | null;
-    apiLoadError: string;
+    isApiLoadError: boolean;
     rawInputSchedule: string;
 }
 
@@ -39,7 +39,7 @@ class App extends React.Component<{}, AppState> {
         super(props);
         this.state = {
             calendarApi: null,
-            apiLoadError: "",
+            isApiLoadError: false,
             rawInputSchedule: "",
         };
         this.analytics = new Analytics();
@@ -49,7 +49,10 @@ class App extends React.Component<{}, AppState> {
 
         CalendarApi.getInstance()
             .then(api => this.setState({calendarApi: api}))
-            .catch(error => this.setState({apiLoadError: error.toString()}));
+            .catch(error => {
+                window.console.error(error);
+                this.setState({isApiLoadError: true});
+            });
 
         this.authStatusChanged = this.authStatusChanged.bind(this);
         this.inputScheduleChanged = this.inputScheduleChanged.bind(this);
@@ -117,20 +120,33 @@ class App extends React.Component<{}, AppState> {
             activeStep = 3;
         }
 
+        let authPanel = null;
+        if (this.state.isApiLoadError) {
+            authPanel = (
+            <div className="alert alert-danger App-api-load-failed">
+                <h4>Failed to load Calendar API.</h4>
+                Try <a href="">reloading the page</a>.  If that doesn't work, either Google is down (very bad), or there
+                is a serious bug within this app (also very bad).
+            </div>
+            );
+        } else if (this.state.calendarApi) {
+            authPanel = (
+            <AuthPanel
+                isSignedIn={this.state.calendarApi.getIsSignedIn()}
+                onSignInRequested={this.state.calendarApi.signIn}
+                onSignOutRequested={this.state.calendarApi.signOut}
+                onAuthChangeComplete={this.authStatusChanged}
+            />
+            );
+        } else {
+            authPanel = <p>Loading...</p>;
+        }
+
         return (
         <div className="App">
             <div className={activeStep === 1 ? activeStepClassName : stepClassName}>
                 <h3 className="App-heading">① Permission</h3>
-                {
-                this.state.calendarApi !== null ?
-                    <AuthPanel
-                        isSignedIn={this.state.calendarApi.getIsSignedIn()}
-                        onSignInRequested={this.state.calendarApi.signIn}
-                        onSignOutRequested={this.state.calendarApi.signOut}
-                        onAuthChangeComplete={this.authStatusChanged}
-                    />
-                    : null
-                }
+                {authPanel}
             </div>
             <div className={activeStep === 2 ? activeStepClassName : stepClassName}>
                 <h3 className="App-heading">② CopyPaste</h3>
