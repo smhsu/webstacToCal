@@ -1,8 +1,15 @@
 import * as React from "react";
 
 interface ErrorButtonProps {
-    tooltip?: string; // Tooltip for the button
-    onClick?(): void; // Callback when button is clicked
+    /**
+     * Tooltip for the button.
+     */
+    tooltip?: string;
+
+    /**
+     * Callback when button is clicked.
+     */
+    onClick?(): void;
 }
 
 /**

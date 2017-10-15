@@ -1,12 +1,14 @@
 import * as React from "react";
+
+import AuthPanel from "./AuthPanel";
+import ScheduleInput from "./ScheduleInput";
+
+import Analytics from "../Analytics";
 import CalendarApi from "../CalendarApi";
 import CourseParser from "../CourseParser";
 import ExamParser from "../ExamParser";
 import EventTable from "./EventTable";
 import EventInputModel from "../EventInputModel";
-
-import AuthPanel from "./AuthPanel";
-import ScheduleInput from "./ScheduleInput";
 
 import "./css/App.css";
 
@@ -16,11 +18,23 @@ interface AppState {
     rawInputSchedule: string;
 }
 
+/**
+ * The root component of everything dynamic in WebSTAC to Calendar.  Loads calendar API, parses user input, and keeps
+ * track of what step the user is on. 
+ * 
+ * @author Silas Hsu
+ */
 class App extends React.Component<{}, AppState> {
+    analytics: Analytics;
     courseParser: CourseParser;
     examParser: ExamParser;
     parsedEvents: EventInputModel[];
 
+    /**
+     * Not only initializes state and binds methods, but also initializes the calendar API.
+     * 
+     * @param {object} props - empty
+     */
     constructor(props: {}) {
         super(props);
         this.state = {
@@ -28,6 +42,7 @@ class App extends React.Component<{}, AppState> {
             apiLoadError: "",
             rawInputSchedule: "",
         };
+        this.analytics = new Analytics();
         this.courseParser = new CourseParser();
         this.examParser = new ExamParser();
         this.parsedEvents = [];
@@ -40,18 +55,57 @@ class App extends React.Component<{}, AppState> {
         this.inputScheduleChanged = this.inputScheduleChanged.bind(this);
     }
 
+    /**
+     * Sends a page view event to Analytics.
+     */
+    componentDidMount(): void {
+        this.analytics.sendPageView("/");
+    }
+
+    /**
+     * Triggers a rerender.
+     */
     authStatusChanged(): void {
         this.setState({});
     }
 
-    inputScheduleChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    /**
+     * Parses the new schedule and sets state.
+     * 
+     * @param {React.ChangeEvent<HTMLTextAreaElement>} event - the event trigged by the user input changing
+     */
+    inputScheduleChanged(event: React.ChangeEvent<HTMLTextAreaElement>): void {
         let parsedCourses = this.courseParser.parseCourses(event.target.value);
         let parsedExams = this.examParser.parseExams(event.target.value, parsedCourses);
         this.parsedEvents = parsedCourses.concat(parsedExams);
+        if (this.parsedEvents.length > 0) {
+            this.analytics.sendEvent({
+                category: "Schedule Parse",
+                action: "Success",
+            });
+            this.analytics.sendEvent({
+                category: "Schedule Parse",
+                action: "Courses parsed",
+                value: parsedCourses.length
+            });
+            this.analytics.sendEvent({
+                category: "Schedule Parse",
+                action: "Exams parsed",
+                value: parsedExams.length
+            });
+        } else {
+            this.analytics.sendEvent({
+                category: "Schedule Parse",
+                action: "Failure",
+            });
+        }
         this.setState({rawInputSchedule: event.target.value});
     }
 
-    render() {
+    /**
+     * @return {JSX.Element} the component to render
+     */
+    render(): JSX.Element {
         const stepClassName = "App-step";
         const activeStepClassName = "App-step App-step-active";
         let activeStep;

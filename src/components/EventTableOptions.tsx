@@ -25,6 +25,9 @@ interface EventTableOptionsProps {
 }
 
 interface EventTableOptionsState {
+    /**
+     * Current calendar options among which to select.
+     */
     calendars: Calendar[];
 }
 

@@ -1,32 +1,53 @@
 import * as React from "react";
 import * as _ from "lodash";
 
-import { CalendarApi } from "../CalendarApi";
 import EventTableOptions from "./EventTableOptions";
 import EventTableRow from "./EventTableRow";
+
+import Analytics from "../Analytics";
+import { CalendarApi } from "../CalendarApi";
 import { EventInputModel, EventInputButtonState } from "../EventInputModel";
 import { ValidationError, ValidationErrorReason } from "../ValidationError";
 
 import "./css/EventTable.css";
 
 interface EventTableProps {
+    /**
+     * Events for the table to display.
+     */
     events: EventInputModel[];
+
+    /**
+     * API for adding events to the user's calendar.
+     */
     calendarApi?: CalendarApi;
-    rawInput?: string;
 }
 
 interface EventTableState {
+    /**
+     * All events the table is displaying.  Forked from props.events, since the user can modify them.
+     */
     events: EventInputModel[];
+
+    /**
+     * The calendar to which the user wishes to add events.
+     */
     selectedCalendar: gapi.client.calendar.CalendarListEntry | null;
+
+    /**
+     * After pressing the "add all" button, whether requests are still in flight.
+     */
     isAddingAll: boolean;
 }
 
 /**
- * Table that displays events to add to Google calendar.
+ * Table that displays events to add to Google calendar, as well as options for doing so.
  * 
  * @author Silas Hsu
  */
 class EventTable extends React.Component<EventTableProps, EventTableState> {
+    analytics: Analytics;
+
     constructor(props: EventTableProps) {
         super(props);
         this.state = {
@@ -34,6 +55,7 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
             selectedCalendar: null,
             isAddingAll: false,
         };
+        this.analytics = new Analytics();
 
         this.updateOneEvent = this.updateOneEvent.bind(this);
         this.updateAllEvents = this.updateAllEvents.bind(this);
@@ -182,9 +204,17 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         }
 
         return this.props.calendarApi.createEvent(this.state.selectedCalendar.id, event)
-            .then((htmlLink) => this.updateOneEvent(
-                {buttonState: EventInputButtonState.success, successUrl: htmlLink}, index
-            ))
+            .then((htmlLink) => {
+                this.analytics.sendEvent({category: "Calendar", action: "Event added"});
+                if (event.isCourse) {
+                    this.analytics.sendEvent({category: "Calendar", action: "Course added"});
+                } else {
+                    this.analytics.sendEvent({category: "Calendar", action: "Exam added"});
+                }
+                this.updateOneEvent(
+                    {buttonState: EventInputButtonState.success, successUrl: htmlLink}, index
+                );
+            })
             .catch(error => {
                 if (!(error instanceof ValidationError)) {
                     window.console.error(error);
@@ -208,6 +238,11 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         );
     }
 
+    /**
+     * Renders the table and its options.
+     * 
+     * @return {JSX.Element} the element to render
+     */
     render(): JSX.Element {
         let addAllButton;
         if (this.state.isAddingAll) {

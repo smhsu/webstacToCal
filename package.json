@@ -18,6 +18,7 @@
     "moment": "^2.18.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-ga": "^2.3.5",
     "react-scripts-ts": "2.6.0"
   },
   "scripts": {

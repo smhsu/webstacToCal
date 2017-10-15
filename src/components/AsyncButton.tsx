@@ -1,6 +1,6 @@
 import * as React from "react";
-import { ApiHttpError } from "../CalendarApi";
 import ErrorButton from "./ErrorButton";
+import { ApiHttpError } from "../CalendarApi";
 
 /**
  * @template T - the resolution type of the Promise provided to this button

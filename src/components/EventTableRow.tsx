@@ -1,7 +1,7 @@
 import * as React from "react";
-import { EventInputModel, EventInputButtonState } from "../EventInputModel";
 import ErrorButton from "./ErrorButton";
 import { ApiHttpError } from "../CalendarApi";
+import { EventInputModel, EventInputButtonState } from "../EventInputModel";
 import ValidationError from "../ValidationError";
 
 import "./css/EventTableRow.css";
