@@ -1,0 +1,52 @@
+body {
+    font-family: "Montserrat", "Helvetica", sans-serif;
+}
+h1 {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.fa {
+    margin-right: 0.5em;
+}
+.center {
+    text-align: center;
+}
+.jumbotron {
+    margin: 20px;
+    padding: 20px;
+}
+
+.header {
+    margin-bottom: 20px;
+    padding-top: 25px;
+    padding-bottom: 20px;
+    background-color: rgb(22, 53, 37);
+    color: white;
+}
+.header img {
+    max-height: 100px;
+}
+
+.footer {
+    margin-top: 40px;
+    padding: 10px;
+    
+    background-color: rgb(22, 53, 37);
+    background: -webkit-linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+    background: -moz-linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+    background: linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+
+    color: white;
+}
+.footer h1 {
+    margin-bottom: 30px;
+}
+.contact-info {
+    display: inline-block;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 10px 40px;
+}
