@@ -135,7 +135,7 @@ function RowButton(props: EventTableRowProps): JSX.Element {
             const error = props.model.error;
             let tooltip;
             if (error instanceof ValidationError || error instanceof ApiHttpError) {
-                tooltip = error.message;
+                tooltip = "Couldn't post event: " + error.message;
             } else {
                 tooltip = "Unexpected error (bug?) -- Check developers' console for technical details.";
                 if (error == null) {

@@ -82,7 +82,7 @@ export class EventInputModel {
      * semester's start date as this event's day, no matter the value of `this.date`.
      * 
      * This method takes into consideration repeating days, moving the event forward to the nearest day selected for
-     * repeat.  For example, if the event's date is on a Monday, but it is also set to repeat on Wednesdays and Fridays,
+     * repeat.  For example, if the event's date is on a Monday, but it is set to only repeat on Wednesdays and Fridays,
      * the returned data will express that the event's date is Wednesday.
      * 
      * Note that the returned date may be invalid; use moment.js's isValid() method to check.
@@ -90,13 +90,12 @@ export class EventInputModel {
      * @return {moment.Moment} this event's date
      */
     getDate(): moment.Moment {
-        let date = this.isCourse ? semester.startDate : moment(this.date, DATE_FORMATS, true);
-        let firstRepeatingDay = this.repeatingDays.findIndex(day => day);
-        if (firstRepeatingDay > -1) { // i.e. if the event is repeating
-            // Do this modulo thing, because moment.js represents Monday with 1 (and Sunday with 0), but we represent
-            // Monday with 0.
-            firstRepeatingDay = (firstRepeatingDay + 1) % EventInputModel.DAYS_PER_WEEK;
-            date.day(firstRepeatingDay);
+        let date = this.isCourse ? semester.startDate.clone() : moment(this.date, DATE_FORMATS, true);
+        // isoWeekday() has Monday = 1 and Sunday = 7.  Convert to our indexing.
+        let dateDayOfWeek = date.isoWeekday() - 1;
+        let dayOffset = this.daysUntilNextRepeatingDay(dateDayOfWeek);
+        if (dayOffset > 0) {
+            date.add(dayOffset, "days");
         }
         return date;
     }
@@ -184,6 +183,26 @@ export class EventInputModel {
         } else {
             return [];
         }
+    }
+
+    /**
+     * Starting from `afterDay` (with Monday = 0), counts forward the number of days until the first day of the week
+     * that is repeating.  Returns the number of days counted forward.  Returns -1 if there are no repeating days.
+     *
+     * Examples:
+     *   - MW repeating, afterDayOfWeek = 0 --> returns 0
+     *   - MW repeating, afterDayOfWeek = 2 --> returns 0
+     *   - M repeating, afterDayOfWeek = 4 --> returns 3
+     */
+    protected daysUntilNextRepeatingDay(afterDay: number) {
+        let dayIndex = afterDay;
+        for (let i = 0; i < EventInputModel.DAYS_PER_WEEK; i++) {
+            if (this.repeatingDays[dayIndex]) {
+                return i;
+            }
+            dayIndex = (dayIndex + 1) % 7;
+        }
+        return -1;
     }
 }
 
