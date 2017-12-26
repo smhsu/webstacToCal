@@ -181,6 +181,10 @@ export class ApiHttpError extends Error {
     constructor(reason: string, statusCode: number | null | undefined) {
         let preface = (statusCode != null) ? "HTTP " + statusCode : "No response -- check connection";
         super(`${preface}: ${reason}`);
+        // tslint:disable-next-line:max-line-length
+        // See https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+        // for why we have to do this setPrototypeOf()
+        Object.setPrototypeOf(this, ApiHttpError.prototype);
         this.name = "ApiHttpError";
     }
 
