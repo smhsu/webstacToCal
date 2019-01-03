@@ -2,7 +2,14 @@
   "name": "webstac-to-cal",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
+  "dependencies": {},
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
     "@types/bootstrap": "^3.3.36",
     "@types/gapi": "0.0.35",
     "@types/gapi.auth2": "0.0.43",
@@ -11,22 +18,22 @@
     "@types/jquery": "^3.2.12",
     "@types/lodash": "^4.14.76",
     "@types/node": "^8.0.25",
-    "@types/react": "^16.0.5",
-    "@types/react-dom": "^16.0.0",
+    "@types/react": "^16.7.0",
+    "@types/react-dom": "^16.0.11",
     "jquery": "^3.2.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.11",
     "moment": "^2.18.1",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
     "react-ga": "^2.3.5",
-    "react-scripts-ts": "2.8.0"
+    "react-scripts": "^2.1.2",
+    "typescript": "^3.2.2"
   },
-  "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
-  },
-  "devDependencies": {},
-  "homepage": "https://smhsu.github.io/webstacToCal/"
+  "homepage": "https://smhsu.github.io/webstacToCal/",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
