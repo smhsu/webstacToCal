@@ -4,19 +4,19 @@ self.__precacheManifest = [
     "url": "/webstacToCal/static/js/runtime~main.8b60d443.js"
   },
   {
-    "revision": "9dbecf2f14aef120a562",
-    "url": "/webstacToCal/static/js/main.9dbecf2f.chunk.js"
+    "revision": "4d6455e4fd8e455b00f0",
+    "url": "/webstacToCal/static/js/main.4d6455e4.chunk.js"
   },
   {
     "revision": "67abfd2f84512040dea4",
     "url": "/webstacToCal/static/js/1.67abfd2f.chunk.js"
   },
   {
-    "revision": "9dbecf2f14aef120a562",
+    "revision": "4d6455e4fd8e455b00f0",
     "url": "/webstacToCal/static/css/main.0d499b79.chunk.css"
   },
   {
-    "revision": "6e9ae1565d362f09bed9cfd39ca8a917",
+    "revision": "9fbc3360ff260cf58203d451c34b2d42",
     "url": "/webstacToCal/index.html"
   }
 ];
