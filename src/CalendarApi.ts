@@ -1,7 +1,8 @@
 import EventInputModel from "./EventInputModel";
 
-const API_SCOPE = "https://www.googleapis.com/auth/calendar";
+const API_SCOPE = "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events";
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+// https://developers.google.com/identity/protocols/googlescopes#calendarv3
 // https://developers.google.com/api-client-library/javascript/reference/referencedocs
 // https://developers.google.com/google-apps/calendar/
 

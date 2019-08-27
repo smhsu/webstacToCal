@@ -17,6 +17,7 @@ class Analytics {
     constructor() {
         if (!Analytics.isInitialized && IS_PRODUCTION) {
             ReactGA.initialize(TRACKING_ID);
+            ReactGA.set({anonymizeIp: true});
         }
     }
 
