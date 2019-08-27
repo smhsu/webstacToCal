@@ -42,7 +42,7 @@ window.onload = () => {
         const alert = (
             <div style={{textAlign: "center"}} >
                 <div className="alert alert-danger" style={{display: "inline-block"}} >
-                    <h4>🙁 Internet Explorer not supported. 🙁</h4>
+                    <h4><Frown /> Internet Explorer not supported. <Frown /></h4>
                     You appear to be using Internet Explorer.  WebSTAC to Calendar does not support IE.  Sorry about
                     that.
                 </div>
@@ -54,3 +54,7 @@ window.onload = () => {
     }
 };
 // registerServiceWorker();
+
+function Frown() {
+    return <span role="img" aria-label="Frown">🙁</span>;
+}

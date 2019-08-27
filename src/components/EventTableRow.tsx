@@ -127,7 +127,12 @@ function RowButton(props: EventTableRowProps): JSX.Element {
             return <button className="btn btn-light" disabled={true}>Working...</button>;
         case EventInputButtonState.success:
             return (
-            <a className="btn btn-success" href={props.model.successUrl || undefined} target="_blank">
+            <a 
+                className="btn btn-success"
+                href={props.model.successUrl || undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
                 <i className="fa fa-check" aria-hidden="true" />Added!
             </a>
             );
@@ -147,7 +152,9 @@ function RowButton(props: EventTableRowProps): JSX.Element {
             return <ErrorButton tooltip={tooltip} onClick={props.onAddButtonPressed}>Failed - retry?</ErrorButton>;
         case EventInputButtonState.normal:
         default:
-            return <button onClick={props.onAddButtonPressed}><img src="img/gcbutton.gif" /></button>;
+            return <button onClick={props.onAddButtonPressed}>
+                <img src="img/gcbutton.gif" alt="Add to Google Calendar"/>
+            </button>;
     }
 }
 

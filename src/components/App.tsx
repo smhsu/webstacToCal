@@ -125,6 +125,7 @@ class App extends React.Component<{}, AppState> {
             authPanel = (
             <div className="alert alert-danger App-api-load-failed">
                 <h4>Failed to load Calendar API.</h4>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 Try <a href="">reloading the page</a>.  If that doesn't work, either Google is down (very bad), or there
                 is a serious bug within this app (also very bad).
             </div>

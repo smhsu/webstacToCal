@@ -276,9 +276,8 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
         <div className="EventTable">
             <div className="EventTable-options-container">
                 <p>
-                    Tip: you can go to <a href="https://www.google.com/calendar/" target="_blank">
-                        www.google.com/calendar
-                    </a>, create a new calendar there, and then press "Refresh list"
+                    Tip: you can go to <a href="https://www.google.com/calendar/" target="_blank" rel="noopener noreferrer">www.google.com/calendar</a>,
+                    create a new calendar there, and then press "Refresh list"
                 </p>
                 <EventTableOptions
                     calendarApi={this.props.calendarApi}
