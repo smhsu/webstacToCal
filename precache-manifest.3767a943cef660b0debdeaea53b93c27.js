@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "527646fbb67c52461562bb6aa1c1c245",
+    "revision": "232af8982537b787c4d5b63f33d5e6d6",
     "url": "/webstacToCal/index.html"
   },
   {
-    "revision": "8c5655767e32b4968b3d",
+    "revision": "f6a01980ecafa3c0e7a7",
     "url": "/webstacToCal/static/css/main.61a1b3e3.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/webstacToCal/static/js/2.0aae98fe.chunk.js"
   },
   {
-    "revision": "8c5655767e32b4968b3d",
-    "url": "/webstacToCal/static/js/main.ae3cda68.chunk.js"
+    "revision": "f6a01980ecafa3c0e7a7",
+    "url": "/webstacToCal/static/js/main.07eb91ad.chunk.js"
   },
   {
     "revision": "2176a92ab30ff5c2ea51",
