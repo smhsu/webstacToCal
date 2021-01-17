@@ -1,15 +1,20 @@
 {
   "files": {
-    "main.css": "/webstacToCal/static/css/main.bee476e5.chunk.css",
-    "main.js": "/webstacToCal/static/js/main.0c00693d.chunk.js",
-    "main.js.map": "/webstacToCal/static/js/main.0c00693d.chunk.js.map",
-    "runtime~main.js": "/webstacToCal/static/js/runtime~main.1f285afd.js",
-    "runtime~main.js.map": "/webstacToCal/static/js/runtime~main.1f285afd.js.map",
-    "static/js/2.0aae98fe.chunk.js": "/webstacToCal/static/js/2.0aae98fe.chunk.js",
-    "static/js/2.0aae98fe.chunk.js.map": "/webstacToCal/static/js/2.0aae98fe.chunk.js.map",
+    "main.css": "/webstacToCal/static/css/main.5ba8b8cc.chunk.css",
+    "main.js": "/webstacToCal/static/js/main.767123ba.chunk.js",
+    "main.js.map": "/webstacToCal/static/js/main.767123ba.chunk.js.map",
+    "runtime-main.js": "/webstacToCal/static/js/runtime-main.923b1c4a.js",
+    "runtime-main.js.map": "/webstacToCal/static/js/runtime-main.923b1c4a.js.map",
+    "static/js/2.c641c8e8.chunk.js": "/webstacToCal/static/js/2.c641c8e8.chunk.js",
+    "static/js/2.c641c8e8.chunk.js.map": "/webstacToCal/static/js/2.c641c8e8.chunk.js.map",
     "index.html": "/webstacToCal/index.html",
-    "precache-manifest.1ebb0235aa959000609f8096d60be8f5.js": "/webstacToCal/precache-manifest.1ebb0235aa959000609f8096d60be8f5.js",
-    "service-worker.js": "/webstacToCal/service-worker.js",
-    "static/css/main.bee476e5.chunk.css.map": "/webstacToCal/static/css/main.bee476e5.chunk.css.map"
-  }
+    "static/css/main.5ba8b8cc.chunk.css.map": "/webstacToCal/static/css/main.5ba8b8cc.chunk.css.map",
+    "static/js/2.c641c8e8.chunk.js.LICENSE.txt": "/webstacToCal/static/js/2.c641c8e8.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.923b1c4a.js",
+    "static/js/2.c641c8e8.chunk.js",
+    "static/css/main.5ba8b8cc.chunk.css",
+    "static/js/main.767123ba.chunk.js"
+  ]
 }
