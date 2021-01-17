@@ -59,7 +59,6 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
 
         this.addCustomEvent = this.addCustomEvent.bind(this);
         this.updateOneEvent = this.updateOneEvent.bind(this);
-        this.updateAllEvents = this.updateAllEvents.bind(this);
         this.validateOptions = this.validateOptions.bind(this);
         this.addButtonPressed = this.addButtonPressed.bind(this);
         this.addAllButtonPressed = this.addAllButtonPressed.bind(this);
@@ -111,34 +110,6 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
     }
 
     /**
-     * @callback eventUpdateFilter
-     * @param {EventInputModel} model - the event to test
-     * @return {boolean} whether the event should update
-     */
-
-    /**
-     * Changes, without mutation, each event of this.state.events, then sets state.  Accepts a filter function so only
-     * certain events update.  By default, all events update.
-     * 
-     * @param {Pick<EventInputModel, K>} propsToChange - props to merge into the events
-     * @param {eventUpdateFilter} [eventShouldUpdate=event => true] - filter for which events to update
-     */
-    updateAllEvents<K extends keyof EventInputModel>(
-        propsToChange: Pick<EventInputModel, K>,
-        eventShouldUpdate: (model: EventInputModel) => boolean = event => true
-    ): void {
-        const newEvents = this.state.events.map(event => {
-            if (eventShouldUpdate(event)) {
-                const newEvent = _.cloneDeep(event);
-                return Object.assign(newEvent, propsToChange);
-            } else {
-                return event;
-            }
-        });
-        this.setState({events: newEvents});
-    }
-
-    /**
      * Examines state and determines if events are ready to be added to calendar.  Returns a ValidationError if there is
      * a problem, and null if there is not.
      * 
@@ -159,19 +130,20 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
      * method sets state.
      * 
      * @param {number} index - the index of the event in this.state.events to add to the user's calendar
+     * @return {Promise<void>} Promise that resolves after the event is added
      */
-    addButtonPressed(index: number): void {
+    addButtonPressed(index: number): Promise<void> {
         const event = this.state.events[index];
         if (!event || !event.getIsReadyToAdd()) {
-            return;
+            return Promise.resolve();
         }
 
         const error = this.validateOptions();
         if (error) {
             this.updateOneEvent({buttonState: EventInputButtonState.error, error: error}, index);
+            return Promise.resolve();
         } else {
-            this.updateOneEvent({buttonState: EventInputButtonState.loading, error: null}, index);
-            this.addModelToCalendar(index);
+            return this.addModelToCalendar(index);
         }
     }
 
@@ -179,21 +151,12 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
      * Callback for when the "add all to calendar" button is pressed.  Attempts to add all events to the user's
      * calendar.  This method sets state.
      */
-    addAllButtonPressed(): void {
-        const error = this.validateOptions();
-        if (error) {
-            this.updateAllEvents(
-                {buttonState: EventInputButtonState.error, error: error}, event => event.getIsReadyToAdd()
-            );
-            return;
-        }
-
+    async addAllButtonPressed(): Promise<void> {
         this.setState({isAddingAll: true});
-        this.updateAllEvents(
-            {buttonState: EventInputButtonState.loading, error: null}, event => event.getIsReadyToAdd()
-        );
-        Promise.all(this.state.events.map((event, index) => this.addModelToCalendar(index)))
-            .then(() => this.setState({isAddingAll: false}));
+        for (let i = 0; i < this.state.events.length; i++) { // Add one at a time so we don't get rate limited
+            await this.addButtonPressed(i);
+        }
+        this.setState({isAddingAll: false});
     }
 
     /**
@@ -214,10 +177,8 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
             console.warn(`Cannot add invalid event at index ${index} to calendar.`);
             return Promise.resolve();
         }
-        if (!event.getIsReadyToAdd()) {
-            return Promise.resolve();
-        }
 
+        this.updateOneEvent({buttonState: EventInputButtonState.loading, error: null}, index);
         return this.props.calendarApi.createEvent(this.state.selectedCalendar.id, event)
             .then((htmlLink) => {
                 this.analytics.sendEvent({category: "Calendar", action: "Event added"});
@@ -286,25 +247,27 @@ class EventTable extends React.Component<EventTableProps, EventTableState> {
                 />
                 <p>{addAllButton}</p>
             </div>
-            <table className="table table-hover table-sm table-responsive">
-                <thead>
-                    <tr>
-                        <td>Class or final name</td>
-                        <td>Days (MTWTFSS)</td>
-                        <td>Time (start - end)</td>
-                        <td>Location</td>
-                        <td>Add to calendar</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.renderEventTableRows()}
-                    <tr onClick={this.addCustomEvent}>
-                        <td colSpan={5}>
-                            <i className="fa fa-plus-circle EventTable-add-custom-event" aria-hidden="true" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className="table-responsive">
+                <table className="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <td>Class or final name</td>
+                            <td>Days (MTWTFSS)</td>
+                            <td>Time (start - end)</td>
+                            <td>Location</td>
+                            <td>Add to calendar</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.renderEventTableRows()}
+                        <tr onClick={this.addCustomEvent}>
+                            <td colSpan={5}>
+                                <i className="fa fa-plus-circle EventTable-add-custom-event" aria-hidden="true" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         );
     }

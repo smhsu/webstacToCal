@@ -26,8 +26,8 @@ interface EventTableRowProps {
 }
 
 const inputSizes = {
-    DATE: 9,
-    TIME: 5,
+    DATE: 12,
+    TIME: 6,
     NAME: 35,
     LOCATION: 30
 };
@@ -152,8 +152,8 @@ function RowButton(props: EventTableRowProps): JSX.Element {
             return <ErrorButton tooltip={tooltip} onClick={props.onAddButtonPressed}>Failed - retry?</ErrorButton>;
         case EventInputButtonState.normal:
         default:
-            return <button onClick={props.onAddButtonPressed}>
-                <img src="img/gcbutton.gif" alt="Add to Google Calendar"/>
+            return <button className="btn btn-light" onClick={props.onAddButtonPressed}>
+                <i className="fa fa-plus-circle" aria-hidden="true"/>Add
             </button>;
     }
 }

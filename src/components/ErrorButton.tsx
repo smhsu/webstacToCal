@@ -66,7 +66,7 @@ class ErrorButton extends React.Component<ErrorButtonProps, {}> {
             data-placement={this.props.tooltip && "top"}
             title={this.props.tooltip}
         >
-            {/* 'times', but we use it just because it looks like a big X. */}
+            {/* fa-times looks like a big X. */}
             <i className="fa fa-times" aria-hidden="true" />{this.props.children}
         </button>
         );

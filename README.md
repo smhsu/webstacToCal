@@ -7,7 +7,7 @@ This branch contains all the code necessary to build the static HTML and CSS for
 2. On the command line, in the root directory of the repository, run `npm install`.
 3. You will need a Google Calendar API key and an OAuth 2.0 client ID to make the app work.  See https://console.developers.google.com/ to get those.
     * When you create the API key, I recommend you add appropriate restrictions to prevent unauthorized use.  The most basic one is to add an HTTP referrer restriction of http://localhost:3000, which is the default run URL of the dev server.
-4. Once you have those keys, create a new file called `.env.local` in the root of the repository.
+4. Once you have those keys, create a new file called `.env.development.local` in the root of the repository.
 5. Write the following two lines in the file, in the same style as `.env.production`.
 ```
 REACT_APP_API_KEY=your_api_key

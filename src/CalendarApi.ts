@@ -74,7 +74,7 @@ export class CalendarApi {
     signIn(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             gapi.auth2.getAuthInstance().signIn().then(
-                resolve,
+                _user => resolve(),
                 (error: any) => reject(ApiHttpError.tryToConvert(error) || error) // tslint:disable-line:no-any
             );
         });

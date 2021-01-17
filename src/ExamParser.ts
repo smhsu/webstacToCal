@@ -41,10 +41,10 @@ class ExamParser {
      * @return {EventInputModel[]} array of parsed exams
      */
     parseExams(rawInput: string, parsedCourses: EventInputModel[] = []): EventInputModel[] {
-        let courseToLocationMap: object = parsedCourses.reduce((map, course) => {
+        let courseToLocationMap = parsedCourses.reduce((map, course) => {
             map[course.name] = course.location;
             return map;
-        }, {}); // tslint:disable-line:align
+        }, {} as {[courseName: string]: string});
 
         let eventModels = [];
         let examMatch = EXAM_REGEX.exec(rawInput);
