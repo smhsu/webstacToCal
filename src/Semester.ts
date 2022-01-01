@@ -15,9 +15,9 @@ export interface Semester {
 }
 
 export const semester: Semester = {
-    name: "FL21",
-    startDate: moment("2021-08-30", "YYYY-MM-DD", true),
-    endDate: moment("2021-12-11", "YYYY-MM-DD", true),
+    name: "SP22",
+    startDate: moment("2022-01-17", "YYYY-MM-DD", true),
+    endDate: moment("2022-04-29", "YYYY-MM-DD", true),
 };
 
 if (!semester.startDate.isValid() || !semester.endDate.isValid() || semester.endDate.isBefore(semester.startDate)) {
