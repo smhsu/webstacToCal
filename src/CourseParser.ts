@@ -1,4 +1,4 @@
-import EventInputModel from "./EventInputModel";
+import { WebstacEvent } from "./eventModel/WebstacEvent";
 
 /*
 A course looks like this:
@@ -7,7 +7,6 @@ E81 CSE 515T 01	Bayesian Methods in Machine Learning	3.0	C	-T-R--- 2:30p-4:00p	W
 const COURSE_REGEX = /[A-Z]\d\d.+/g; // Match something that looks like department letter and course number
 // Something that looks like "M-W---- 10:00a-11:30p"
 const DAYS_AND_TIME_REGEX = /([\w-]+) (\d\d?:\d\d[ap])-(\d\d?:\d\d[ap])/;
-const DAYS_PER_WEEK = EventInputModel.DAYS_PER_WEEK;
 
 const columnIndices = {
     MIN_EXPECTED: 5,
@@ -24,43 +23,43 @@ const daysAndTimeCaptureGroups = {
 
 /**
  * Parses courses from WebSTAC.
- * 
+ *
  * @author Silas Hsu
  */
-class CourseParser {
+export class CourseParser {
     /**
      * Parses courses from WebSTAC, returning them in an array of EventInputModel.  Returns an empty array if no courses
      * could be parsed.
-     * 
-     * @param {string} rawInput - class schedule copy-pasted from WebSTAC
-     * @return {EventInputModel[]} array of parsed courses
+     *
+     * @param rawInput - class schedule copy-pasted from WebSTAC
+     * @return array of parsed courses
      */
-    parseCourses(rawInput: string): EventInputModel[] {
-        let fuzzyCourseMatches = rawInput.match(COURSE_REGEX);
+    static parseCourses(rawInput: string): WebstacEvent[] {
+        const fuzzyCourseMatches = rawInput.match(COURSE_REGEX);
         if (!fuzzyCourseMatches) {
             return [];
         }
 
-        let eventModels = [];
-        for (let fuzzyCourseMatch of fuzzyCourseMatches) {
-            let columns = fuzzyCourseMatch.split("\t");
+        const events = [];
+        for (const fuzzyCourseMatch of fuzzyCourseMatches) {
+            const columns = fuzzyCourseMatch.split("\t");
             if (columns.length < columnIndices.MIN_EXPECTED) {
                 continue;
             }
 
-            let daysAndTimeMatch = columns[columnIndices.DAYS_AND_TIME].match(DAYS_AND_TIME_REGEX) || [];
-
-            let eventModel = new EventInputModel();
-            eventModel.isCourse = true;
-            eventModel.name = columns[columnIndices.NAME].trim() || "";
-            eventModel.location = columns[columnIndices.LOCATION] || "";
-            eventModel.repeatingDays = this.parseCourseDays(daysAndTimeMatch[daysAndTimeCaptureGroups.DAYS] || "");
-            eventModel.startTime = daysAndTimeMatch[daysAndTimeCaptureGroups.START_TIME] || "";
-            eventModel.endTime = daysAndTimeMatch[daysAndTimeCaptureGroups.END_TIME] || "";
-            
-            eventModels.push(eventModel);
+            const daysAndTimeMatch = columns[columnIndices.DAYS_AND_TIME].match(DAYS_AND_TIME_REGEX) || [];
+            events.push(new WebstacEvent({
+                isCourse: true,
+                name: columns[columnIndices.NAME].trim() || "",
+                location: columns[columnIndices.LOCATION] || "",
+                // Courses don't have dates on their own; their start and end dates are determined by the semester.
+                date: "",
+                startTime: daysAndTimeMatch[daysAndTimeCaptureGroups.START_TIME] || "",
+                endTime: daysAndTimeMatch[daysAndTimeCaptureGroups.END_TIME] || "",
+                repeatingDays: CourseParser.parseCourseDays(daysAndTimeMatch[daysAndTimeCaptureGroups.DAYS] || ""),
+            }));
         }
-        return eventModels;
+        return events;
     }
 
     /**
@@ -68,13 +67,12 @@ class CourseParser {
      * @param {string} rawInput a WebSTAC days-of-the-week string
      * @return {boolean[]}
      */
-    private parseCourseDays(rawInput: string): boolean[] {
-        let daysArray = Array(DAYS_PER_WEEK).fill(false);
-        if (rawInput.length === DAYS_PER_WEEK) {
-            for (let i = 0; i < DAYS_PER_WEEK; i++) {
-                // I'm not going to check if the letter is the right one for the position, since I'm not sure what
-                // WebSTAC uses for Saturday and Sunday.
-                if (rawInput.charAt(i) !== "-") { 
+    private static parseCourseDays(rawInput: string): boolean[] {
+        const daysArray = Array(WebstacEvent.NUM_DAYS_PER_WEEK).fill(false);
+        if (rawInput.length === WebstacEvent.NUM_DAYS_PER_WEEK) {
+            for (let i = 0; i < WebstacEvent.NUM_DAYS_PER_WEEK; i++) {
+                // I'm not going to check if the letter is the right one for the position
+                if (rawInput.charAt(i) !== "-") {
                     daysArray[i] = true;
                 }
             }
@@ -82,5 +80,3 @@ class CourseParser {
         return daysArray;
     }
 }
-
-export default CourseParser;

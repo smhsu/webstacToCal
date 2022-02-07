@@ -1,0 +1,11 @@
+{
+  "extends": ["react-app"],
+  "rules": {
+    "indent": ["error", 4, { "SwitchCase": 1 }],
+    "quotes": ["warn", "double"],
+    "semi": ["warn", "always"],
+    "max-len": ["warn", 120],
+    "eol-last": ["warn"],
+    "object-curly-spacing": ["warn", "always"]
+  }
+}

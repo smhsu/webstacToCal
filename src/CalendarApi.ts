@@ -1,145 +1,195 @@
-import EventInputModel from "./EventInputModel";
-
 const API_SCOPE = "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events";
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 // https://developers.google.com/identity/protocols/googlescopes#calendarv3
 // https://developers.google.com/api-client-library/javascript/reference/referencedocs
 // https://developers.google.com/google-apps/calendar/
 
-// Alias some names so we don't have to type so much ;)
-interface RequestFulfilled<T> extends gapi.client.HttpRequestFulfilled<T> {}
-interface CalendarList extends gapi.client.calendar.CalendarList {}
-interface CalendarListEntry extends gapi.client.calendar.CalendarListEntry {}
+
 
 /**
- * A singleton wrapper around Google's calendar API.  This class is singleton because Google's API is in global scope,
- * and is wrapped because Google's promises are not exactly ES6-confomant.
- * 
+ * Wrapper functions around Google's calendar API.  Functions are in a namespaced global scope because Google's API is
+ * in global scope.
+ *
+ * Note: when any of the asynchronous functions throw, they are guaranteed to throw an instance of Error.
+ *
  * @author Silas Hsu
  */
-export class CalendarApi {
-    private static instancePromise: Promise<CalendarApi> | null = null;
-
-    private constructor() {}
+export namespace CalendarApi {
+    let initPromise: Promise<void> | null = null;
 
     /**
-     * Returns a promise for the global instance of CalendarApi.  This function will also initialize the calendar API
-     * the first time it is called.
-     * 
-     * @return {Promise<CalendarApi>} a promise for the instance
+     * Initializes Google's API.  Required before using any other function.
+     *
+     * @returns a promise that resolves when initialization is complete
      */
-    static getInstance(): Promise<CalendarApi> {
-        if (CalendarApi.instancePromise === null) {
-            // Init in this function because it is async, and constructors cannot be async.
-            if (process.env.REACT_APP_API_KEY === undefined || process.env.REACT_APP_OAUTH_CLIENT_ID === undefined) {
-                throw new Error("Required environment variables not set during build time.  Refer to README.md for " +
-                  "more details.");
-            }
-            if (!gapi.client) { // Should be loaded in a <script> in the HTML
-                throw new Error("Google client library is required in global scope.  Be sure it has loaded and " +
-                    "executed completely.");
-            }
-
-            CalendarApi.instancePromise = new Promise<CalendarApi>((resolve, reject) => {
-                gapi.client.init({
-                    apiKey: process.env.REACT_APP_API_KEY,
-                    clientId: process.env.REACT_APP_OAUTH_CLIENT_ID,
-                    scope: API_SCOPE,
-                    // discoveryDocs will augment gapi with additional calendar-related methods.
-                    discoveryDocs: DISCOVERY_DOCS,
-                }).then(
-                    () => resolve(new CalendarApi()),
-                    error => reject(ApiHttpError.tryToConvert(error) || error)
-                );
-            });
+    export function init(): Promise<void> {
+        if (initPromise) {
+            return initPromise;
         }
-        return CalendarApi.instancePromise;
+
+        if (process.env.REACT_APP_API_KEY === undefined || process.env.REACT_APP_OAUTH_CLIENT_ID === undefined) {
+            throw new Error("Required environment variables not set during build time.  Refer to README.md for " +
+                "more details.");
+        }
+        if (!gapi.client) { // Should be loaded in a <script> in the HTML
+            throw new Error("Google client library is required in global scope.  Be sure it has loaded and " +
+                "executed completely.");
+        }
+
+        initPromise = gapi.client.init({
+            apiKey: process.env.REACT_APP_API_KEY,
+            clientId: process.env.REACT_APP_OAUTH_CLIENT_ID,
+            scope: API_SCOPE,
+            // discoveryDocs will augment gapi with additional calendar-related methods.
+            discoveryDocs: DISCOVERY_DOCS,
+        }).catch(convertToErrorObjAndThrow);
+
+        return initPromise;
     }
 
     /**
-     * @return {boolean} whether the current user is signed in
+     * Requests permission from the user to access their Google calendar.  Returns a promise that resolves when the user
+     * grants permission, and rejects if the user denies permission or some other error happens.
+     *
+     * @returns a Promise that resolves when the user is signed in
      */
-    getIsSignedIn(): boolean {
+    export function signIn(): Promise<void> {
+        return gapi.auth2.getAuthInstance()
+            .signIn()
+            .then(_user => undefined)
+            .catch(convertToErrorObjAndThrow);
+    }
+
+    /**
+     * @returns whether a user is signed in
+     */
+    export function getIsSignedIn(): boolean {
         return gapi.auth2.getAuthInstance()
             .currentUser.get()
             .isSignedIn();
     }
 
     /**
-     * Requests permission from the user to access their Google calendar.  Returns a promise that resolves when the user
-     * grants permission, and rejects if the user denies permission or some other error happens.
-     * 
-     * @return {Promise<void>} a Promise that resolves when the user is signed in
-     */
-    signIn(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            gapi.auth2.getAuthInstance().signIn().then(
-                _user => resolve(),
-                (error: any) => reject(ApiHttpError.tryToConvert(error) || error) // tslint:disable-line:no-any
-            );
-        });
-    }
-
-    /**
      * Ends the user's Google Calendar session, allowing another user to sign in.
-     * 
-     * @return {Promise<void>} a Promise that resolves when the user is signed out
+     *
+     * @returns a Promise that resolves when the user is signed out
      */
-    signOut(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            gapi.auth2.getAuthInstance().signOut().then(
-                resolve,
-                (error: any) => reject(ApiHttpError.tryToConvert(error) || error) // tslint:disable-line:no-any
-            );
-        });
+    export function signOut(): Promise<void> {
+        // The type definitions say `signOut` returns any but it's actually does an HTTP request and returns a Promise.
+        return gapi.auth2.getAuthInstance()
+            .signOut()
+            .catch(convertToErrorObjAndThrow);
     }
 
     /**
-     * @return {Promise<CalendarListEntry[]>} a Promise for the user's **editable** calendars
+     * @returns a Promise for a list of the user's *editable* calendars
      */
-    getCalendarList(): Promise<CalendarListEntry[]> {
-        return new Promise<RequestFulfilled<CalendarList>>((resolve, reject) => {
-            gapi.client.calendar.calendarList.list({minAccessRole: "writer"}).then(
-                resolve,
-                error => reject(ApiHttpError.tryToConvert(error) || error)
-            );
-        }).then(response => response.result.items);
+    export function fetchWritableCalendars(): Promise<gapi.client.calendar.CalendarListEntry[]> {
+        return gapi.client.calendar.calendarList
+            .list({ minAccessRole: "writer" })
+            .then(response => response.result.items)
+            .catch(convertToErrorObjAndThrow);
     }
 
     /**
      * Posts an event to the specified calendar.  Returns a Promise that resolves with a URL to the created event.
-     * 
-     * @param {string} calendarId - the calendar to which to add the event
-     * @param {EventInputModel} model - object that can generate the event request object
-     * @return {Promise<string>} a Promise for the URL to the created event
+     *
+     * @param calendarId - the calendar to which to add the event
+     * @param event - the event data
+     * @returns a Promise for the URL to the created event
      */
-    createEvent(calendarId: string, model: EventInputModel): Promise<string> {
-        try {
-            let request = gapi.client.calendar.events.insert({
-                calendarId: calendarId,
-                resource: model.generateEventObject()
-            });
+    export function createEvent(calendarId: string, event: gapi.client.calendar.EventInput): Promise<string> {
+        return gapi.client.calendar.events
+            .insert({ calendarId, resource: event })
+            .then(response => response.result.htmlLink)
+            .catch(convertToErrorObjAndThrow);
+    }
 
-            return new Promise<string>((resolve, reject) => {
-                request.then(
-                    success => resolve(success.result.htmlLink),
-                    error => reject(ApiHttpError.tryToConvert(error) || error)
-                );
-            });
-        } catch (error) {
-            return Promise.reject(error);
+    /**
+     * Tries to convert an error to an instance of an ApiHttpError.  Also logs.
+     *
+     * @param error - any error thrown during an API call
+     */
+    function convertToErrorObjAndThrow(error: unknown): never {
+        console.error(error);
+
+        const converted = ApiHttpError.tryToConvert(error);
+        if (converted !== null) {
+            throw converted;
+        } else if (error instanceof Error) {
+            throw error;
         }
+
+        throw new ApiUnknownError(error);
     }
 }
-
-export default CalendarApi;
 
 ////////////////
 // API errors //
 ////////////////
 
 /**
- * Google API throws these objects.  It loosely extends {@link gapi.client.HttpRequestRejected}.
+ * An error thrown by functions in {@link CalendarApi} when a non-Error object is thrown.  Very unusual; most
+ * bugs should throw ReferenceError or some other kind of object extending Error.
+ *
+ * @author Silas Hsu
+ */
+export class ApiUnknownError extends Error {
+    public originalThrown: unknown;
+
+    constructor(error: unknown) {
+        if (typeof error === "string") {
+            super(error);
+        } else {
+            super("Unknown error");
+        }
+        this.originalThrown = error;
+    }
+}
+
+/**
+ * An error thrown by functions in {@link CalendarApi} originating from HTTP requests.  400-level and 500-level
+ * responses should be covered by this error, as well as situations where the server does not respond.
+ *
+ * @author Silas Hsu
+ */
+export class ApiHttpError extends Error {
+    public statusCode: number | null | undefined;
+    constructor(statusCode: number | null | undefined, details?: string) {
+        let message = (statusCode !== null && statusCode !== undefined) ?
+            `HTTP ${statusCode}` : "No response -- check internet connection";
+        if (details) {
+            message += ": " + details;
+        }
+        super(message);
+        // eslint-disable-next-line max-len
+        // See https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+        // for why we have to do this setPrototypeOf()
+        // Object.setPrototypeOf(this, ApiHttpError.prototype);
+        this.name = "ApiHttpError";
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Checks if an object is similar enough to a Google error object, and if so, uses the contained data to make a new
+     * ApiError.  Otherwise, returns null.
+     *
+     * @param obj - object from which to make a ApiHttpError
+     * @returns {ApiHttpError | null} a new ApiError if the object was suitable, and null otherwise
+     */
+    static tryToConvert(obj: unknown): ApiHttpError | null {
+        if (obj instanceof ApiHttpError) {
+            return obj;
+        }
+        if (isGoogleError(obj)) {
+            return new ApiHttpError(obj.status, obj.result.error.message);
+        }
+        return null;
+    }
+}
+
+/**
+ * Google API throws these objects.  It is loosely based off of {@link gapi.client.HttpRequestRejected}.
  */
 interface GoogleError {
     result: {
@@ -150,60 +200,32 @@ interface GoogleError {
         }
     };
     body: string; // HTTP response body
-    headers: {}; // Key-value pairs representing HTTP headers
+    headers: Record<string, string>; // Key-value pairs representing HTTP headers
     status: number | null; // HTTP status
     statusText: string | null;
 }
 
 /**
  * Gets, loosely, whether an object implements the {@link GoogleError} interface
- * 
+ *
  * @param obj - the object to check
- * @return true if the object loosely implements {@link GoogleError}
+ * @returns true if the object loosely implements {@link GoogleError}
  */
-function isGoogleErrorObject(obj: any): obj is GoogleError { // tslint:disable-line:no-any
-    if (typeof obj === "object" && "result" in obj) {
-        let result = obj.result || {};
-        if ("error" in result) {
-            let error = result.error;
-            return (typeof error.code === "number" && typeof error.message === "string");
-        }
+function isGoogleError(obj: unknown): obj is GoogleError {
+    if (hasProperty(obj, "result") && hasProperty(obj.result, "error")) {
+        const error = obj.result.error;
+        return (
+            isObject(error) &&
+            typeof error.code === "number" &&
+            typeof error.message === "string"
+        );
     }
     return false;
 }
 
-/**
- * An error thrown by {@link CalendarApi} when encountering errors.  Aims to provide a friendlier interface than
- * Google's error objects.
- * 
- * @author Silas Hsu
- */
-export class ApiHttpError extends Error {
-    constructor(reason: string, statusCode: number | null | undefined) {
-        let preface = (statusCode != null) ? "HTTP " + statusCode : "No response -- check connection";
-        super(`${preface}: ${reason}`);
-        // tslint:disable-next-line:max-line-length
-        // See https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
-        // for why we have to do this setPrototypeOf()
-        Object.setPrototypeOf(this, ApiHttpError.prototype);
-        this.name = "ApiHttpError";
-    }
-
-    /**
-     * Checks if an object is similar enough to a Google error object, and if so, uses the contained data to make a new
-     * ApiError.  Otherwise, returns null.
-     * 
-     * @param obj - object from which to make a ApiHttpError
-     * @return {ApiHttpError | null} a new ApiError if the object was suitable, and null otherwise
-     */
-    static tryToConvert(obj: any): ApiHttpError | null { // tslint:disable-line:no-any
-        if (obj instanceof ApiHttpError) {
-            return obj;
-        }
-        if (isGoogleErrorObject(obj)) {
-            return new ApiHttpError(obj.result.error.message, obj.status);
-        }
-
-        return null;
-    }
+function isObject(something: unknown): something is Record<PropertyKey, unknown> {
+    return something !== null && typeof something === "object";
+}
+function hasProperty<P extends PropertyKey>(something: unknown, prop: P): something is Record<P, unknown> {
+    return isObject(something) && prop in something;
 }

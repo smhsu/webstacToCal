@@ -1,70 +1,53 @@
-import * as React from "react";
-import AsyncButton from "./AsyncButton";
+import { AsyncButton } from "./AsyncButton";
+import {ApiHttpError, CalendarApi} from "../CalendarApi";
+import {useCallback, useState} from "react";
 
 interface AuthPanelProps {
-    /**
-     * Whether the user is signed in or not.
-     */
     isSignedIn: boolean;
-
-    /**
-     * Called when an API sign in is requested.
-     */
-    onSignInRequested?(): Promise<void>;
-
-    /**
-     * Called when an API sign in is requested.
-     */
-    onSignOutRequested?(): Promise<void>;
-
-    /**
-     * Called when onSignInRequested or onSignOutRequested has resolved.
-     */
-    onAuthChangeComplete?(): void;
+    onAuthStateChange: (isSignedIn: boolean) => void;
 }
 
-/**
- * An AsyncButton with specific type void.  Aliased because we cannot specify it in JSX.
- */
-class AsyncButtonVoid extends AsyncButton<void> {}
+export function AuthPanel(props: AuthPanelProps) {
+    const { isSignedIn, onAuthStateChange } = props;
+    const [error, setError] = useState<Error | null>(null);
+    const dispatchAuthStateChange = useCallback(() => {
+        onAuthStateChange(CalendarApi.getIsSignedIn());
+    }, [onAuthStateChange]);
 
-/**
- * Component presenting buttons for logging in and out of Calendar API.
- * 
- * @param {AuthPanelProps} props
- * @return {JSX.Element} component to render
- * @author Silas Hsu
- */
-function AuthPanel(props: AuthPanelProps): JSX.Element {
-    if (!props.isSignedIn) {
-        return (
-        <div>
+    let errorDisplay = null;
+    if (error !== null) {
+        if (error instanceof ApiHttpError) {
+            errorDisplay = <div>Error: {error.message}</div>;
+        } else {
+            errorDisplay = <div>Unknown error -- possibly bug?  See developer's console for details.</div>;
+        }
+    }
+
+    if (!isSignedIn) {
+        return <div>
             <p>Click the button to grant access to your Google calendar.</p>
-            <AsyncButtonVoid
+            <AsyncButton
                 className="btn btn-primary"
-                onClick={props.onSignInRequested}
-                onPromiseResolved={props.onAuthChangeComplete}
-                errorContent="Permission failed - retry?"
+                promiseFactory={CalendarApi.signIn}
+                onPromiseResolved={dispatchAuthStateChange}
+                onPromiseRejected={setError}
             >
-                Grant permission 
-            </AsyncButtonVoid>
-        </div>
-        );
+                Grant permission
+            </AsyncButton>
+            {errorDisplay}
+        </div>;
     } else {
-        return (
-        <div>
+        return <div>
             <p>You have granted access to your calendar.</p>
-            <AsyncButtonVoid
+            <AsyncButton
                 className="btn btn-light"
-                onClick={props.onSignOutRequested}
-                onPromiseResolved={props.onAuthChangeComplete}
-                errorContent="End session failed - retry?"
+                promiseFactory={CalendarApi.signOut}
+                onPromiseResolved={dispatchAuthStateChange}
+                onPromiseRejected={setError}
             >
                 End session
-            </AsyncButtonVoid>
-        </div>
-        );
+            </AsyncButton>
+            {errorDisplay}
+        </div>;
     }
 }
-
-export default AuthPanel;

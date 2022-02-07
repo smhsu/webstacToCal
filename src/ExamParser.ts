@@ -1,4 +1,4 @@
-import EventInputModel from "./EventInputModel";
+import { WebstacEvent } from "./eventModel/WebstacEvent";
 
 /*
 An exam looks like this; it takes up two lines:
@@ -21,57 +21,52 @@ const captureGroups = {
     DATE: 1,
     START_TIME: 3,
     END_TIME: 4,
-    NAME: 5,
+    COURSE_NAME: 5,
     LOCATION: 6,
 };
 
 /**
  * Parses final exams.
- * 
+ *
  * @author Silas Hsu
  */
-class ExamParser {
+export class ExamParser {
     /**
      * Parses exams from WebSTAC, returning them in an array of EventInputModel.  Optionally takes an array of parsed
      * courses which will be used to get locations for exams that are in the same location as the class. Returns an
      * empty array if no exams could be parsed.
-     * 
-     * @param {string} rawInput - class schedule copy-pasted from WebSTAC
-     * @param {EventInputModel[]} [parsedCourses] - clues for determining exam locations
-     * @return {EventInputModel[]} array of parsed exams
+     *
+     * @param rawInput - class schedule copy-pasted from WebSTAC
+     * @param courses - list of courses to match to exams for determining exam locations
+     * @return array of parsed exams
      */
-    parseExams(rawInput: string, parsedCourses: EventInputModel[] = []): EventInputModel[] {
-        let courseToLocationMap = parsedCourses.reduce((map, course) => {
-            map[course.name] = course.location;
-            return map;
-        }, {} as {[courseName: string]: string});
+    static parseExams(rawInput: string, courses: WebstacEvent[] = []): WebstacEvent[] {
+        const locationForCourseName: Record<string, string> = {};
+        for (const course of courses) {
+            locationForCourseName[course.name] = course.location;
+        }
 
-        let eventModels = [];
+        let events = [];
         let examMatch = EXAM_REGEX.exec(rawInput);
         while (examMatch !== null) {
-            let eventModel = new EventInputModel();
-            eventModel.isCourse = false;
-
-            let courseName = examMatch[captureGroups.NAME];
-            eventModel.name = courseName + " Final";
-
-            let rawLocation = examMatch[captureGroups.LOCATION];
-            if (rawLocation === "Same / Same") {
-                eventModel.location = courseToLocationMap[courseName] || rawLocation;
-            } else {
-                eventModel.location = rawLocation;
+            const courseName = examMatch[captureGroups.COURSE_NAME];
+            let location = examMatch[captureGroups.LOCATION];
+            if (location === "Same / Same") { // Attempt to find the matching course's location
+                location = locationForCourseName[courseName] || location;
             }
-            
-            eventModel.date = examMatch[captureGroups.DATE];
-            eventModel.startTime = examMatch[captureGroups.START_TIME];
-            eventModel.endTime = examMatch[captureGroups.END_TIME];
-            
-            eventModels.push(eventModel);
+
+            events.push(new WebstacEvent({
+                isCourse: false,
+                name: courseName + " Final",
+                location,
+                date: examMatch[captureGroups.DATE],
+                startTime: examMatch[captureGroups.START_TIME],
+                endTime: examMatch[captureGroups.END_TIME],
+                repeatingDays: []
+            }));
             examMatch = EXAM_REGEX.exec(rawInput);
         }
 
-        return eventModels;
+        return events;
     }
 }
-
-export default ExamParser;
