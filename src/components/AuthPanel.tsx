@@ -1,6 +1,6 @@
 import { AsyncButton } from "./AsyncButton";
-import {ApiHttpError, CalendarApi} from "../CalendarApi";
-import {useCallback, useState} from "react";
+import { ApiHttpError, CalendarApi } from "../CalendarApi";
+import { useCallback, useState } from "react";
 
 interface AuthPanelProps {
     isSignedIn: boolean;

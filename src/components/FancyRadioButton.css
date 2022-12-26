@@ -1,0 +1,21 @@
+.FancyRadioButton-unchecked {
+    background-color: var(--bs-gray-200);
+}
+
+.FancyRadioButton-unchecked:hover {
+    background-color: var(--bs-gray-300);
+}
+
+.FancyRadioButton-disabled {
+    background-color: var(--bs-gray-100);
+    cursor: not-allowed;
+}
+
+.FancyRadioButton-checked {
+    background-color: #bfdbfe;
+    border: 1px solid #60a5fa;
+}
+
+.FancyRadioButton-checked:hover {
+    background-color: #a6ceff;
+}
