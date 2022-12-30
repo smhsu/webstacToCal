@@ -1,24 +1,24 @@
-import { ReactNode, useId } from "react";
+import React, { ReactNode, useId } from "react";
 import "./FancyRadioButton.css";
 
 const UNCHECKED_CSS_CLASSES = "FancyRadioButton-unchecked";
 const CHECKED_CSS_CLASSES = "FancyRadioButton-checked";
-const DISABLED_CSS_CLASSES = "FancyRadioButton-disabled text-muted";
+const DISABLED_CSS_CLASSES = "FancyRadioButton-disabled text-body text-opacity-50";
 
-interface FancyRadioButtonProps {
+interface IFancyRadioButtonProps {
     majorText: ReactNode;
     minorText?: ReactNode;
-    minorTextClassName?: string;
     name?: string;
     value?: string;
     checked?: boolean;
     disabled?: boolean;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function FancyRadioButton(props: FancyRadioButtonProps) {
-    const { majorText, minorText, name, value, checked, disabled } = props;
+export function FancyRadioButton(props: IFancyRadioButtonProps) {
+    const { majorText, minorText, name, value, checked, disabled, onChange } = props;
     const id = useId();
-    let containerClasses = "d-flex align-items-start m-1 p-2 gap-2 rounded ";
+    let containerClasses = "d-flex align-items-start p-2 gap-2 rounded ";
     if (disabled) {
         containerClasses += DISABLED_CSS_CLASSES;
     } else if (checked) {
@@ -37,6 +37,7 @@ export function FancyRadioButton(props: FancyRadioButtonProps) {
                 value={value}
                 checked={checked}
                 disabled={disabled}
+                onChange={onChange}
             />
         </div>
         <div>

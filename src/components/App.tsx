@@ -1,13 +1,31 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useCallback, useState } from "react";
 import { Intro } from "./Intro";
 import { NavSidebar } from "./NavSidebar";
 import { AppWorkflowStep, PROPS_FOR_STEP } from "../AppWorkflowStep";
-import { FancyRadioButton } from "./FancyRadioButton";
+import { useGlobalGoogleApis } from "../google/useGlobalGoogleApis";
+import { useAuth } from "../google/useAuthState";
+import { ExportMethodSelector } from "./ExportMethodSelector";
+import { EventExportMethod } from "../EventExportMethod";
+import { CalendarSelector } from "./CalendarSelector";
+import { ISemester } from "../eventModel/ISemester";
+import { SemesterSelector } from "./SemesterSelector";
 
 import "./App.css";
 
+const INPUT_PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\n" +
+    "Then, SELECT ALL the text, including finals schedule, and copy and paste it into this box.";
+
 export function App() {
+    const apiLoadState = useGlobalGoogleApis();
+    const auth = useAuth(apiLoadState.isLoaded);
+    const [exportMethod, setExportMethod] = useState(EventExportMethod.None);
+    const [selectedSemester, setSelectedSemester] = useState<ISemester | null>(null);
+    const [selectedCalendarId, setSelectedCalendarId] = useState("primary");
     const [pastedSchedule, setPastedSchedule] = useState("");
+
+    const handleExportMethodChanged = useCallback((newMethod: EventExportMethod) => {
+        setExportMethod(newMethod);
+    }, []);
 
     return <div className="container">
         <div className="row">
@@ -15,56 +33,46 @@ export function App() {
             <div className="col">
                 <Intro />
 
-                <StepContainer step={AppWorkflowStep.CONFIGURE}>
-
-                    <h3 className="fs-6">Choose an export method:</h3>
+                <StepContainer step={AppWorkflowStep.Config}>
+                    <h3 className="fs-6">• Choose an export method:</h3>
                     <IndentedDiv className="mb-4">
-                        <div className="d-flex flex-column">
-                            <FancyRadioButton
-                                majorText="Direct to Google Calendar"
-                                minorText="This will open a pop-up to grant access to your Google calendar."
-                                checked={true}
-                            />
-                            <FancyRadioButton
-                                majorText=".ical file"
-                                minorText="Not available yet -- coming soon"
-                                disabled={true}
-                            />
-                        </div>
+                        <ExportMethodSelector
+                            method={exportMethod}
+                            apiLoadState={apiLoadState}
+                            auth={auth}
+                            onMethodChanged={handleExportMethodChanged}
+                        />
                     </IndentedDiv>
 
+                    {exportMethod === EventExportMethod.GoogleCalendar &&
+                        <>
+                            <h3 className="fs-6">• Choose a Google Calendar to export to:</h3>
+                            <IndentedDiv className="mb-4">
+                                <CalendarSelector
+                                    value={selectedCalendarId}
+                                    auth={auth}
+                                    onChange={setSelectedCalendarId}
+                                />
+                            </IndentedDiv>
+                        </>
+                    }
 
-                    <h3 className="fs-6">Choose a Google Calendar to export to:</h3>
-                    <IndentedDiv className="mb-4">
-                        <select className="form-select">
-                            <option>Calendar 1</option>
-                            <option>Calendar 2</option>
-                            <option>Calendar 3</option>
-                        </select>
-                        <button className="btn btn-link p-0" style={{ fontSize: "smaller", textDecoration: "none" }}>
-                            Refresh calendar list
-                        </button>
-                    </IndentedDiv>
-
-
-                    <h3 className="fs-6">Choose a semester:</h3>
+                    <h3 className="fs-6">• Choose a semester:</h3>
                     <IndentedDiv className="mb-2">
-                        <div className="d-flex flex-column">
-                            <FancyRadioButton
-                                majorText="SP23"
-                                minorText="Starts in 5 days"
-                            />
-                        </div>
+                        <SemesterSelector value={selectedSemester} onChange={setSelectedSemester} />
                     </IndentedDiv>
-
                 </StepContainer>
 
-                <StepContainer step={AppWorkflowStep.COPYPASTE}>
-                    step3
+                <StepContainer step={AppWorkflowStep.CopyPaste}>
+                    <textarea
+                        placeholder={INPUT_PLACEHOLDER}
+                        value={pastedSchedule}
+                        onChange={e => setPastedSchedule(e.currentTarget.value)}
+                    />
                 </StepContainer>
 
-                <StepContainer step={AppWorkflowStep.CONFIRM}>
-                    step4
+                <StepContainer step={AppWorkflowStep.Confirm}>
+                    Coming soon!
                 </StepContainer>
             </div>
         </div>
@@ -72,9 +80,9 @@ export function App() {
 }
 
 function StepContainer(props: PropsWithChildren<{step: AppWorkflowStep}>) {
-    const { id, title } = PROPS_FOR_STEP[props.step];
+    const { id, heading } = PROPS_FOR_STEP[props.step];
     return <div id={id} className="border-bottom mt-2 pb-2">
-        <h2 className="fs-4">{title}</h2>
+        <h2 className="fs-4">{heading}</h2>
         {props.children}
     </div>;
 }

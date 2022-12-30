@@ -16,6 +16,14 @@ REACT_APP_OAUTH_CLIENT_ID=your_oauth_client_id
 6. `npm start` on the command line.
 7. Finally, if the app complains about your keys or environment variables, double-check them, and restart the server (Control-C and `npm start` again).
 
+
+## Helpful links
+* https://developers.google.com/calendar/api/guides/overview
+* https://developers.google.com/calendar/api/quickstart/js
+* https://developers.google.com/identity/protocols/googlescopes#calendarv3
+* https://github.com/google/google-api-javascript-client
+
+
 ## Deploying your own version
 Of course, you'll need your own webserver for this.
 

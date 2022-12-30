@@ -1,0 +1,10 @@
+.btn-small-link {
+    padding: 0;
+    font-size: smaller;
+    text-decoration: none;
+}
+
+.btn-small-link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}

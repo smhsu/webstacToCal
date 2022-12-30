@@ -1,15 +1,16 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { App } from "./components/App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 
-ReactDOM.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
-    document.getElementById("root")
-);
+const rootDom = document.getElementById("root");
+if (!rootDom) {
+    throw new Error("Could not find an HTML element with id of `root` in which to render the React app.  " +
+        "Be sure this script is running *after* the appearance of that element in the HTML file.");
+}
+const root = createRoot(rootDom);
+root.render(<React.StrictMode><App /></React.StrictMode>);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -1,94 +1,47 @@
-const API_SCOPE = "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events";
+if (process.env.REACT_APP_API_KEY === undefined) {
+    throw new Error("Required environment variable `REACT_APP_API_KEY` not set during build time.");
+}
+const API_KEY = process.env.REACT_APP_API_KEY;
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
-// https://developers.google.com/identity/protocols/googlescopes#calendarv3
-// https://developers.google.com/api-client-library/javascript/reference/referencedocs
-// https://developers.google.com/google-apps/calendar/
-
-
 
 /**
- * Wrapper functions around Google's calendar API.  Functions are in a namespaced global scope because Google's API is
- * in global scope.
- *
- * Note: when any of the asynchronous functions throw, they are guaranteed to throw an instance of Error.
+ * Wrapper functions around Google's calendar API.  This is a Singleton class because Google's API is in global scope.
  *
  * @author Silas Hsu
  */
-export namespace CalendarApi {
-    let initPromise: Promise<void> | null = null;
+export class CalendarApi {
+    static _instance: CalendarApi;
 
     /**
      * Initializes Google's API.  Required before using any other function.
      *
      * @returns a promise that resolves when initialization is complete
      */
-    export function init(): Promise<void> {
-        if (initPromise) {
-            return initPromise;
-        }
-
-        if (process.env.REACT_APP_API_KEY === undefined || process.env.REACT_APP_OAUTH_CLIENT_ID === undefined) {
-            throw new Error("Required environment variables not set during build time.  Refer to README.md for " +
-                "more details.");
-        }
-        if (!gapi.client) { // Should be loaded in a <script> in the HTML
-            throw new Error("Google client library is required in global scope.  Be sure it has loaded and " +
-                "executed completely.");
-        }
-
-        initPromise = gapi.client.init({
-            apiKey: process.env.REACT_APP_API_KEY,
-            clientId: process.env.REACT_APP_OAUTH_CLIENT_ID,
-            scope: API_SCOPE,
-            // discoveryDocs will augment gapi with additional calendar-related methods.
+    static initGapi(): Promise<void> {
+        return gapi.client.init({
+            apiKey: API_KEY,
+            // discoveryDocs will augment gapi.client with additional calendar-related methods.
             discoveryDocs: DISCOVERY_DOCS,
-        }).catch(convertToErrorObjAndThrow);
-
-        return initPromise;
+        });
     }
 
-    /**
-     * Requests permission from the user to access their Google calendar.  Returns a promise that resolves when the user
-     * grants permission, and rejects if the user denies permission or some other error happens.
-     *
-     * @returns a Promise that resolves when the user is signed in
-     */
-    export function signIn(): Promise<void> {
-        return gapi.auth2.getAuthInstance()
-            .signIn()
-            .then(_user => undefined)
-            .catch(convertToErrorObjAndThrow);
+    static getInstance(): CalendarApi {
+        if (!CalendarApi._instance) {
+            CalendarApi._instance = new CalendarApi();
+        }
+        return CalendarApi._instance;
     }
 
-    /**
-     * @returns whether a user is signed in
-     */
-    export function getIsSignedIn(): boolean {
-        return gapi.auth2.getAuthInstance()
-            .currentUser.get()
-            .isSignedIn();
-    }
-
-    /**
-     * Ends the user's Google Calendar session, allowing another user to sign in.
-     *
-     * @returns a Promise that resolves when the user is signed out
-     */
-    export function signOut(): Promise<void> {
-        // The type definitions say `signOut` returns any but it's actually does an HTTP request and returns a Promise.
-        return gapi.auth2.getAuthInstance()
-            .signOut()
-            .catch(convertToErrorObjAndThrow);
-    }
+    private constructor() { }
 
     /**
      * @returns a Promise for a list of the user's *editable* calendars
      */
-    export function fetchWritableCalendars(): Promise<gapi.client.calendar.CalendarListEntry[]> {
+    listWritableCalendars(): Promise<gapi.client.calendar.CalendarListEntry[]> {
         return gapi.client.calendar.calendarList
             .list({ minAccessRole: "writer" })
             .then(response => response.result.items)
-            .catch(convertToErrorObjAndThrow);
+            .catch(CalendarApi.convertToErrorObjAndThrow);
     }
 
     /**
@@ -98,11 +51,11 @@ export namespace CalendarApi {
      * @param event - the event data
      * @returns a Promise for the URL to the created event
      */
-    export function createEvent(calendarId: string, event: gapi.client.calendar.EventInput): Promise<string> {
+    createEvent(calendarId: string, event: gapi.client.calendar.EventInput): Promise<string> {
         return gapi.client.calendar.events
             .insert({ calendarId, resource: event })
             .then(response => response.result.htmlLink)
-            .catch(convertToErrorObjAndThrow);
+            .catch(CalendarApi.convertToErrorObjAndThrow);
     }
 
     /**
@@ -110,7 +63,7 @@ export namespace CalendarApi {
      *
      * @param error - any error thrown during an API call
      */
-    function convertToErrorObjAndThrow(error: unknown): never {
+    static convertToErrorObjAndThrow(error: unknown): never {
         console.error(error);
 
         const converted = ApiHttpError.tryToConvert(error);
