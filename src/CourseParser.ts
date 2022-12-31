@@ -1,7 +1,7 @@
 import { WebstacEvent } from "./eventModel/WebstacEvent";
 
 /*
-A course looks like this:
+A course looks like this.  Major fields are separated by tabs:
 E81 CSE 515T 01	Bayesian Methods in Machine Learning	3.0	C	-T-R--- 2:30p-4:00p	Whitaker / 218	Garnett
 */
 const COURSE_REGEX = /[A-Z]\d\d.+/g; // Match something that looks like department letter and course number

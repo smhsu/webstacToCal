@@ -4,6 +4,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { AuthError, AuthManagement } from "../google/useAuthState";
 import { GoogleAuthScope } from "../google/GoogleAuthScope";
 import { CalendarApi } from "../google/CalendarApi";
+import { describeCount } from "../describeCount";
 
 const AUTH_SCOPES = [GoogleAuthScope.ReadWriteEvents, GoogleAuthScope.ListCalendars];
 const NON_PRIMARY_CALENDAR_VALUE = "other";
@@ -76,8 +77,9 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
                     "There was a problem getting your calendars."
                     :
                     <>
-                        <FontAwesomeIcon icon={faCheck}/> Found {fetchedCalendars.length} calendar(s) for which you
-                        have edit access.
+                        <FontAwesomeIcon icon={faCheck}/> Found
+                        {describeCount(fetchedCalendars.length, "calendar")} for
+                        which you have edit access.
                     </>
                 }
             </span>

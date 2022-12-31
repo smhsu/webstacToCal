@@ -1,27 +1,27 @@
-import React, { PropsWithChildren, useCallback, useState } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import { Intro } from "./Intro";
 import { NavSidebar } from "./NavSidebar";
+import { SchedulePasteArea } from "./SchedulePasteArea";
+import { ExportMethodSelector } from "./ExportMethodSelector";
+import { CalendarSelector } from "./CalendarSelector";
+import { SemesterSelector } from "./SemesterSelector";
+
+import { EventExportMethod } from "../EventExportMethod";
 import { AppWorkflowStep, PROPS_FOR_STEP } from "../AppWorkflowStep";
 import { useGlobalGoogleApis } from "../google/useGlobalGoogleApis";
 import { useAuth } from "../google/useAuthState";
-import { ExportMethodSelector } from "./ExportMethodSelector";
-import { EventExportMethod } from "../EventExportMethod";
-import { CalendarSelector } from "./CalendarSelector";
 import { ISemester } from "../eventModel/ISemester";
-import { SemesterSelector } from "./SemesterSelector";
+import { WebstacEvent } from "../eventModel/WebstacEvent";
 
 import "./App.css";
-
-const INPUT_PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\n" +
-    "Then, SELECT ALL the text, including finals schedule, and copy and paste it into this box.";
 
 export function App() {
     const apiLoadState = useGlobalGoogleApis();
     const auth = useAuth(apiLoadState.isLoaded);
     const [exportMethod, setExportMethod] = useState(EventExportMethod.None);
-    const [selectedSemester, setSelectedSemester] = useState<ISemester | null>(null);
     const [selectedCalendarId, setSelectedCalendarId] = useState("primary");
-    const [pastedSchedule, setPastedSchedule] = useState("");
+    const [selectedSemester, setSelectedSemester] = useState<ISemester | null>(null);
+    const [webstacEvents, setWebstacEvents] = useState<WebstacEvent[]>([]);
 
     const handleExportMethodChanged = useCallback((newMethod: EventExportMethod) => {
         setExportMethod(newMethod);
@@ -29,7 +29,7 @@ export function App() {
 
     return <div className="container">
         <div className="row">
-            <div className="col-2"><NavSidebar /></div>
+            <div className="col-md-2"><NavSidebar /></div>
             <div className="col">
                 <Intro />
 
@@ -64,11 +64,7 @@ export function App() {
                 </StepContainer>
 
                 <StepContainer step={AppWorkflowStep.CopyPaste}>
-                    <textarea
-                        placeholder={INPUT_PLACEHOLDER}
-                        value={pastedSchedule}
-                        onChange={e => setPastedSchedule(e.currentTarget.value)}
-                    />
+                    <SchedulePasteArea onEventsParsed={setWebstacEvents} />
                 </StepContainer>
 
                 <StepContainer step={AppWorkflowStep.Confirm}>
@@ -81,7 +77,7 @@ export function App() {
 
 function StepContainer(props: PropsWithChildren<{step: AppWorkflowStep}>) {
     const { id, heading } = PROPS_FOR_STEP[props.step];
-    return <div id={id} className="border-bottom mt-2 pb-2">
+    return <div id={id} className="border-bottom mt-3 pb-3">
         <h2 className="fs-4">{heading}</h2>
         {props.children}
     </div>;

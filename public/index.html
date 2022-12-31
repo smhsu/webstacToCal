@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Oxygen&display=swap">
     <link rel="stylesheet" href="bootstrap@5.2.3.min.css">
     <link rel="stylesheet" href="global.css">
+    <script async defer src="bootstrap.min.js"></script>
   </head>
   <body>
     <div id="top" class="header bg-wustl">
@@ -42,6 +43,46 @@
     </div>
 
     <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <!--Help modal. Button to show it will be rendered with React.-->
+    <div id="help-modal" class="modal modal-lg fade" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="helpModalLabel">② COPYPASTE</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div>
+              <p>
+                2a. Once you've logged into <a href="https://acadinfo.wustl.edu/" target="_blank">WebSTAC</a>, select
+                Courses &amp; Registration >> Class Schedule.
+              </p>
+              <img src="%PUBLIC_URL%/img/help1.JPG" class="img-fluid" alt="Select Courses and Registration >> Class Schedule"/>
+            </div>
+            <div style="margin-top: 30px">
+              <p>
+                2b. <b>Easy way</b>: select all (<span id="modifierKeyDescription" class="keyboard-key">
+                CTRL</span>+<span class="keyboard-key">A</span>), and copy.  Paste it all into the text box.
+              </p>
+              <p><b>Important:</b> make sure you copied your schedule in LIST view, not grid view.</p>
+              <img src="%PUBLIC_URL%/img/help2.gif" class="img-fluid" alt="Copy the entire table"/>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      if (navigator.appVersion.indexOf("Mac") !== -1) { // macOS
+         document.getElementById("modifierKeyDescription").innerText = "command ⌘";
+      }
+    </script>
+
     <div id="root"></div>
     <!--
       This HTML file is a template.
