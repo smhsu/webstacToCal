@@ -77,7 +77,7 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
                     "There was a problem getting your calendars."
                     :
                     <>
-                        <FontAwesomeIcon icon={faCheck}/> Found
+                        <FontAwesomeIcon icon={faCheck} aria-hidden="true" /> Found
                         {describeCount(fetchedCalendars.length, "calendar")} for
                         which you have edit access.
                     </>

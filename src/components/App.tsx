@@ -77,7 +77,7 @@ export function App() {
 
 function StepContainer(props: PropsWithChildren<{step: AppWorkflowStep}>) {
     const { id, heading } = PROPS_FOR_STEP[props.step];
-    return <div id={id} className="border-bottom mt-3 pb-3">
+    return <div id={id} className="border-bottom pt-3 pb-3">
         <h2 className="fs-4">{heading}</h2>
         {props.children}
     </div>;

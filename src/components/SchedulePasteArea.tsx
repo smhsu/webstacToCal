@@ -22,7 +22,7 @@ interface ISchedulePasteAreaState {
     isParsingFailure: boolean;
 }
 
-export class SchedulePasteArea extends React.Component<ISchedulePasteAreaProps, ISchedulePasteAreaState> {
+export class SchedulePasteArea extends React.PureComponent<ISchedulePasteAreaProps, ISchedulePasteAreaState> {
     constructor(props: ISchedulePasteAreaProps) {
         super(props);
         this.state = {
@@ -58,10 +58,19 @@ export class SchedulePasteArea extends React.Component<ISchedulePasteAreaProps, 
     render() {
         return <div className="px-2">
             <div className="mt-3 mb-2">
-                <b>Instructions: </b> first <a href={CLASS_SCHEDULE_URL} target="_blank" rel="noreferrer">
-                go to your WebSTAC class schedule. </a> Then, while in <i>List View</i>, highlight ALL the text on the
-                page, including finals.  Copy-paste into the box below.  Processing of your schedule will happen
-                automatically.
+                <b>Instructions: </b>
+                <ol>
+                    <li>
+                        Go to your <a href={CLASS_SCHEDULE_URL} target="_blank" rel="noreferrer">class schedule on
+                        WebSTAC.</a>
+                    </li>
+                    <li>
+                        While in <i>List View</i>, highlight ALL the text on the page, including finals.
+                        (Shortcut: <SelectAllShortcut />)
+                    </li>
+                    <li>Copy-paste into the box below.</li>
+                    <li>Processing of your schedule will happen automatically.</li>
+                </ol>
             </div>
             <div className="mb-4">
                 <button className="btn btn-secondary" data-bs-toggle="modal" data-bs-target={"#" + MODAL_ID}>
@@ -117,3 +126,11 @@ function ParseStatus(props: ISchedulePasteAreaState) {
         {secondaryText && <div>{secondaryText}</div>}
     </div>;
 }
+
+const SelectAllShortcut = React.memo(function SelectAllShortcut() {
+    const isMac = navigator.userAgent.indexOf("Mac") !== -1;
+    const modifierKey = isMac ? "command ⌘" : "Ctrl";
+    return <>
+        <span className="keyboard-key">{modifierKey}</span>+<span className="keyboard-key">A</span>
+    </>;
+});

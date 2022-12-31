@@ -5,9 +5,9 @@ export function Intro() {
         <p className="fs-4 fw-bold mb-1 font-heading">Export classes and finals from WebSTAC to Google Calendar.</p>
         <ul>
             <li>For students of Washington University in St. Louis.</li>
-            <li>Free and no registration required.  Just copy and paste from WebSTAC.</li>
+            <li>No registration needed.  Just copy and paste from WebSTAC.</li>
             <li>
-                Schedule sent only to Google Calendar.  This app does not store or retain anybody's
+                Schedule sent only to Google Calendar.  This website does not store or retain anybody's
                 schedules <a href="privacy.html">(privacy policy)</a>.
             </li>
         </ul>
