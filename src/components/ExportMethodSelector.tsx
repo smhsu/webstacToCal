@@ -1,7 +1,7 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { EventExportMethod } from "../EventExportMethod";
+import { EventExportMethod } from "../eventExport/EventExportMethod";
 import { FancyRadioButton } from "./FancyRadioButton";
 import { AuthError, AuthManagement } from "../google/useAuthState";
 import { GoogleAuthScope } from "../google/GoogleAuthScope";
@@ -28,11 +28,13 @@ interface IExportMethodSelectorProps {
     method: EventExportMethod;
     apiLoadState: { isLoaded: boolean, isError: boolean };
     auth: AuthManagement;
+
+    ariaLabelledby?: string;
     onMethodChanged?: (newMethod: EventExportMethod) => void;
 }
 
 export function ExportMethodSelector(props: IExportMethodSelectorProps) {
-    const { method, apiLoadState, auth, onMethodChanged } = props;
+    const { method, apiLoadState, auth, ariaLabelledby, onMethodChanged } = props;
     const [authError, setAuthError] = useState(AuthError.None);
     const [logoutState, setLogoutState] = useState(LogoutState.None);
 
@@ -69,7 +71,7 @@ export function ExportMethodSelector(props: IExportMethodSelectorProps) {
     let googleChoiceMinorText;
     if (apiLoadState.isError) {
         // text-opacity-50 because the option will be disabled
-        googleChoiceMinorText = <span className="text-danger text-opacity-50">Failed to load Google libraries.</span>;
+        googleChoiceMinorText = <span className="text-danger text-opacity-50">Unavailable</span>;
     } else if (!apiLoadState.isLoaded) {
         googleChoiceMinorText = "Loading Google libraries...";
     }  else if (auth.isPending) {
@@ -83,7 +85,7 @@ export function ExportMethodSelector(props: IExportMethodSelectorProps) {
     let googleStatusDisplay = null;
     if (apiLoadState.isError) {
         googleStatusDisplay = <div className="text-danger mb-3" role="status">
-            Failed to load Google libraries.  Reload the page to try again.<br />
+            Google sign-in is unavailable.  Try reloading the page.<br />
             <InstructionsToWaitOrContact />
         </div>;
     } else if (authError === AuthError.PopupBlocked) {
@@ -115,7 +117,7 @@ export function ExportMethodSelector(props: IExportMethodSelectorProps) {
         </GoogleStatus>;
     }
 
-    return <div className="d-flex flex-column gap-1">
+    return <div className="d-flex flex-column gap-1" role="radiogroup" aria-labelledby={ariaLabelledby} >
         <FancyRadioButton
             majorText="Direct to Google Calendar"
             minorText={googleChoiceMinorText}
@@ -127,7 +129,7 @@ export function ExportMethodSelector(props: IExportMethodSelectorProps) {
         {googleStatusDisplay}
         <FancyRadioButton
             majorText=".ical file"
-            minorText="Not available yet -- coming soon"
+            minorText="Not available yet -- coming in the next few months"
             value={EventExportMethod.IcalFile}
             checked={method === EventExportMethod.IcalFile}
             //onChange={() => onMethodChanged?.(EventExportMethod.IcalFile)}

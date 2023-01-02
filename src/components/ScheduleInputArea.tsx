@@ -1,8 +1,8 @@
 import React from "react";
 import { debounce } from "lodash";
-import { WebstacEvent } from "../eventModel/WebstacEvent";
-import { CourseParser } from "../CourseParser";
-import { ExamParser } from "../ExamParser";
+import { IWebstacEvent } from "../eventModel/IWebstacEvent";
+import { CourseParser } from "../eventModel/CourseParser";
+import { ExamParser } from "../eventModel/ExamParser";
 import { describeCount } from "../describeCount";
 
 const CLASS_SCHEDULE_URL = "https://acadinfo.wustl.edu/apps/ClassSchedule/";
@@ -11,19 +11,19 @@ const PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\
 const MODAL_ID = "help-modal"; // The modal itself is specified in index.html.
 const DEBOUNCE_DELAY_MS = 300;
 
-interface ISchedulePasteAreaProps {
-    onEventsParsed?: (events: WebstacEvent[]) => void;
+interface IScheduleInputAreaProps {
+    onEventsParsed?: (events: IWebstacEvent[]) => void;
 }
 
-interface ISchedulePasteAreaState {
+interface IScheduleInputAreaState {
     textAreaValue: string;
     numCoursesParsed: number;
     numFinalsParsed: number;
     isParsingFailure: boolean;
 }
 
-export class SchedulePasteArea extends React.PureComponent<ISchedulePasteAreaProps, ISchedulePasteAreaState> {
-    constructor(props: ISchedulePasteAreaProps) {
+export class ScheduleInputArea extends React.PureComponent<IScheduleInputAreaProps, IScheduleInputAreaState> {
+    constructor(props: IScheduleInputAreaProps) {
         super(props);
         this.state = {
             textAreaValue: "",
@@ -43,12 +43,12 @@ export class SchedulePasteArea extends React.PureComponent<ISchedulePasteAreaPro
 
     parseEvents(input: string): void {
         const courses = CourseParser.parseCourses(input);
-        const finals = ExamParser.parseExams(input);
+        const finals = ExamParser.parseExams(input, courses);
         this.setState({
             numCoursesParsed: courses.length,
             numFinalsParsed: finals.length
         });
-        const allEvents = courses.concat(finals);
+        const allEvents = (courses as IWebstacEvent[]).concat(finals);
         if (allEvents.length <= 0 && input.trim().length > 0) {
             this.setState({ isParsingFailure: true });
         }
@@ -57,29 +57,9 @@ export class SchedulePasteArea extends React.PureComponent<ISchedulePasteAreaPro
 
     render() {
         return <div className="px-2">
-            <div className="mt-3 mb-2">
-                <b>Instructions: </b>
-                <ol>
-                    <li>
-                        Go to your <a href={CLASS_SCHEDULE_URL} target="_blank" rel="noreferrer">class schedule on
-                        WebSTAC.</a>
-                    </li>
-                    <li>
-                        While in <i>List View</i>, highlight ALL the text on the page, including finals.
-                        (Shortcut: <SelectAllShortcut />)
-                    </li>
-                    <li>Copy-paste into the box below.</li>
-                    <li>Processing of your schedule will happen automatically.</li>
-                </ol>
-            </div>
-            <div className="mb-4">
-                <button className="btn btn-secondary" data-bs-toggle="modal" data-bs-target={"#" + MODAL_ID}>
-                    More help...
-                </button>
-            </div>
-
+            <Instructions />
             <div className="row">
-                <div className="col-sm-8">
+                <div className="col-md-8">
                     <textarea
                         className="w-100"
                         style={{ minHeight: "170px" }}
@@ -88,7 +68,7 @@ export class SchedulePasteArea extends React.PureComponent<ISchedulePasteAreaPro
                         onChange={this.handleTextAreaChanged}
                     />
                 </div>
-                <div className="col-sm-4">
+                <div className="col-md-4">
                     <ParseStatus {...this.state} />
                 </div>
             </div>
@@ -96,7 +76,32 @@ export class SchedulePasteArea extends React.PureComponent<ISchedulePasteAreaPro
     }
 }
 
-function ParseStatus(props: ISchedulePasteAreaState) {
+function Instructions() {
+    return <div>
+        <div className="mt-2 mb-2">
+            <b>Instructions: </b>
+            <ol>
+                <li>
+                    Go to your <a href={CLASS_SCHEDULE_URL} target="_blank" rel="noreferrer">class schedule on
+                    WebSTAC.</a>
+                </li>
+                <li>
+                    While in <i>List View</i>, highlight ALL the text on the page, including finals.
+                    (Shortcut: <SelectAllShortcut />)
+                </li>
+                <li>Copy-paste into the box below.</li>
+                <li>Processing of your schedule will happen automatically.</li>
+            </ol>
+        </div>
+        <div className="mb-4">
+            <button className="btn btn-secondary" data-bs-toggle="modal" data-bs-target={"#" + MODAL_ID}>
+                More help...
+            </button>
+        </div>
+    </div>;
+}
+
+function ParseStatus(props: IScheduleInputAreaState) {
     const { numCoursesParsed, numFinalsParsed, isParsingFailure } = props;
     let additionalClassNames;
     let secondaryText = "";

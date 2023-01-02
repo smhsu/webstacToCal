@@ -1,0 +1,14 @@
+.RepeatingDaysSelector-box {
+    width: 1.25em;
+    margin-right: 1px;
+}
+
+.RepeatingDaysSelector-box.btn-outline-primary:focus {
+    background-color: white;
+    color: var(--bs-btn-color);
+}
+
+.RepeatingDaysSelector-box.btn-outline-primary:hover {
+    background-color: #cadefc;
+    color: var(--bs-btn-color);
+}

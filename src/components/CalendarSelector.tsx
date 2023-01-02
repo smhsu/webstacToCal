@@ -65,20 +65,20 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
 
     let statusDisplay;
     if (authError === AuthError.PopupBlocked || authError === AuthError.Unknown) {
-        statusDisplay = <div className="text-danger py-1" style={{ fontSize: "smaller" }}>
+        statusDisplay = <div className="text-danger py-1" style={{ fontSize: "smaller" }} role="status">
             An error occurred while trying to gain permission to fetch calendars.
         </div>;
     } else if (isFetching) {
         statusDisplay = <div className="py-1" style={{ fontSize: "smaller" }}>Fetching calendars...</div>;
     } else if (isAuthed) {
-        statusDisplay = <div className="d-flex align-items-center gap-1 py-1">
+        statusDisplay = <div className="d-flex align-items-center gap-1 py-1" role="status">
             <span className={isFetchError ? "text-danger" : "text-success"} style={{ fontSize: "smaller" }}>
                 {isFetchError ?
                     "There was a problem getting your calendars."
                     :
                     <>
                         <FontAwesomeIcon icon={faCheck} aria-hidden="true" /> Found
-                        {describeCount(fetchedCalendars.length, "calendar")} for
+                        {" " + describeCount(fetchedCalendars.length, "calendar")} for
                         which you have edit access.
                     </>
                 }

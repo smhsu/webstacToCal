@@ -1,4 +1,4 @@
-import { WebstacEvent } from "./eventModel/WebstacEvent";
+import { IWebstacCourseData, IWebstacExamData, WebstacEventType } from "./IWebstacEvent";
 
 /*
 An exam looks like this; it takes up two lines:
@@ -17,12 +17,12 @@ const EXAM_REGEX = new RegExp(
     "g"
 );
 
-const captureGroups = {
-    DATE: 1,
-    START_TIME: 3,
-    END_TIME: 4,
-    COURSE_NAME: 5,
-    LOCATION: 6,
+const CaptureGroups = {
+    Date: 1,
+    StartTime: 3,
+    EndTime: 4,
+    CourseName: 5,
+    Location: 6,
 };
 
 /**
@@ -32,38 +32,38 @@ const captureGroups = {
  */
 export class ExamParser {
     /**
-     * Parses exams from WebSTAC, returning them in an array of EventInputModel.  Optionally takes an array of parsed
-     * courses which will be used to get locations for exams that are in the same location as the class. Returns an
-     * empty array if no exams could be parsed.
+     * Parses exams from WebSTAC.  Optionally takes an array of parsed courses which will be used to get locations for
+     * exams that are in the same location as the class. Returns an empty array if no exams could be parsed.
      *
      * @param rawInput - class schedule copy-pasted from WebSTAC
      * @param courses - list of courses to match to exams for determining exam locations
      * @return array of parsed exams
      */
-    static parseExams(rawInput: string, courses: WebstacEvent[] = []): WebstacEvent[] {
+    static parseExams(rawInput: string, courses: IWebstacCourseData[]): IWebstacExamData[] {
         const locationForCourseName: Record<string, string> = {};
         for (const course of courses) {
             locationForCourseName[course.name] = course.location;
         }
 
-        let events = [];
+        let events: IWebstacExamData[] = [];
         let examMatch = EXAM_REGEX.exec(rawInput);
         while (examMatch !== null) {
-            const courseName = examMatch[captureGroups.COURSE_NAME];
-            let location = examMatch[captureGroups.LOCATION];
+            const courseName = examMatch[CaptureGroups.CourseName];
+            let location = examMatch[CaptureGroups.Location];
             if (location === "Same / Same") { // Attempt to find the matching course's location
                 location = locationForCourseName[courseName] || location;
             }
 
-            events.push(new WebstacEvent({
-                isCourse: false,
+            events.push({
+                type: WebstacEventType.Exam,
                 name: courseName + " Final",
                 location,
-                date: examMatch[captureGroups.DATE],
-                startTime: examMatch[captureGroups.START_TIME],
-                endTime: examMatch[captureGroups.END_TIME],
-                repeatingDays: []
-            }));
+                date: examMatch[CaptureGroups.Date],
+                startTime: examMatch[CaptureGroups.StartTime],
+                endTime: examMatch[CaptureGroups.EndTime],
+                isSelected: false,
+                isExported: false
+            });
             examMatch = EXAM_REGEX.exec(rawInput);
         }
 

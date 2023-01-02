@@ -1,3 +1,10 @@
+/**
+ * Utility method.
+ *
+ * @param count
+ * @param singular
+ * @param plural
+ */
 export function describeCount(count: number, singular: string, plural?: string) {
     if (count === 1) {
         return "1 " + singular;
