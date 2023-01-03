@@ -3,6 +3,10 @@
     margin-right: 1px;
 }
 
+.RepeatingDaysSelector-box-row {
+    width: 10em; /* The size of one box times 7 plus some wiggle room */
+}
+
 .RepeatingDaysSelector-box.btn-outline-primary:focus {
     background-color: white;
     color: var(--bs-btn-color);

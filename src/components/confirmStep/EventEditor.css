@@ -1,3 +1,30 @@
 .EventEditor label {
+    color: #41464b;
     font-size: smaller;
+}
+
+.EventEditor legend {
+    color: #41464b;
+    line-height: 24px;
+    font-size: smaller;
+    padding: 0;
+    margin: 0;
+}
+
+.EventEditor .cursor-not-allowed {
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
+.EventEditor .text-warning-darker {
+    color: #997405;
+}
+
+.EventEditor .border-warning-darker {
+    border: 2px solid #cc9b06;
+    margin-top: -2px;
+}
+
+.EventEditor .form-control {
+    padding: 0.25em;
 }

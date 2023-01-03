@@ -12,7 +12,7 @@ interface IWebstacBasicData {
     startTime: string;
     endTime: string;
     isSelected: boolean;
-    isExported: boolean;
+    uploadedUrl: string;
 }
 
 export interface IWebstacCourseData extends IWebstacBasicData {

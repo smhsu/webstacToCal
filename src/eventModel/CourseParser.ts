@@ -60,7 +60,7 @@ export class CourseParser {
                 endTime: daysAndTimeMatch[DaysAndTimeCaptureGroups.EndTime] || "",
                 repeatingDays: CourseParser.parseCourseDays(daysAndTimeMatch[DaysAndTimeCaptureGroups.Days] || ""),
                 isSelected: false,
-                isExported: false
+                uploadedUrl: ""
             });
         }
         return events;

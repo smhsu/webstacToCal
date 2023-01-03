@@ -1,4 +1,5 @@
 export enum ValidationErrorType {
+    BadName,
     BadDate,
     BadStartTime,
     BadEndTime,

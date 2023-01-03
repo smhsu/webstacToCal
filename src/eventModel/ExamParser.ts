@@ -62,7 +62,7 @@ export class ExamParser {
                 startTime: examMatch[CaptureGroups.StartTime],
                 endTime: examMatch[CaptureGroups.EndTime],
                 isSelected: false,
-                isExported: false
+                uploadedUrl: ""
             });
             examMatch = EXAM_REGEX.exec(rawInput);
         }

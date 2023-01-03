@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useId } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowUp, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { IWebstacEvent, WebstacEventType } from "../../eventModel/IWebstacEvent";
+import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+
 import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
+import { LabeledInput } from "./LabeledInput";
+import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
+
+import { IWebstacEvent, WebstacEventType } from "../../eventModel/IWebstacEvent";
+import { EventValidator } from "../../eventExport/EventValidator";
+import { ValidationErrorType } from "../../eventExport/IValidationError";
+
 import "./EventEditor.css";
 
 const DATE_INPUT_SIZE = 12;
 const TIME_INPUT_SIZE = 8;
-const CENTERING_CSS = "d-flex flex-column justify-content-center align-items-center";
 
 interface IEventEditorProps {
     calendarEvent: IWebstacEvent;
@@ -22,115 +28,170 @@ interface IEventEditorProps {
  */
 export function EventEditor(props: IEventEditorProps) {
     const { calendarEvent, onChange } = props;
-    const validationErrors = [];
+    const checkboxId = useId();
+    const validationErrors = new EventValidator().validate(calendarEvent);
     const dispatchChange = (changes: Partial<IWebstacEvent>) => {
         onChange(Object.assign({}, calendarEvent, changes));
     };
+    const errorTypes = new Set(validationErrors.map(error => error.type));
 
-    let eventNameLabel;
-    let eventNamePlaceholder;
-    let dateLabel;
-    switch (calendarEvent.type) {
-        case WebstacEventType.Course:
-            eventNameLabel = "Class name";
-            eventNamePlaceholder = "Untitled class";
-            dateLabel = "Days";
-            break;
-        case WebstacEventType.Exam:
-            eventNameLabel = "Final name";
-            eventNamePlaceholder = "Untitled exam";
-            dateLabel = "Date";
-            break;
-        default:
-            eventNameLabel = "Event name";
-            eventNamePlaceholder = "Untitled event";
-            dateLabel = "Date";
+    const cursorNotAllowedCss = validationErrors.length > 0 ? " cursor-not-allowed " : "";
+    function getBorderCss(activatingErrors: ValidationErrorType[]) {
+        return activatingErrors.some(type => errorTypes.has(type)) ? " border-warning-darker" : "";
     }
 
-    let selectionBox = <div className={"col-sm-1 col-2 order-sm-first order-1 " + CENTERING_CSS}>
-        {validationErrors.length === 0 ?
-            <>
-                <label className="d-block">Select</label>
-                <input type="checkbox" className="form-check-input" />
-            </>
-            :
-            <>
-                <span className="text-danger">Invalid</span>
-                <FontAwesomeIcon icon={faTriangleExclamation} className="text-danger" />
-            </>
-        }
-    </div>;
 
-    return <div className="EventEditor border-bottom pt-4 pt-sm-2 pb-4 pb-sm-3">
+    let userReadableEventType;
+    let dateField;
+    if (calendarEvent.type === WebstacEventType.Exam) {
+        userReadableEventType = "Final";
+        dateField = <LabeledInput
+            labelText="Date"
+            type="text"
+            className={"form-control w-auto" + getBorderCss([ValidationErrorType.BadDate])}
+            size={DATE_INPUT_SIZE}
+            maxLength={DATE_INPUT_SIZE + 2}
+            value={calendarEvent.date}
+            onChange={e => dispatchChange({ date: e.currentTarget.value })}
+        />;
+    } else {
+        userReadableEventType = "Class";
+        dateField = <RepeatingDaysSelector
+            selectedDays={calendarEvent.repeatingDays}
+            onChange={newSelection => dispatchChange({ repeatingDays: newSelection })}
+        />;
+    }
+
+    return <fieldset className="EventEditor border border-secondary p-3 pb-4 bg-light">
+        <legend className="visually-hidden">
+            Edit {calendarEvent.name || "Untitled " + userReadableEventType}
+        </legend>
+
         <div className="row">
-            {selectionBox}
-
-            <div className="col-lg-7 col-sm-5 col-12">
-                <label className="d-block">{eventNameLabel}</label>
-                <input
+            {/* Name and Location */}
+            <div className="col-md col-12">
+                <LabeledInput // "col-xxl-7 col-xl-6 col-lg-5 col-md-5 col-10"
+                    labelText={userReadableEventType + " name"}
                     type="text"
-                    className="w-100"
+                    className={"form-control" + getBorderCss([ValidationErrorType.BadName])}
                     value={calendarEvent.name}
-                    placeholder={eventNamePlaceholder}
+                    placeholder="Enter a name"
                     onChange={e => dispatchChange({ name: e.currentTarget.value })}
                 />
-                <label className="d-block">Location</label>
-                <input
+                <LabeledInput
+                    labelText="Location"
                     type="text"
-                    className="w-100"
+                    className="form-control"
                     value={calendarEvent.location}
+                    placeholder="Enter a location"
                     onChange={e => dispatchChange({ location: e.currentTarget.value })}
                 />
             </div>
 
-            <div className="col-lg-3 col-sm-4 col-7">
-                <label className="d-block">{dateLabel}</label>
-                {calendarEvent.type === WebstacEventType.Course ?
-                    <RepeatingDaysSelector
-                        selectedDays={calendarEvent.repeatingDays}
-                        onChange={newSelection => dispatchChange({ repeatingDays: newSelection })}
-                    />
-                    :
-                    <input
-                        type="text"
-                        size={DATE_INPUT_SIZE}
-                        maxLength={DATE_INPUT_SIZE + 2}
-                        value={calendarEvent.date}
-                        onChange={e => dispatchChange({ date: e.currentTarget.value })}
-                    />
-                }
+            <SmallScreenColBreak />
+
+            {/* Time inputs */}
+            <div className="col-auto mt-2 mt-md-auto">
+                {dateField}
 
                 <div className="d-flex gap-2">
                     <div>
-                        <label className="d-block">Start time</label>
-                        <input
+                        <LabeledInput
+                            labelText="Start time"
                             type="text"
+                            className={"form-control" +
+                                getBorderCss([ValidationErrorType.BadStartTime, ValidationErrorType.EndBeforeStart])
+                            }
                             size={TIME_INPUT_SIZE}
                             maxLength={TIME_INPUT_SIZE + 2}
                             value={calendarEvent.startTime}
-                            onChange={e => dispatchChange({
-                                startTime: e.currentTarget.value
-                            })}
+                            onChange={e => dispatchChange({ startTime: e.currentTarget.value })}
                         />
                     </div>
                     <div>
-                        <label className="d-block">End time</label>
-                        <input
+                        <LabeledInput
+                            labelText="End time"
                             type="text"
+                            className={"form-control" +
+                                getBorderCss([ValidationErrorType.BadEndTime, ValidationErrorType.EndBeforeStart])
+                            }
                             size={TIME_INPUT_SIZE}
                             maxLength={TIME_INPUT_SIZE + 2}
                             value={calendarEvent.endTime}
-                            onChange={e => dispatchChange({
-                                endTime: e.currentTarget.value
-                            })}
+                            onChange={e => dispatchChange({ endTime: e.currentTarget.value })}
                         />
                     </div>
                 </div>
             </div>
 
-            <div className={"col-lg-1 col-2 order-last " + CENTERING_CSS}>
-                <button className="btn btn-primary"><FontAwesomeIcon icon={faCloudArrowUp} /></button>
+            <ValidationErrorDisplay
+                errors={validationErrors}
+                containerClassName="d-md-none col mt-3 text-warning-darker" // Only visible at small screen sizes
+            />
+
+            <SmallScreenColBreak />
+
+            <div className="col-xl-2 col-md-3 col d-flex flex-column gap-2 align-items-md-center pt-3">
+                <div>
+                    <button
+                        className={"btn btn-primary" + cursorNotAllowedCss}
+                        disabled={validationErrors.length > 0}
+                    >
+                        <FontAwesomeIcon icon={faCloudArrowUp} className="me-2" />
+                        {validationErrors.length > 0 ?
+                            <span className="spinner-border spinner-border-sm">
+                                <span className="visually-hidden">Working...</span>
+                            </span>
+                            :
+                            "Add"
+                        }
+                    </button>
+                </div>
+
+                <div className="d-flex gap-2 align-items-center justify-content-md-center">
+                    <div><input
+                        id={checkboxId}
+                        type="checkbox"
+                        className={"form-check-input" + cursorNotAllowedCss}
+                        checked={calendarEvent.isSelected}
+                        disabled={validationErrors.length > 0}
+                        onChange={() => dispatchChange({ isSelected: !calendarEvent.isSelected })}
+                    /></div>
+                    <label htmlFor={checkboxId} className={cursorNotAllowedCss} >
+                        Include when adding all
+                    </label>
+
+                </div>
             </div>
-        </div>
-    </div>;
+        </div> {/* End row */}
+
+
+        {validationErrors.length > 0 && // Only visible at md breakpoint and above
+            <ValidationErrorDisplay
+                errors={validationErrors}
+                containerClassName="text-warning-darker d-md-block d-none mt-3"
+            />
+        }
+
+    </fieldset>;
 }
+
+function SmallScreenColBreak() {
+    return <div className="w-100 d-block d-md-none" />;
+}
+
+
+/*
+<input
+                        id={checkboxId}
+                        type="checkbox"
+                        className={"form-check-input" + cursorNotAllowedCss}
+                        checked={calendarEvent.isSelected}
+                        disabled={validationErrors.length > 0}
+                        onChange={() => dispatchChange({ isSelected: !calendarEvent.isSelected })}
+                    />
+                    <label htmlFor={checkboxId} className={cursorNotAllowedCss} style={{ width: "15ch", flex: "none" }}>
+                        Include when adding all
+                    </label>
+
+ */

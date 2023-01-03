@@ -38,7 +38,7 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
             className={className}
             role="checkbox"
             aria-checked={isChecked}
-            aria-label={"Repeat every week on " + dayFullName}
+            aria-label={dayFullName}
             tabIndex={0}
             onClick={() => handleToggle(day)}
             onKeyDown={e => handleKeyDown(e, day)}
@@ -47,9 +47,12 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
         </div>);
     }
 
-    return <div>
-        {checkboxes}
-        {/* An invisible text input so the height of things are still consistent */}
-        <input type="text" style={{ visibility: "hidden", width: "1px" }} />
-    </div>;
+    return <fieldset>
+        <legend>Repeat every week on...</legend>
+        <div className="RepeatingDaysSelector-box-row">
+            {checkboxes}
+            {/* An invisible text input so the height of things are still consistent */}
+            <input type="text" className="form-control d-inline invisible" style={{ width: "1px" }} />
+        </div>
+    </fieldset>;
 }

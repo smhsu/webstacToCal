@@ -64,6 +64,7 @@ export class ScheduleInputArea extends React.PureComponent<IScheduleInputAreaPro
                         className="w-100"
                         style={{ minHeight: "170px" }}
                         placeholder={PLACEHOLDER}
+                        aria-label="Paste your schedule here"
                         value={this.state.textAreaValue}
                         onChange={this.handleTextAreaChanged}
                     />
