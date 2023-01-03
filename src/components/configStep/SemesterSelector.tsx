@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
+import { ISemester } from "eventLogic/ISemester";
 import { FancyRadioButton } from "./FancyRadioButton";
-import { ISemester } from "../../eventLogic/ISemester";
 
 export const SEMESTERS: ISemester[] = [
     {

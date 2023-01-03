@@ -1,4 +1,4 @@
-import { PROPS_FOR_STEP } from "../AppWorkflowStep";
+import { PROPS_FOR_STEP } from "AppWorkflowStep";
 
 export function NavSidebar() {
     return <div className="position-sticky" style={{ top: "15px" }}>

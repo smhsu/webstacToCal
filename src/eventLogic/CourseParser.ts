@@ -1,5 +1,5 @@
-import { IWebstacCourseData, WebstacEventType } from "./IWebstacEvent";
 import { DayOfWeek } from "./DayOfWeek";
+import { IWebstacCourseData, WebstacEventType } from "./IWebstacEvent";
 
 /*
 A course looks like this.  Major fields are separated by tabs:

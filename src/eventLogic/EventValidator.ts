@@ -1,6 +1,6 @@
-import { IWebstacEvent, WebstacEventType } from "./IWebstacEvent";
-import { IValidationError, ValidationErrorType } from "./IValidationError";
 import { DATE_TIME_PARSER as PARSER } from "./DateTimeParser";
+import { IValidationError, ValidationErrorType } from "./IValidationError";
+import { IWebstacEvent, WebstacEventType } from "./IWebstacEvent";
 
 export class EventValidator {
     validate(event: IWebstacEvent): IValidationError[] {

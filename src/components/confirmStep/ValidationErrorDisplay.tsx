@@ -1,7 +1,7 @@
-import React from "react";
-import { IValidationError } from "../../eventLogic/IValidationError";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import { IValidationError } from "eventLogic/IValidationError";
 
 interface IValidationErrorDisplayProps {
     errors: IValidationError[];

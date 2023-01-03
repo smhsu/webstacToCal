@@ -1,7 +1,7 @@
 import React from "react";
-import { IWebstacEvent } from "../../eventLogic/IWebstacEvent";
-import { ISemester } from "../../eventLogic/ISemester";
-import { EventExportMethod } from "../../eventLogic/EventExportMethod";
+import { EventExportMethod } from "eventLogic/EventExportMethod";
+import { ISemester } from "eventLogic/ISemester";
+import { IWebstacEvent } from "eventLogic/IWebstacEvent";
 import { EventEditor } from "./EventEditor";
 
 interface IExportConfirmAreaProps {

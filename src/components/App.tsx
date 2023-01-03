@@ -1,18 +1,19 @@
 import { PropsWithChildren, useCallback, useId, useState } from "react";
+import { AppWorkflowStep, PROPS_FOR_STEP } from "AppWorkflowStep";
+
+import { EventExportMethod } from "eventLogic/EventExportMethod";
+import { ISemester } from "eventLogic/ISemester";
+import { IWebstacEvent } from "eventLogic/IWebstacEvent";
+import { useAuth } from "google/useAuthState";
+import { useGlobalGoogleApis } from "google/useGlobalGoogleApis";
+
+import { CalendarSelector } from "./configStep/CalendarSelector";
+import { ExportMethodSelector } from "./configStep/ExportMethodSelector";
+import { SemesterSelector } from "./configStep/SemesterSelector";
+import { ExportConfirmArea } from "./confirmStep/ExportConfirmArea";
 import { Intro } from "./Intro";
 import { NavSidebar } from "./NavSidebar";
 import { ScheduleInputArea } from "./ScheduleInputArea";
-import { ExportMethodSelector } from "./configStep/ExportMethodSelector";
-import { CalendarSelector } from "./configStep/CalendarSelector";
-import { SemesterSelector } from "./configStep/SemesterSelector";
-import { ExportConfirmArea } from "./confirmStep/ExportConfirmArea";
-
-import { EventExportMethod } from "../eventLogic/EventExportMethod";
-import { AppWorkflowStep, PROPS_FOR_STEP } from "../AppWorkflowStep";
-import { useGlobalGoogleApis } from "../google/useGlobalGoogleApis";
-import { useAuth } from "../google/useAuthState";
-import { ISemester } from "../eventLogic/ISemester";
-import { IWebstacEvent } from "../eventLogic/IWebstacEvent";
 
 import "./App.css";
 

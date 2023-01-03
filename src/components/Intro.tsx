@@ -1,4 +1,4 @@
-import { AppWorkflowStep, PROPS_FOR_STEP } from "../AppWorkflowStep";
+import { AppWorkflowStep, PROPS_FOR_STEP } from "AppWorkflowStep";
 
 export function Intro() {
     return <div className="p-4 mb-4 rounded-3" style={{ backgroundColor: "gainsboro" }}>

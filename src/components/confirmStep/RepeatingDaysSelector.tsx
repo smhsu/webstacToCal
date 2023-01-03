@@ -1,5 +1,5 @@
 import React from "react";
-import { DayOfWeek } from "../../eventLogic/DayOfWeek";
+import { DayOfWeek } from "eventLogic/DayOfWeek";
 import "./RepeatingDaysSelector.css";
 
 interface IRepeatingDaysSelectorProps {

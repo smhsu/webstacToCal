@@ -1,15 +1,14 @@
-import React, { useId } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useId } from "react";
 
-import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
+import { EventValidator } from "eventLogic/EventValidator";
+import { ValidationErrorType } from "eventLogic/IValidationError";
+import { IWebstacEvent, WebstacEventType } from "eventLogic/IWebstacEvent";
+
 import { LabeledInput } from "./LabeledInput";
+import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
 import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
-
-import { IWebstacEvent, WebstacEventType } from "../../eventLogic/IWebstacEvent";
-import { EventValidator } from "../../eventLogic/EventValidator";
-import { ValidationErrorType } from "../../eventLogic/IValidationError";
-
 import "./EventEditor.css";
 
 const DATE_INPUT_SIZE = 12;
