@@ -1,9 +1,8 @@
 import React from "react";
-import { IWebstacEvent } from "../../eventModel/IWebstacEvent";
-import { ISemester } from "../../eventModel/ISemester";
-import { EventExportMethod } from "../../eventExport/EventExportMethod";
+import { IWebstacEvent } from "../../eventLogic/IWebstacEvent";
+import { ISemester } from "../../eventLogic/ISemester";
+import { EventExportMethod } from "../../eventLogic/EventExportMethod";
 import { EventEditor } from "./EventEditor";
-
 
 interface IExportConfirmAreaProps {
     exportMethod: EventExportMethod;
@@ -43,10 +42,14 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     }*/
 
     return <div>
-        <button className="btn btn-primary">Add 3 selected events to Google Calendar</button>
-        <div className="span-four-cols">
-            <label className="d-block">Select all</label>
-            <input type="checkbox" className="form-check-input" />
+        <button className="btn btn-primary">Add selected events to Google Calendar</button>
+        <div>
+            <div>3 events added.</div>
+            <div>1 invalid event ignored.</div>
+            <div>2 events failed to add.  See individual rows for error details.</div>
+        </div>
+        <div>
+            Some events are not ready for export and need manual editing.
         </div>
         <div>
             {

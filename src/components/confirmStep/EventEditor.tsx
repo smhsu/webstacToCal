@@ -6,9 +6,9 @@ import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
 import { LabeledInput } from "./LabeledInput";
 import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
 
-import { IWebstacEvent, WebstacEventType } from "../../eventModel/IWebstacEvent";
-import { EventValidator } from "../../eventExport/EventValidator";
-import { ValidationErrorType } from "../../eventExport/IValidationError";
+import { IWebstacEvent, WebstacEventType } from "../../eventLogic/IWebstacEvent";
+import { EventValidator } from "../../eventLogic/EventValidator";
+import { ValidationErrorType } from "../../eventLogic/IValidationError";
 
 import "./EventEditor.css";
 

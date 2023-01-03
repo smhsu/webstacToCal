@@ -1,5 +1,5 @@
 import React from "react";
-import { IValidationError } from "../../eventExport/IValidationError";
+import { IValidationError } from "../../eventLogic/IValidationError";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { debounce } from "lodash";
-import { IWebstacEvent } from "../eventModel/IWebstacEvent";
-import { CourseParser } from "../eventModel/CourseParser";
-import { ExamParser } from "../eventModel/ExamParser";
+import { IWebstacEvent } from "../eventLogic/IWebstacEvent";
+import { CourseParser } from "../eventLogic/CourseParser";
+import { ExamParser } from "../eventLogic/ExamParser";
 import { describeCount } from "../describeCount";
 
 const CLASS_SCHEDULE_URL = "https://acadinfo.wustl.edu/apps/ClassSchedule/";

@@ -23,7 +23,7 @@ const DaysAndTimeCaptureGroups = {
 };
 
 // According to the implementation of DayOfWeek, starts with Monday.
-const ExpectedDayOrder = Object.values(DayOfWeek);
+const ExpectedDayOrder = Object.values(DayOfWeek) as DayOfWeek[];
 
 /**
  * Parses courses from WebSTAC.

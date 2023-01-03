@@ -2,17 +2,17 @@ import { PropsWithChildren, useCallback, useId, useState } from "react";
 import { Intro } from "./Intro";
 import { NavSidebar } from "./NavSidebar";
 import { ScheduleInputArea } from "./ScheduleInputArea";
-import { ExportMethodSelector } from "./ExportMethodSelector";
-import { CalendarSelector } from "./CalendarSelector";
-import { SemesterSelector } from "./SemesterSelector";
+import { ExportMethodSelector } from "./configStep/ExportMethodSelector";
+import { CalendarSelector } from "./configStep/CalendarSelector";
+import { SemesterSelector } from "./configStep/SemesterSelector";
 import { ExportConfirmArea } from "./confirmStep/ExportConfirmArea";
 
-import { EventExportMethod } from "../eventExport/EventExportMethod";
+import { EventExportMethod } from "../eventLogic/EventExportMethod";
 import { AppWorkflowStep, PROPS_FOR_STEP } from "../AppWorkflowStep";
 import { useGlobalGoogleApis } from "../google/useGlobalGoogleApis";
 import { useAuth } from "../google/useAuthState";
-import { ISemester } from "../eventModel/ISemester";
-import { IWebstacEvent } from "../eventModel/IWebstacEvent";
+import { ISemester } from "../eventLogic/ISemester";
+import { IWebstacEvent } from "../eventLogic/IWebstacEvent";
 
 import "./App.css";
 

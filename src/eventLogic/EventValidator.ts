@@ -1,4 +1,4 @@
-import { IWebstacEvent, WebstacEventType } from "../eventModel/IWebstacEvent";
+import { IWebstacEvent, WebstacEventType } from "./IWebstacEvent";
 import { IValidationError, ValidationErrorType } from "./IValidationError";
 import { DATE_TIME_PARSER as PARSER } from "./DateTimeParser";
 
