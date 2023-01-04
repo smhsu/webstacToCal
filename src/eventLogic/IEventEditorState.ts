@@ -1,5 +1,5 @@
-import { IEventExportState } from "eventLogic/IEventExportState";
-import { IWebstacEvent } from "eventLogic/IWebstacEvent";
+import { IEventExportState } from "./IEventExportState";
+import { IWebstacEvent } from "./IWebstacEvent";
 
 export interface IEventEditorState {
     data: IWebstacEvent;

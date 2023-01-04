@@ -1,6 +1,6 @@
-import { LabeledInput } from "components/confirmStep/LabeledInput";
-import { IWebstacEvent } from "eventLogic/IWebstacEvent";
 import React from "react";
+import { IWebstacEvent } from "src/eventLogic/IWebstacEvent";
+import { LabeledInput } from "./LabeledInput";
 
 const TIME_INPUT_SIZE = 8;
 

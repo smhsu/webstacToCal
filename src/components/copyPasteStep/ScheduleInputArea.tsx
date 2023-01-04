@@ -1,9 +1,9 @@
 import { debounce } from "lodash";
 import React from "react";
-import { describeCount } from "describeCount";
-import { WebstacCourseParser } from "eventLogic/WebstacCourseParser";
-import { WebstacExamParser } from "eventLogic/WebstacExamParser";
-import { IWebstacEvent } from "eventLogic/IWebstacEvent";
+import { describeCount } from "src/describeCount";
+import { WebstacCourseParser } from "src/eventLogic/WebstacCourseParser";
+import { WebstacExamParser } from "src/eventLogic/WebstacExamParser";
+import { IWebstacEvent } from "src/eventLogic/IWebstacEvent";
 
 const CLASS_SCHEDULE_URL = "https://acadinfo.wustl.edu/apps/ClassSchedule/";
 const PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\n" +

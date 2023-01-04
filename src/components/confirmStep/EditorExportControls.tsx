@@ -1,8 +1,9 @@
 import { faCheck, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { LabeledInput } from "components/confirmStep/LabeledInput";
-import { IEventExportState } from "eventLogic/IEventExportState";
+
+import { IEventExportState } from "src/eventLogic/IEventExportState";
+import { LabeledInput } from "./LabeledInput";
 
 interface IEditorExportControlsProps {
     exportState: IEventExportState;

@@ -2,10 +2,10 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useState } from "react";
 
-import { describeCount } from "describeCount";
-import { CalendarApi } from "google/CalendarApi";
-import { GoogleAuthScope } from "google/GoogleAuthScope";
-import { AuthError, AuthManagement } from "google/useAuthState";
+import { describeCount } from "src/describeCount";
+import { CalendarApi } from "src/google/CalendarApi";
+import { GoogleAuthScope } from "src/google/GoogleAuthScope";
+import { AuthError, AuthManagement } from "src/google/useAuthState";
 
 const AUTH_SCOPES = [GoogleAuthScope.ReadWriteEvents, GoogleAuthScope.ListCalendars];
 const NON_PRIMARY_CALENDAR_VALUE = "other";

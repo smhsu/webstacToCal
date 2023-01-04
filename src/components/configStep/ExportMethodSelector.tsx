@@ -1,10 +1,11 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PropsWithChildren, useEffect, useState } from "react";
-import { AppWorkflowStep, PROPS_FOR_STEP } from "AppWorkflowStep";
-import { EventExportMethod } from "eventLogic/EventExportMethod";
-import { GoogleAuthScope } from "google/GoogleAuthScope";
-import { AuthError, AuthManagement } from "google/useAuthState";
+
+import { AppWorkflowStep, PROPS_FOR_STEP } from "src/AppWorkflowStep";
+import { EventExportMethod } from "src/eventLogic/EventExportMethod";
+import { GoogleAuthScope } from "src/google/GoogleAuthScope";
+import { AuthError, AuthManagement } from "src/google/useAuthState";
 import { FancyRadioButton } from "./FancyRadioButton";
 
 /**

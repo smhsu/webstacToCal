@@ -1,4 +1,4 @@
-import { AppWorkflowStep, PROPS_FOR_STEP } from "AppWorkflowStep";
+import { AppWorkflowStep, PROPS_FOR_STEP } from "src/AppWorkflowStep";
 
 interface IAppStepLinkProps {
     step: AppWorkflowStep;

@@ -1,7 +1,7 @@
 import { min } from "lodash";
 import { DateTime } from "luxon";
 
-import { CalendarApi } from "google/CalendarApi";
+import { CalendarApi } from "src/google/CalendarApi";
 import { DATE_TIME_PARSER as PARSER } from "./DateTimeParser";
 import { DayOfWeek } from "./DayOfWeek";
 import { ISemester } from "./ISemester";

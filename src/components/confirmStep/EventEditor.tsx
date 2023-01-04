@@ -2,9 +2,9 @@ import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-import { IEventEditorState } from "eventLogic/IEventEditorState";
-import { IValidationError, ValidationErrorType } from "eventLogic/IValidationError";
-import { IWebstacEvent, WebstacEventType } from "eventLogic/IWebstacEvent";
+import { IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { IValidationError, ValidationErrorType } from "src/eventLogic/IValidationError";
+import { IWebstacEvent, WebstacEventType } from "src/eventLogic/IWebstacEvent";
 
 import { LabeledInput } from "./LabeledInput";
 import { RepeatingDaysSelector } from "./RepeatingDaysSelector";

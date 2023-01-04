@@ -2,10 +2,10 @@ import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-import { describeCount } from "describeCount";
-import { IEventEditorState } from "eventLogic/IEventEditorState";
-import { EventExportMethod } from "eventLogic/EventExportMethod";
-import { ISemester } from "eventLogic/ISemester";
+import { describeCount } from "src/describeCount";
+import { IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { EventExportMethod } from "src/eventLogic/EventExportMethod";
+import { ISemester } from "src/eventLogic/ISemester";
 
 import { EventEditor } from "./EventEditor";
 import { useEventInputValidation } from "./useEventInputValidation";

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { EventValidator } from "eventLogic/EventValidator";
-import { IValidationError } from "eventLogic/IValidationError";
-import { IWebstacEvent } from "eventLogic/IWebstacEvent";
+import { EventValidator } from "src/eventLogic/EventValidator";
+import { IValidationError } from "src/eventLogic/IValidationError";
+import { IWebstacEvent } from "src/eventLogic/IWebstacEvent";
 
 const VALIDATOR = new EventValidator();
 

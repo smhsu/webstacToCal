@@ -1,6 +1,6 @@
-import { describeCount } from "describeCount";
 import { DateTime } from "luxon";
-import { ISemester } from "eventLogic/ISemester";
+import { describeCount } from "src/describeCount";
+import { ISemester } from "src/eventLogic/ISemester";
 import { FancyRadioButton } from "./FancyRadioButton";
 
 const TIME_ZONE = { zone: "America/Chicago" };

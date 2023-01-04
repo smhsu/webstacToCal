@@ -1,12 +1,12 @@
-import { IEventEditorState } from "eventLogic/IEventEditorState";
 import { PropsWithChildren, useCallback, useId, useState } from "react";
-import { AppWorkflowStep, PROPS_FOR_STEP } from "AppWorkflowStep";
 
-import { EventExportMethod } from "eventLogic/EventExportMethod";
-import { ISemester } from "eventLogic/ISemester";
-import { IWebstacEvent } from "eventLogic/IWebstacEvent";
-import { useAuth } from "google/useAuthState";
-import { useGlobalGoogleApis } from "google/useGlobalGoogleApis";
+import { AppWorkflowStep, PROPS_FOR_STEP } from "src/AppWorkflowStep";
+import { EventExportMethod } from "src/eventLogic/EventExportMethod";
+import { IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { ISemester } from "src/eventLogic/ISemester";
+import { IWebstacEvent } from "src/eventLogic/IWebstacEvent";
+import { useAuth } from "src/google/useAuthState";
+import { useGlobalGoogleApis } from "src/google/useGlobalGoogleApis";
 
 import { CalendarSelector } from "./configStep/CalendarSelector";
 import { ExportMethodSelector } from "./configStep/ExportMethodSelector";

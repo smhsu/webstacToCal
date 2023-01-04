@@ -1,8 +1,8 @@
-import { GoogleEventExporter } from "eventLogic/GoogleEventExporter";
-import { IEventEditorState } from "eventLogic/IEventEditorState";
-import { IEventExportState } from "eventLogic/IEventExportState";
-import { ISemester } from "eventLogic/ISemester";
-import { ApiHttpError } from "google/CalendarApi";
+import { GoogleEventExporter } from "src/eventLogic/GoogleEventExporter";
+import { IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { IEventExportState } from "src/eventLogic/IEventExportState";
+import { ISemester } from "src/eventLogic/ISemester";
+import { ApiHttpError } from "src/google/CalendarApi";
 
 const EXPORTER = new GoogleEventExporter();
 
