@@ -30,7 +30,7 @@ const CaptureGroups = {
  *
  * @author Silas Hsu
  */
-export class ExamParser {
+export class WebstacExamParser {
     /**
      * Parses exams from WebSTAC.  Optionally takes an array of parsed courses which will be used to get locations for
      * exams that are in the same location as the class. Returns an empty array if no exams could be parsed.
@@ -60,9 +60,7 @@ export class ExamParser {
                 location,
                 date: examMatch[CaptureGroups.Date],
                 startTime: examMatch[CaptureGroups.StartTime],
-                endTime: examMatch[CaptureGroups.EndTime],
-                isSelected: false,
-                uploadedUrl: ""
+                endTime: examMatch[CaptureGroups.EndTime]
             });
             examMatch = EXAM_REGEX.exec(rawInput);
         }

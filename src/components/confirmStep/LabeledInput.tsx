@@ -1,16 +1,25 @@
 import React, { useId } from "react";
 
-type RestrictedInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "id">
-type LabeledInputProps = RestrictedInputProps & {
-    labelText: React.ReactNode,
-    labelClassName?: string
+interface ILabeledInputProps {
+    className?: string;
+    renderLabel: ((inputId: string) => JSX.Element) | string;
+    renderInput: (id: string) => JSX.Element;
+    isPutLabelSecond?: boolean;
 }
 
-export function LabeledInput(props: LabeledInputProps) {
+export function LabeledInput(props: ILabeledInputProps) {
     const id = useId();
-    const { labelText, labelClassName, ...rest } = props;
-    return <>
-        <div><label htmlFor={id} className={labelClassName}>{labelText}</label></div>
-        <input id={id} {...rest} />
-    </>;
+    const { className, renderLabel, renderInput } = props;
+
+    let label;
+    if (typeof(renderLabel) === "string") {
+        label = <label htmlFor={id}>{renderLabel}</label>;
+    } else {
+        label = renderLabel(id);
+    }
+
+    return <div className={className} >
+        {label}
+        {renderInput(id)}
+    </div>;
 }

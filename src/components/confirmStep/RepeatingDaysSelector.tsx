@@ -1,14 +1,16 @@
 import React from "react";
-import { DayOfWeek } from "eventLogic/DayOfWeek";
+import { AllDays, DayOfWeek } from "eventLogic/DayOfWeek";
 import "./RepeatingDaysSelector.css";
 
 interface IRepeatingDaysSelectorProps {
     selectedDays: Set<DayOfWeek>;
+    legendClassName?: string;
+    disabled?: boolean;
     onChange: (newSelection: Set<DayOfWeek>) => void;
 }
 
 export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
-    const { selectedDays, onChange } = props;
+    const { selectedDays, legendClassName, disabled, onChange } = props;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, day: DayOfWeek) => {
         if (e.key === " ") {
@@ -28,17 +30,19 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
     };
 
     const checkboxes = [];
-    for (const day of Object.values(DayOfWeek) as number[]) {
+    for (const day of AllDays) {
         const dayFullName = DayOfWeek[day];
         const isChecked = props.selectedDays.has(day);
-        const className = "RepeatingDaysSelector-box btn p-0 rounded-0 align-baseline " +
-            (isChecked ? "btn-primary" : "btn-outline-primary");
+        const className = "RepeatingDaysSelector-box btn p-0 rounded-0 align-baseline" +
+            (isChecked ? " btn-primary" : " btn-outline-primary") +
+            (disabled ? " disabled" : "");
         checkboxes.push(<div
             key={day}
             className={className}
             role="checkbox"
             aria-checked={isChecked}
             aria-label={dayFullName}
+            aria-disabled={disabled}
             tabIndex={0}
             onClick={() => handleToggle(day)}
             onKeyDown={e => handleKeyDown(e, day)}
@@ -48,7 +52,7 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
     }
 
     return <fieldset>
-        <legend>Repeat every week on...</legend>
+        <legend className={legendClassName}>Repeat every week on...</legend>
         <div className="RepeatingDaysSelector-box-row">
             {checkboxes}
             {/* An invisible text input so the height of things are still consistent */}

@@ -1,8 +1,8 @@
 import { debounce } from "lodash";
 import React from "react";
 import { describeCount } from "describeCount";
-import { CourseParser } from "eventLogic/CourseParser";
-import { ExamParser } from "eventLogic/ExamParser";
+import { WebstacCourseParser } from "eventLogic/WebstacCourseParser";
+import { WebstacExamParser } from "eventLogic/WebstacExamParser";
 import { IWebstacEvent } from "eventLogic/IWebstacEvent";
 
 const CLASS_SCHEDULE_URL = "https://acadinfo.wustl.edu/apps/ClassSchedule/";
@@ -42,8 +42,8 @@ export class ScheduleInputArea extends React.PureComponent<IScheduleInputAreaPro
     }
 
     parseEvents(input: string): void {
-        const courses = CourseParser.parseCourses(input);
-        const finals = ExamParser.parseExams(input, courses);
+        const courses = WebstacCourseParser.parseCourses(input);
+        const finals = WebstacExamParser.parseExams(input, courses);
         this.setState({
             numCoursesParsed: courses.length,
             numFinalsParsed: finals.length

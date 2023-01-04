@@ -1,4 +1,4 @@
-import { DayOfWeek } from "./DayOfWeek";
+import { AllDays, DayOfWeek } from "./DayOfWeek";
 import { IWebstacCourseData, WebstacEventType } from "./IWebstacEvent";
 
 /*
@@ -22,15 +22,12 @@ const DaysAndTimeCaptureGroups = {
     EndTime: 3,
 };
 
-// According to the implementation of DayOfWeek, starts with Monday.
-const ExpectedDayOrder = Object.values(DayOfWeek) as DayOfWeek[];
-
 /**
  * Parses courses from WebSTAC.
  *
  * @author Silas Hsu
  */
-export class CourseParser {
+export class WebstacCourseParser {
     /**
      * Parses courses from WebSTAC, returning them in an array of EventInputModel.  Returns an empty array if no courses
      * could be parsed.
@@ -58,9 +55,9 @@ export class CourseParser {
                 location: columns[ColumnIndex.Location] || "",
                 startTime: daysAndTimeMatch[DaysAndTimeCaptureGroups.StartTime] || "",
                 endTime: daysAndTimeMatch[DaysAndTimeCaptureGroups.EndTime] || "",
-                repeatingDays: CourseParser.parseCourseDays(daysAndTimeMatch[DaysAndTimeCaptureGroups.Days] || ""),
-                isSelected: false,
-                uploadedUrl: ""
+                repeatingDays: WebstacCourseParser.parseCourseDays(
+                    daysAndTimeMatch[DaysAndTimeCaptureGroups.Days] || ""
+                )
             });
         }
         return events;
@@ -74,11 +71,11 @@ export class CourseParser {
      */
     private static parseCourseDays(rawInput: string): Set<DayOfWeek> {
         const days: Set<DayOfWeek> = new Set();
-        if (rawInput.length === ExpectedDayOrder.length) {
-            for (let i = 0; i < ExpectedDayOrder.length; i++) {
+        if (rawInput.length === AllDays.length) {
+            for (let i = 0; i < AllDays.length; i++) {
                 // I'm not going to check if the letter is the right one for the position
                 if (rawInput.charAt(i) !== "-") {
-                    days.add(ExpectedDayOrder[i]);
+                    days.add(AllDays[i]);
                 }
             }
         }

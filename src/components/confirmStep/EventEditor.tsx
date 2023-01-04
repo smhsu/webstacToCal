@@ -1,196 +1,147 @@
-import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useId } from "react";
+import React from "react";
 
-import { EventValidator } from "eventLogic/EventValidator";
-import { ValidationErrorType } from "eventLogic/IValidationError";
+import { IEventEditorState } from "eventLogic/IEventEditorState";
+import { IValidationError, ValidationErrorType } from "eventLogic/IValidationError";
 import { IWebstacEvent, WebstacEventType } from "eventLogic/IWebstacEvent";
 
 import { LabeledInput } from "./LabeledInput";
 import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
 import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
+import { EventEditorLayout } from "./EventEditorLayout";
+import { StartEndTimeInputs } from "./StartEndTimeInputs";
+import { EditorExportControls } from "./EditorExportControls";
 import "./EventEditor.css";
 
 const DATE_INPUT_SIZE = 12;
-const TIME_INPUT_SIZE = 8;
 
 interface IEventEditorProps {
-    calendarEvent: IWebstacEvent;
-    onChange: (updatedCalendarEvent: IWebstacEvent) => void;
+    editorState: IEventEditorState;
+    validationErrors: IValidationError[];
+    index: number;
+    onChange: (updatedState: IEventEditorState) => void;
+    onExportClicked: () => void;
 }
 
 /**
  * After giving this a lot of thought, I have arrived at the conclusion that <input type="text" /> is best for date
- * and time inputs, i.e. no date or time pickers.  The reason is
+ * and time inputs, i.e. no date or time pickers.  Pickers are best for the situation where the user makes a choice and
+ * can peruse alternatives, but in our case, the date and times are already known.
+ *
  * @param props
- * @constructor
  */
-export function EventEditor(props: IEventEditorProps) {
-    const { calendarEvent, onChange } = props;
-    const checkboxId = useId();
-    const validationErrors = new EventValidator().validate(calendarEvent);
-    const dispatchChange = (changes: Partial<IWebstacEvent>) => {
-        onChange(Object.assign({}, calendarEvent, changes));
+export const EventEditor = function EventEditor(props: IEventEditorProps) {
+    const { editorState, validationErrors, index, onChange, onExportClicked } = props;
+    const { data, isSelected, exportState } = editorState;
+    const dispatchChange = function<T extends IWebstacEvent>(updatedData: Partial<T>) {
+        onChange({
+            ...props.editorState,
+            data: {
+                ...data,
+                ...updatedData
+            }
+        });
     };
-    const errorTypes = new Set(validationErrors.map(error => error.type));
 
-    const cursorNotAllowedCss = validationErrors.length > 0 ? " cursor-not-allowed " : "";
+    // Some helpers and properties
+    const isReadOnly = exportState.isExporting || exportState.successUrl.length > 0;
+    const isExportDisabled = isReadOnly || validationErrors.length > 0;
+    const validationErrorTypes = new Set(validationErrors.map(err => err.type));
     function getBorderCss(activatingErrors: ValidationErrorType[]) {
-        return activatingErrors.some(type => errorTypes.has(type)) ? " border-warning-darker" : "";
+        return activatingErrors.some(errType => validationErrorTypes.has(errType)) ? " border-warning-darker" : "";
     }
 
+    return <EventEditorLayout
+        renderLegend={cssClasses => <legend
+            className={cssClasses + " d-flex flex-column justify-content-center align-items-center m-0"}
+        >
+            <span style={{ fontSize: "small" }}>{"Event"}</span>
+            <span className="fs-5">{index + 1}</span>
+        </legend>}
 
-    let userReadableEventType;
-    let dateField;
-    if (calendarEvent.type === WebstacEventType.Exam) {
-        userReadableEventType = "Final";
-        dateField = <LabeledInput
-            labelText="Date"
-            type="text"
-            className={"form-control w-auto" + getBorderCss([ValidationErrorType.BadDate])}
-            size={DATE_INPUT_SIZE}
-            maxLength={DATE_INPUT_SIZE + 2}
-            value={calendarEvent.date}
-            onChange={e => dispatchChange({ date: e.currentTarget.value })}
-        />;
-    } else {
-        userReadableEventType = "Class";
-        dateField = <RepeatingDaysSelector
-            selectedDays={calendarEvent.repeatingDays}
-            onChange={newSelection => dispatchChange({ repeatingDays: newSelection })}
-        />;
-    }
-
-    return <fieldset className="EventEditor border border-secondary p-3 pb-4 bg-light">
-        <legend className="visually-hidden">
-            Edit {calendarEvent.name || "Untitled " + userReadableEventType}
-        </legend>
-
-        <div className="row">
-            {/* Name and Location */}
-            <div className="col-md col-12">
-                <LabeledInput // "col-xxl-7 col-xl-6 col-lg-5 col-md-5 col-10"
-                    labelText={userReadableEventType + " name"}
+        renderCol1={cssClasses => <div className={cssClasses}>
+            <LabeledInput
+                renderLabel="Event name"
+                renderInput={id => <input
+                    id={id}
                     type="text"
                     className={"form-control" + getBorderCss([ValidationErrorType.BadName])}
-                    value={calendarEvent.name}
+                    value={data.name}
                     placeholder="Enter a name"
+                    readOnly={isReadOnly}
+                    disabled={isReadOnly}
                     onChange={e => dispatchChange({ name: e.currentTarget.value })}
-                />
-                <LabeledInput
-                    labelText="Location"
+                />}
+            />
+            <LabeledInput
+                renderLabel="Location"
+                renderInput={id => <input
+                    id={id}
                     type="text"
                     className="form-control"
-                    value={calendarEvent.location}
+                    value={data.location}
                     placeholder="Enter a location"
+                    readOnly={isReadOnly}
+                    disabled={isReadOnly}
                     onChange={e => dispatchChange({ location: e.currentTarget.value })}
+                />}
+            />
+        </div>}
+
+        renderCol2={cssClasses => <div className={cssClasses}>
+            {data.type === WebstacEventType.Course ?
+                <RepeatingDaysSelector
+                    selectedDays={data.repeatingDays}
+                    legendClassName="EventEditor-repeating-days-legend"
+                    disabled={isReadOnly}
+                    onChange={newSelection => dispatchChange({ repeatingDays: newSelection })}
                 />
-            </div>
-
-            <SmallScreenColBreak />
-
-            {/* Time inputs */}
-            <div className="col-auto mt-2 mt-md-auto">
-                {dateField}
-
-                <div className="d-flex gap-2">
-                    <div>
-                        <LabeledInput
-                            labelText="Start time"
-                            type="text"
-                            className={"form-control" +
-                                getBorderCss([ValidationErrorType.BadStartTime, ValidationErrorType.EndBeforeStart])
-                            }
-                            size={TIME_INPUT_SIZE}
-                            maxLength={TIME_INPUT_SIZE + 2}
-                            value={calendarEvent.startTime}
-                            onChange={e => dispatchChange({ startTime: e.currentTarget.value })}
-                        />
-                    </div>
-                    <div>
-                        <LabeledInput
-                            labelText="End time"
-                            type="text"
-                            className={"form-control" +
-                                getBorderCss([ValidationErrorType.BadEndTime, ValidationErrorType.EndBeforeStart])
-                            }
-                            size={TIME_INPUT_SIZE}
-                            maxLength={TIME_INPUT_SIZE + 2}
-                            value={calendarEvent.endTime}
-                            onChange={e => dispatchChange({ endTime: e.currentTarget.value })}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <ValidationErrorDisplay
-                errors={validationErrors}
-                containerClassName="d-md-none col mt-3 text-warning-darker" // Only visible at small screen sizes
+                :
+                <LabeledInput
+                    renderLabel="Date"
+                    renderInput={id => <input
+                        id={id}
+                        type="text"
+                        className={"form-control w-auto" + getBorderCss([ValidationErrorType.BadDate])}
+                        size={DATE_INPUT_SIZE}
+                        maxLength={DATE_INPUT_SIZE + 2}
+                        value={data.date}
+                        readOnly={isReadOnly}
+                        onChange={e => dispatchChange({ date: e.currentTarget.value })}
+                    />}
+                />
+            }
+            <StartEndTimeInputs
+                data={data}
+                isReadOnly={isReadOnly}
+                startClassName={getBorderCss([ValidationErrorType.BadStartTime, ValidationErrorType.EndBeforeStart])}
+                endClassName={getBorderCss([ValidationErrorType.BadEndTime, ValidationErrorType.EndBeforeStart])}
+                onChange={dispatchChange}
             />
+        </div>}
 
-            <SmallScreenColBreak />
+        renderCol3={cssClasses => <EditorExportControls
+            exportState={exportState}
+            isSelectedForExport={isSelected}
+            className={cssClasses}
+            disabled={isExportDisabled}
+            onExportClicked={onExportClicked}
+            onSelectionToggle={() => onChange( { ...editorState, isSelected: !editorState.isSelected })}
+        />}
 
-            <div className="col-xl-2 col-md-3 col d-flex flex-column gap-2 align-items-md-center pt-3">
-                <div>
-                    <button
-                        className={"btn btn-primary" + cursorNotAllowedCss}
-                        disabled={validationErrors.length > 0}
-                    >
-                        <FontAwesomeIcon icon={faCloudArrowUp} className="me-2" />
-                        {validationErrors.length > 0 ?
-                            <span className="spinner-border spinner-border-sm">
-                                <span className="visually-hidden">Working...</span>
-                            </span>
-                            :
-                            "Add"
-                        }
-                    </button>
+        renderValidationErrors={cssClasses => <ValidationErrorDisplay
+            errors={validationErrors}
+            containerClassName={cssClasses + " text-warning-darker"}
+        />}
+
+        renderExportErrors={cssClasses => <div className={cssClasses}>
+            {exportState.errorMessage &&
+                <div className="alert alert-danger float-end d-inline-block py-2 px-3 mb-0" role="status">
+                    <FontAwesomeIcon className="me-1" icon={faTriangleExclamation} /> Error while
+                    adding: {exportState.errorMessage}
                 </div>
-
-                <div className="d-flex gap-2 align-items-center justify-content-md-center">
-                    <div><input
-                        id={checkboxId}
-                        type="checkbox"
-                        className={"form-check-input" + cursorNotAllowedCss}
-                        checked={calendarEvent.isSelected}
-                        disabled={validationErrors.length > 0}
-                        onChange={() => dispatchChange({ isSelected: !calendarEvent.isSelected })}
-                    /></div>
-                    <label htmlFor={checkboxId} className={cursorNotAllowedCss} >
-                        Include when adding all
-                    </label>
-
-                </div>
-            </div>
-        </div> {/* End row */}
-
-
-        {validationErrors.length > 0 && // Only visible at md breakpoint and above
-            <ValidationErrorDisplay
-                errors={validationErrors}
-                containerClassName="text-warning-darker d-md-block d-none mt-3"
-            />
-        }
-
-    </fieldset>;
-}
-
-function SmallScreenColBreak() {
-    return <div className="w-100 d-block d-md-none" />;
-}
-
-
-/*
-<input
-                        id={checkboxId}
-                        type="checkbox"
-                        className={"form-check-input" + cursorNotAllowedCss}
-                        checked={calendarEvent.isSelected}
-                        disabled={validationErrors.length > 0}
-                        onChange={() => dispatchChange({ isSelected: !calendarEvent.isSelected })}
-                    />
-                    <label htmlFor={checkboxId} className={cursorNotAllowedCss} style={{ width: "15ch", flex: "none" }}>
-                        Include when adding all
-                    </label>
-
- */
+            }
+        </div>}
+    />;
+};

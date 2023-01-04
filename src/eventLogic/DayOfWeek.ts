@@ -11,3 +11,8 @@ export enum DayOfWeek {
     Saturday = 6,
     Sunday = 7
 }
+
+/**
+ * All days of the week starting with Monday.
+ */
+export const AllDays: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 7];

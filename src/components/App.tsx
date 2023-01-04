@@ -1,3 +1,4 @@
+import { IEventEditorState } from "eventLogic/IEventEditorState";
 import { PropsWithChildren, useCallback, useId, useState } from "react";
 import { AppWorkflowStep, PROPS_FOR_STEP } from "AppWorkflowStep";
 
@@ -11,9 +12,9 @@ import { CalendarSelector } from "./configStep/CalendarSelector";
 import { ExportMethodSelector } from "./configStep/ExportMethodSelector";
 import { SemesterSelector } from "./configStep/SemesterSelector";
 import { ExportConfirmArea } from "./confirmStep/ExportConfirmArea";
+import { ScheduleInputArea } from "./copyPasteStep/ScheduleInputArea";
 import { Intro } from "./Intro";
 import { NavSidebar } from "./NavSidebar";
-import { ScheduleInputArea } from "./ScheduleInputArea";
 
 import "./App.css";
 
@@ -23,12 +24,26 @@ export function App() {
     const [exportMethod, setExportMethod] = useState(EventExportMethod.None);
     const [selectedCalendarId, setSelectedCalendarId] = useState("primary");
     const [selectedSemester, setSelectedSemester] = useState<ISemester | null>(null);
-    const [webstacEvents, setWebstacEvents] = useState<IWebstacEvent[]>([]);
+    const [editorStates, setEditorStates] = useState<IEventEditorState[]>([]);
 
     const exportMethodLabelId = useId();
 
     const handleExportMethodChanged = useCallback((newMethod: EventExportMethod) => {
         setExportMethod(newMethod);
+    }, []);
+
+    const handleEventsParsed = useCallback((newEvents: IWebstacEvent[]) => {
+        setEditorStates(newEvents.map(event => {
+            return {
+                data: event,
+                isSelected: true,
+                exportState: {
+                    isExporting: false,
+                    successUrl: "",
+                    errorMessage: ""
+                }
+            };
+        }));
     }, []);
 
     return <div className="container-lg">
@@ -69,16 +84,17 @@ export function App() {
                 </StepContainer>
 
                 <StepContainer step={AppWorkflowStep.CopyPaste}>
-                    <ScheduleInputArea onEventsParsed={setWebstacEvents} />
+                    <ScheduleInputArea onEventsParsed={handleEventsParsed} />
                 </StepContainer>
 
                 <StepContainer step={AppWorkflowStep.Confirm}>
                     <IndentedDiv>
                         <ExportConfirmArea
                             exportMethod={exportMethod}
+                            calendarId={selectedCalendarId}
                             semester={selectedSemester}
-                            webstacEvents={webstacEvents}
-                            onEventsChanged={setWebstacEvents} />
+                            editorStates={editorStates}
+                            onEditorStatesChanged={setEditorStates} />
                     </IndentedDiv>
                 </StepContainer>
             </div>

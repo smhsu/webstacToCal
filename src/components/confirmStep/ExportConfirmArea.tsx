@@ -1,23 +1,33 @@
+import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+
+import { describeCount } from "describeCount";
+import { IEventEditorState } from "eventLogic/IEventEditorState";
 import { EventExportMethod } from "eventLogic/EventExportMethod";
 import { ISemester } from "eventLogic/ISemester";
-import { IWebstacEvent } from "eventLogic/IWebstacEvent";
+
 import { EventEditor } from "./EventEditor";
+import { useEventInputValidation } from "./useEventInputValidation";
+import { useManageExportState } from "./useManageExportState";
 
 interface IExportConfirmAreaProps {
     exportMethod: EventExportMethod;
+    calendarId: string;
     semester: ISemester | null;
-    webstacEvents: IWebstacEvent[];
-    onEventsChanged: (newEvents: IWebstacEvent[]) => void;
+    editorStates: IEventEditorState[];
+    onEditorStatesChanged: (newEvents: IEventEditorState[]) => void;
 }
 
 export function ExportConfirmArea(props: IExportConfirmAreaProps) {
-    const { exportMethod, semester, webstacEvents, onEventsChanged } = props;
+    const { exportMethod, calendarId, semester, editorStates, onEditorStatesChanged } = props;
+    const validationErrors = useEventInputValidation(editorStates.map(state => state.data));
+    const { exportOne } = useManageExportState(editorStates, calendarId, semester, onEditorStatesChanged);
 
-    const handleOneEventChanged = (updatedCalendarEvent: IWebstacEvent, index: number) => {
-        const newEvents = webstacEvents.slice();
-        newEvents[index] = updatedCalendarEvent;
-        onEventsChanged(newEvents);
+    const handleOneEditorChanged = (updatedState: IEventEditorState, index: number) => {
+        const newStates = editorStates.slice();
+        newStates[index] = updatedState;
+        onEditorStatesChanged(newStates);
     };
 
     const notReadyNotifications = [];/*
@@ -41,8 +51,39 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
         </div>;
     }*/
 
+    const numSelected = editorStates.filter(state => state.isSelected).length;
     return <div>
-        <button className="btn btn-primary">Add selected events to Google Calendar</button>
+        <button
+            className="btn btn-primary d-flex align-items-center gap-1 text-start"
+            disabled={numSelected <= 0}
+        >
+            <FontAwesomeIcon icon={faCloudArrowUp} className="me-2" />
+            <div>
+                <div>Add all selected events to Google Calendar</div>
+                <div style={{ fontSize: "smaller" }}>
+                    {describeCount(numSelected, "event")} selected
+                </div>
+            </div>
+        </button>
+        <div>
+            {
+                editorStates.map((event, index) => {
+                    return <EventEditor
+                        key={index}
+                        editorState={event}
+                        validationErrors={validationErrors[index]}
+                        index={index}
+                        onChange={newState => handleOneEditorChanged(newState, index)}
+                        onExportClicked={() => exportOne(index)}
+                    />;
+                })
+            }
+        </div>
+    </div>;
+}
+
+
+/*
         <div>
             <div>3 events added.</div>
             <div>1 invalid event ignored.</div>
@@ -51,16 +92,4 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
         <div>
             Some events are not ready for export and need manual editing.
         </div>
-        <div>
-            {
-                webstacEvents.map((event, index) => {
-                    return <EventEditor
-                        key={index}
-                        calendarEvent={event}
-                        onChange={updatedCalendarEvent => handleOneEventChanged(updatedCalendarEvent, index)}
-                    />;
-                })
-            }
-        </div>
-    </div>;
-}
+*/
