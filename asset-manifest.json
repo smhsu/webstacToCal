@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/webstacToCal/static/css/main.b536bcc3.chunk.css",
-    "main.js": "/webstacToCal/static/js/main.9b53e9c9.chunk.js",
-    "main.js.map": "/webstacToCal/static/js/main.9b53e9c9.chunk.js.map",
+    "main.js": "/webstacToCal/static/js/main.55d72f9d.chunk.js",
+    "main.js.map": "/webstacToCal/static/js/main.55d72f9d.chunk.js.map",
     "runtime-main.js": "/webstacToCal/static/js/runtime-main.ef1b5f12.js",
     "runtime-main.js.map": "/webstacToCal/static/js/runtime-main.ef1b5f12.js.map",
     "static/js/2.a312ef76.chunk.js": "/webstacToCal/static/js/2.a312ef76.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.ef1b5f12.js",
     "static/js/2.a312ef76.chunk.js",
     "static/css/main.b536bcc3.chunk.css",
-    "static/js/main.9b53e9c9.chunk.js"
+    "static/js/main.55d72f9d.chunk.js"
   ]
 }
