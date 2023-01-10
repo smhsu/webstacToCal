@@ -9,6 +9,6 @@ interface IAppStepLinkProps {
 export function AppStepLink(props: IAppStepLinkProps) {
     const { step, className } = props;
     const propsForStep = PROPS_FOR_STEP[step];
-    let linkText = props.linkText !== undefined ? props.linkText : propsForStep.heading;
+    const linkText = props.linkText === undefined ? propsForStep.heading: props.linkText;
     return <a href={"#" + propsForStep.id} className={className}>{linkText}</a>;
 }

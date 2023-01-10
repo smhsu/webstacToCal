@@ -2,10 +2,9 @@ import { min } from "lodash";
 import { DateTime } from "luxon";
 
 import { CalendarApi } from "src/google/CalendarApi";
-import { DATE_TIME_PARSER as PARSER } from "./DateTimeParser";
 import { DayOfWeek } from "./DayOfWeek";
 import { ISemester } from "./ISemester";
-import { IWebstacEvent, WebstacEventType } from "./IWebstacEvent";
+import { IWebstacEventData, WebstacEventType } from "./IWebstacEvent";
 
 // Example of an ISO 8601 date: 2017-10-09T02:33:50Z
 const ISO_TIME_START_INDEX = 11;
@@ -33,11 +32,7 @@ const REMINDERS = {
 };
 
 export class GoogleEventExporter {
-    exportMany(events: IWebstacEvent[], calendarId: string, semester: ISemester) {
-        return Promise.resolve();
-    }
-
-    exportOne(event: IWebstacEvent, calendarId: string, semester: ISemester): Promise<string> {
+    exportOne(event: IWebstacEventData, calendarId: string, semester: ISemester): Promise<string> {
         const { start, end } = this._generateStartEndAsISO(event, semester);
         return CalendarApi.getInstance().createEvent(calendarId, {
             summary: event.name,
@@ -56,21 +51,19 @@ export class GoogleEventExporter {
         });
     }
 
-    private _generateStartEndAsISO(event: IWebstacEvent, semester: ISemester) {
-        const startTime = PARSER.parseTime(event.startTime);
-        const endTime = PARSER.parseTime(event.endTime);
-
+    private _generateStartEndAsISO(event: IWebstacEventData, semester: ISemester) {
+        const startTime = event.startTime.parsed;
+        const endTime = event.endTime.parsed;
         const startDate = this._getStartDate(event, semester);
-        const dateISO = startDate.toISO().substring(0, ISO_TIME_START_INDEX);
-        const startTimeISO = startTime.toISO()
-            .substring(ISO_TIME_START_INDEX, ISO_TIME_START_INDEX + ISO_TIME_CHARS_TO_KEEP);
-        const endTimeISO = endTime.toISO()
-            .substring(ISO_TIME_START_INDEX, ISO_TIME_START_INDEX + ISO_TIME_CHARS_TO_KEEP);
-
         return {
-            start: dateISO + startTimeISO,
-            end: dateISO + endTimeISO,
+            start: this._generateIsoString(startDate, startTime),
+            end: this._generateIsoString(startDate, endTime)
         };
+    }
+
+    private _generateIsoString(date: DateTime, time: DateTime) {
+        return date.toISO().substring(0, ISO_TIME_START_INDEX) +
+            time.toISO().substring(ISO_TIME_START_INDEX, ISO_TIME_START_INDEX + ISO_TIME_CHARS_TO_KEEP);
     }
 
     /**
@@ -81,14 +74,14 @@ export class GoogleEventExporter {
      * @param semester
      * @private
      */
-    private _getStartDate(event: IWebstacEvent, semester: ISemester): DateTime {
+    private _getStartDate(event: IWebstacEventData, semester: ISemester): DateTime {
         if (event.type === WebstacEventType.Course) {
             return semester.firstDayOfClasses.plus({
                 // The event might not happen on the first day of classes.  Advance time to find the first day.
                 days: this._daysUntilNearestDayOfWeek(semester.firstDayOfClasses.weekday, event.repeatingDays)
             });
         } else {
-            return PARSER.parseDate(event.date);
+            return event.date.parsed;
         }
     }
 
@@ -124,7 +117,7 @@ export class GoogleEventExporter {
      * @param semester
      * @return list of recurrence rules
      */
-    private _generateRecurrence(event: IWebstacEvent, semester: ISemester): string[] {
+    private _generateRecurrence(event: IWebstacEventData, semester: ISemester): string[] {
         if (event.type !== WebstacEventType.Course) {
             return [];
         }

@@ -26,12 +26,17 @@ export function useManageExportState(
         onEditorStatesChanged(newStates);
     };
 
-    const exportOne = async (index: number) => {
+    const exportOne = async(toExport: IEventEditorState) => {
+        const index = editorStates.findIndex(state => state.id === toExport.id);
+        if (index < 0) {
+            return false;
+        }
+
         if (!semester) {
             dispatchChange(index, {
                 errorMessage: "No semester selected"
             });
-            return;
+            return false;
         }
 
         dispatchChange(index, {
@@ -42,8 +47,10 @@ export function useManageExportState(
 
         let successUrl = "";
         let errorMessage = "";
+        let wasSuccessful = false;
         try {
             successUrl = await EXPORTER.exportOne(editorStates[index].data, calendarId, semester);
+            wasSuccessful = true;
         } catch (error) {
             console.error(error);
             errorMessage = error instanceof ApiHttpError ? error.message : "Unknown error (bug?)";
@@ -54,7 +61,19 @@ export function useManageExportState(
             successUrl,
             errorMessage
         });
+        return wasSuccessful;
     };
 
-    return { exportOne };
+    const exportMany = async(toExport: IEventEditorState[]) => {
+        // TODO set EVERYTHING to be exporting
+
+        const results = [];
+        for (const element of toExport) {
+            const result = await exportOne(element);
+            results.push(result);
+        }
+        return results;
+    };
+
+    return { exportOne, exportMany };
 }

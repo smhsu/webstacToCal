@@ -1,4 +1,6 @@
 import { DayOfWeek } from "./DayOfWeek";
+import { WebstacDate } from "./WebstacDate";
+import { WebstacTime } from "./WebstacTime";
 
 /**
  * The type of event -- courses are recurring events, and exams are one-time events.
@@ -9,16 +11,24 @@ import { DayOfWeek } from "./DayOfWeek";
  * stays manageable.
  */
 export enum WebstacEventType {
+    /**
+     * Could be named Class but isn't to avoid confusion with JS classes.
+     */
     Course,
-    Exam
+    Final
 }
+
+export const DESCRIPTION_FOR_TYPE: Record<WebstacEventType, string> = {
+    [WebstacEventType.Course]: "Class",
+    [WebstacEventType.Final]: "Final"
+};
 
 interface IWebstacBasicData {
     type: WebstacEventType;
     name: string;
     location: string;
-    startTime: string;
-    endTime: string;
+    startTime: WebstacTime;
+    endTime: WebstacTime;
 }
 
 export interface IWebstacCourseData extends IWebstacBasicData {
@@ -26,9 +36,9 @@ export interface IWebstacCourseData extends IWebstacBasicData {
     repeatingDays: Set<DayOfWeek>;
 }
 
-export interface IWebstacExamData extends IWebstacBasicData {
-    type: WebstacEventType.Exam;
-    date: string;
+export interface IWebstacFinalData extends IWebstacBasicData {
+    type: WebstacEventType.Final;
+    date: WebstacDate;
 }
 
-export type IWebstacEvent = IWebstacCourseData | IWebstacExamData;
+export type IWebstacEventData = IWebstacCourseData | IWebstacFinalData;

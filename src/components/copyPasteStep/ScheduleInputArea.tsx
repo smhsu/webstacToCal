@@ -3,7 +3,7 @@ import React from "react";
 import { describeCount } from "src/describeCount";
 import { WebstacCourseParser } from "src/eventLogic/WebstacCourseParser";
 import { WebstacExamParser } from "src/eventLogic/WebstacExamParser";
-import { IWebstacEvent } from "src/eventLogic/IWebstacEvent";
+import { IWebstacEventData } from "src/eventLogic/IWebstacEvent";
 
 const CLASS_SCHEDULE_URL = "https://acadinfo.wustl.edu/apps/ClassSchedule/";
 const PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\n" +
@@ -12,7 +12,7 @@ const MODAL_ID = "help-modal"; // The modal itself is specified in index.html.
 const DEBOUNCE_DELAY_MS = 300;
 
 interface IScheduleInputAreaProps {
-    onEventsParsed?: (events: IWebstacEvent[]) => void;
+    onEventsParsed?: (events: IWebstacEventData[]) => void;
 }
 
 interface IScheduleInputAreaState {
@@ -48,7 +48,7 @@ export class ScheduleInputArea extends React.PureComponent<IScheduleInputAreaPro
             numCoursesParsed: courses.length,
             numFinalsParsed: finals.length
         });
-        const allEvents = (courses as IWebstacEvent[]).concat(finals);
+        const allEvents = (courses as IWebstacEventData[]).concat(finals);
         if (allEvents.length <= 0 && input.trim().length > 0) {
             this.setState({ isParsingFailure: true });
         }

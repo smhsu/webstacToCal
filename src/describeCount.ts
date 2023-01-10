@@ -10,8 +10,10 @@ export function describeCount(count: number, singular: string, plural?: string) 
         return "1 " + singular;
     }
 
-    if (plural === undefined) {
-        plural = singular.endsWith("s") ? (singular + "es") : (singular + "s");
-    }
-    return `${count} ${plural}`;
+    return `${count} ${plural || getPlural(singular)}`;
+}
+
+
+export function getPlural(singular: string) {
+    return singular.endsWith("s") ? (singular + "es") : (singular + "s");
 }

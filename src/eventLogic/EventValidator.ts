@@ -1,19 +1,18 @@
-import { DATE_TIME_PARSER as PARSER } from "./DateTimeParser";
 import { IValidationError, ValidationErrorType } from "./IValidationError";
-import { IWebstacEvent, WebstacEventType } from "./IWebstacEvent";
+import { IWebstacEventData, WebstacEventType } from "./IWebstacEvent";
 
 export class EventValidator {
-    validate(event: IWebstacEvent): IValidationError[] {
+    validate(event: IWebstacEventData): IValidationError[] {
         const errors: IValidationError[] = [];
 
         if (!event.name) {
             errors.push({ type: ValidationErrorType.BadName, details: "Enter a name" });
         }
 
-        if (event.type === WebstacEventType.Exam && !PARSER.parseDate(event.date).isValid) {
+        if (event.type === WebstacEventType.Final && !event.date.parsed.isValid) {
             errors.push({
                 type: ValidationErrorType.BadDate,
-                details: "Enter a valid date: " + PARSER.dateInputInstructions
+                details: "Enter a valid date. " + event.date.formatInstructions
             });
         }
 
@@ -21,18 +20,18 @@ export class EventValidator {
             errors.push({ type: ValidationErrorType.BadRecurrence, details: "Select at least one day of the week" });
         }
 
-        const startTime = PARSER.parseTime(event.startTime);
-        const endTime = PARSER.parseTime(event.endTime);
+        const startTime = event.startTime.parsed;
+        const endTime = event.endTime.parsed;
         if (!startTime.isValid) {
             errors.push({
                 type: ValidationErrorType.BadStartTime,
-                details: "Enter a valid start time: " + PARSER.timeInputInstructions
+                details: "Enter a valid start time. " + event.startTime.formatInstructions
             });
         }
         if (!endTime.isValid) {
             errors.push({
                 type: ValidationErrorType.BadEndTime,
-                details: "Enter a valid end time: " + PARSER.timeInputInstructions
+                details: "Enter a valid end time. " + event.endTime.formatInstructions
             });
         }
 

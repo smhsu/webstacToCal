@@ -1,4 +1,6 @@
-import { IWebstacCourseData, IWebstacExamData, WebstacEventType } from "./IWebstacEvent";
+import { WebstacDate } from "src/eventLogic/WebstacDate";
+import { WebstacTime } from "src/eventLogic/WebstacTime";
+import { DESCRIPTION_FOR_TYPE, IWebstacCourseData, IWebstacFinalData, WebstacEventType } from "./IWebstacEvent";
 
 /*
 An exam looks like this; it takes up two lines:
@@ -39,13 +41,13 @@ export class WebstacExamParser {
      * @param courses - list of courses to match to exams for determining exam locations
      * @return array of parsed exams
      */
-    static parseExams(rawInput: string, courses: IWebstacCourseData[]): IWebstacExamData[] {
+    static parseExams(rawInput: string, courses: IWebstacCourseData[]): IWebstacFinalData[] {
         const locationForCourseName: Record<string, string> = {};
-        for (const course of courses) {
+        for (const course of courses) { // Initialize the mapping
             locationForCourseName[course.name] = course.location;
         }
 
-        let events: IWebstacExamData[] = [];
+        const events: IWebstacFinalData[] = [];
         let examMatch = EXAM_REGEX.exec(rawInput);
         while (examMatch !== null) {
             const courseName = examMatch[CaptureGroups.CourseName];
@@ -55,12 +57,12 @@ export class WebstacExamParser {
             }
 
             events.push({
-                type: WebstacEventType.Exam,
-                name: courseName + " Final",
+                type: WebstacEventType.Final,
+                name: `${courseName} ${DESCRIPTION_FOR_TYPE[WebstacEventType.Final]}`,
                 location,
-                date: examMatch[CaptureGroups.Date],
-                startTime: examMatch[CaptureGroups.StartTime],
-                endTime: examMatch[CaptureGroups.EndTime]
+                date: new WebstacDate(examMatch[CaptureGroups.Date]),
+                startTime: new WebstacTime(examMatch[CaptureGroups.StartTime]),
+                endTime: new WebstacTime(examMatch[CaptureGroups.EndTime])
             });
             examMatch = EXAM_REGEX.exec(rawInput);
         }

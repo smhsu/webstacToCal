@@ -6,6 +6,10 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Open Sans", sans-serif;
 }
 
+.height-0 {
+    height: 0;
+}
+
 .font-heading {
     font-family: "Open Sans", sans-serif;
 }

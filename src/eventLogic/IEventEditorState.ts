@@ -1,8 +1,11 @@
 import { IEventExportState } from "./IEventExportState";
-import { IWebstacEvent } from "./IWebstacEvent";
+import { IWebstacEventData } from "./IWebstacEvent";
+
+export type EventId = string;
 
 export interface IEventEditorState {
-    data: IWebstacEvent;
+    id: EventId;
+    data: IWebstacEventData;
     isSelected: boolean;
     exportState: IEventExportState;
 }

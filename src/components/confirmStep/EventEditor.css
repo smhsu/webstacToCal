@@ -11,6 +11,10 @@
     margin: 0;
 }
 
+.EventEditor-bg-highlighted {
+    background-color: #fffff0;
+}
+
 .EventEditor .text-warning-darker {
     color: #997405;
 }

@@ -4,8 +4,10 @@ import React from "react";
 
 import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { IValidationError, ValidationErrorType } from "src/eventLogic/IValidationError";
-import { IWebstacEvent, WebstacEventType } from "src/eventLogic/IWebstacEvent";
+import { IWebstacEventData, WebstacEventType } from "src/eventLogic/IWebstacEvent";
+import { WebstacDate } from "src/eventLogic/WebstacDate";
 
+import { EditorLegend } from "./EditorLegend";
 import { LabeledInput } from "./LabeledInput";
 import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
 import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
@@ -20,8 +22,8 @@ interface IEventEditorProps {
     editorState: IEventEditorState;
     validationErrors: IValidationError[];
     index: number;
-    onChange: (updatedState: IEventEditorState) => void;
-    onExportClicked: () => void;
+    onChange: (updated: IEventEditorState) => void;
+    onExportClicked: (toExport: IEventEditorState) => void;
 }
 
 /**
@@ -34,9 +36,9 @@ interface IEventEditorProps {
 export const EventEditor = function EventEditor(props: IEventEditorProps) {
     const { editorState, validationErrors, index, onChange, onExportClicked } = props;
     const { data, isSelected, exportState } = editorState;
-    const dispatchChange = function<T extends IWebstacEvent>(updatedData: Partial<T>) {
+    const dispatchChange = function<T extends IWebstacEventData>(updatedData: Partial<T>) {
         onChange({
-            ...props.editorState,
+            ...editorState,
             data: {
                 ...data,
                 ...updatedData
@@ -53,16 +55,13 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
     }
 
     return <EventEditorLayout
-        renderLegend={cssClasses => <legend
-            className={cssClasses + " d-flex flex-column justify-content-center align-items-center m-0"}
-        >
-            <span style={{ fontSize: "small" }}>{"Event"}</span>
-            <span className="fs-5">{index + 1}</span>
-        </legend>}
+        className={isSelected && validationErrors.length === 0 ? "EventEditor-bg-highlighted" : "bg-light"}
+
+        renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={data.type} index={index} />}
 
         renderCol1={cssClasses => <div className={cssClasses}>
             <LabeledInput
-                renderLabel="Event name"
+                renderLabel="Name"
                 renderInput={id => <input
                     id={id}
                     type="text"
@@ -106,9 +105,9 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
                         className={"form-control w-auto" + getBorderCss([ValidationErrorType.BadDate])}
                         size={DATE_INPUT_SIZE}
                         maxLength={DATE_INPUT_SIZE + 2}
-                        value={data.date}
+                        value={data.date.raw}
                         readOnly={isReadOnly}
-                        onChange={e => dispatchChange({ date: e.currentTarget.value })}
+                        onChange={e => dispatchChange({ date: new WebstacDate(e.currentTarget.value) })}
                     />}
                 />
             }
@@ -126,7 +125,7 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
             isSelectedForExport={isSelected}
             className={cssClasses}
             disabled={isExportDisabled}
-            onExportClicked={onExportClicked}
+            onExportClicked={() => onExportClicked(editorState)}
             onSelectionToggle={() => onChange( { ...editorState, isSelected: !editorState.isSelected })}
         />}
 

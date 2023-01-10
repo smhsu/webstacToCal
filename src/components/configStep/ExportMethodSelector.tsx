@@ -86,7 +86,7 @@ export function ExportMethodSelector(props: IExportMethodSelectorProps) {
     let googleStatusDisplay = null;
     if (apiLoadState.isError) {
         googleStatusDisplay = <div className="text-danger mb-3" role="status">
-            Google sign-in is unavailable.  Try reloading the page.<br />
+            There was a problem loading Google sign-in.  Try reloading the page.<br />
             <InstructionsToWaitOrContact />
         </div>;
     } else if (authError === AuthError.PopupBlocked) {

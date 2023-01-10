@@ -1,5 +1,5 @@
 import React from "react";
-import { AllDays, DayOfWeek } from "src/eventLogic/DayOfWeek";
+import { ALL_DAYS, DayOfWeek } from "src/eventLogic/DayOfWeek";
 import "./RepeatingDaysSelector.css";
 
 interface IRepeatingDaysSelectorProps {
@@ -30,7 +30,7 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
     };
 
     const checkboxes = [];
-    for (const day of AllDays) {
+    for (const day of ALL_DAYS) {
         const dayFullName = DayOfWeek[day];
         const isChecked = props.selectedDays.has(day);
         const className = "RepeatingDaysSelector-box btn p-0 rounded-0 align-baseline" +

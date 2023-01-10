@@ -4,7 +4,7 @@ import { AppWorkflowStep, PROPS_FOR_STEP } from "src/AppWorkflowStep";
 import { EventExportMethod } from "src/eventLogic/EventExportMethod";
 import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
-import { IWebstacEvent } from "src/eventLogic/IWebstacEvent";
+import { IWebstacEventData } from "src/eventLogic/IWebstacEvent";
 import { useAuth } from "src/google/useAuthState";
 import { useGlobalGoogleApis } from "src/google/useGlobalGoogleApis";
 
@@ -32,9 +32,10 @@ export function App() {
         setExportMethod(newMethod);
     }, []);
 
-    const handleEventsParsed = useCallback((newEvents: IWebstacEvent[]) => {
-        setEditorStates(newEvents.map(event => {
+    const handleEventsParsed = useCallback((newEvents: IWebstacEventData[]) => {
+        setEditorStates(newEvents.map((event, i) => {
             return {
+                id: i.toString(),
                 data: event,
                 isSelected: true,
                 exportState: {

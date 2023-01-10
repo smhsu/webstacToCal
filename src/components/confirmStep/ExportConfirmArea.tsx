@@ -1,15 +1,17 @@
-import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-
-import { describeCount } from "src/describeCount";
-import { IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { AppWorkflowStep } from "src/AppWorkflowStep";
+import { AppStepLink } from "src/components/AppStepLink";
 import { EventExportMethod } from "src/eventLogic/EventExportMethod";
+import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
+import { WebstacEventType } from "src/eventLogic/IWebstacEvent";
 
-import { EventEditor } from "./EventEditor";
+import { ExportAllPanel } from "./ExportAllPanel";
+import { EventTable } from "./EventTable";
 import { useEventInputValidation } from "./useEventInputValidation";
 import { useManageExportState } from "./useManageExportState";
+
+const IS_CHECKING_READY_STATE = false;
 
 interface IExportConfirmAreaProps {
     exportMethod: EventExportMethod;
@@ -21,16 +23,20 @@ interface IExportConfirmAreaProps {
 
 export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     const { exportMethod, calendarId, semester, editorStates, onEditorStatesChanged } = props;
-    const validationErrors = useEventInputValidation(editorStates.map(state => state.data));
-    const { exportOne } = useManageExportState(editorStates, calendarId, semester, onEditorStatesChanged);
+    const validationErrors = useEventInputValidation(editorStates);
+    const { exportOne, exportMany } = useManageExportState(editorStates, calendarId, semester, onEditorStatesChanged);
 
-    const handleOneEditorChanged = (updatedState: IEventEditorState, index: number) => {
+    const handleOneEditorChanged = (updatedState: IEventEditorState) => {
+        const index = editorStates.findIndex(state => state.id === updatedState.id);
+        if (index < 0) {
+            return;
+        }
         const newStates = editorStates.slice();
         newStates[index] = updatedState;
         onEditorStatesChanged(newStates);
     };
 
-    const notReadyNotifications = [];/*
+    const notReadyNotifications = [];
     if (exportMethod === EventExportMethod.None) {
         notReadyNotifications.push(<li key="0">
             You must <AppStepLink step={AppWorkflowStep.Config} linkText={"choose an eventExport method"}/>.
@@ -41,55 +47,28 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
             You must <AppStepLink step={AppWorkflowStep.Config} linkText={"choose a semester"} />.
         </li>);
     }
-    if (webstacEvents.length <= 0) {
+    if (editorStates.length <= 0) {
         notReadyNotifications.push(<li key="2">You must copy-paste something valid from WebSTAC.</li>);
     }
-    if (notReadyNotifications.length > 0) {
+    if (notReadyNotifications.length > 0 && IS_CHECKING_READY_STATE) {
         return <div>
             Hold your horses!  To eventExport events:
             <ul className="mt-1">{notReadyNotifications}</ul>
         </div>;
-    }*/
+    }
 
-    const numSelected = editorStates.filter(state => state.isSelected).length;
-    return <div>
-        <button
-            className="btn btn-primary d-flex align-items-center gap-1 text-start"
-            disabled={numSelected <= 0}
-        >
-            <FontAwesomeIcon icon={faCloudArrowUp} className="me-2" />
-            <div>
-                <div>Add all selected events to Google Calendar</div>
-                <div style={{ fontSize: "smaller" }}>
-                    {describeCount(numSelected, "event")} selected
-                </div>
-            </div>
-        </button>
+    const tableProps = {
+        editorStates,
+        validationErrors,
+        onChange: handleOneEditorChanged,
+        onExportClicked: exportOne
+    };
+
+    return <div className="mt-3">
+        <ExportAllPanel editorStates={editorStates} validationErrors={validationErrors} exporter={exportMany} />
         <div>
-            {
-                editorStates.map((event, index) => {
-                    return <EventEditor
-                        key={index}
-                        editorState={event}
-                        validationErrors={validationErrors[index]}
-                        index={index}
-                        onChange={newState => handleOneEditorChanged(newState, index)}
-                        onExportClicked={() => exportOne(index)}
-                    />;
-                })
-            }
+            <EventTable eventType={WebstacEventType.Course} {...tableProps} />
+            <EventTable eventType={WebstacEventType.Final} {...tableProps} />
         </div>
     </div>;
 }
-
-
-/*
-        <div>
-            <div>3 events added.</div>
-            <div>1 invalid event ignored.</div>
-            <div>2 events failed to add.  See individual rows for error details.</div>
-        </div>
-        <div>
-            Some events are not ready for export and need manual editing.
-        </div>
-*/

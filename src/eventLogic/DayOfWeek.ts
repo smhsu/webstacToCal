@@ -15,4 +15,4 @@ export enum DayOfWeek {
 /**
  * All days of the week starting with Monday.
  */
-export const AllDays: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 7];
+export const ALL_DAYS: ReadonlyArray<DayOfWeek> = [1, 2, 3, 4, 5, 6, 7];

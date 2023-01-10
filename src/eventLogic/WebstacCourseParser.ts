@@ -1,4 +1,5 @@
-import { AllDays, DayOfWeek } from "./DayOfWeek";
+import { WebstacTime } from "src/eventLogic/WebstacTime";
+import { ALL_DAYS, DayOfWeek } from "./DayOfWeek";
 import { IWebstacCourseData, WebstacEventType } from "./IWebstacEvent";
 
 /*
@@ -53,8 +54,8 @@ export class WebstacCourseParser {
                 type: WebstacEventType.Course,
                 name: columns[ColumnIndex.Name].trim() || "",
                 location: columns[ColumnIndex.Location] || "",
-                startTime: daysAndTimeMatch[DaysAndTimeCaptureGroups.StartTime] || "",
-                endTime: daysAndTimeMatch[DaysAndTimeCaptureGroups.EndTime] || "",
+                startTime: new WebstacTime(daysAndTimeMatch[DaysAndTimeCaptureGroups.StartTime] || ""),
+                endTime: new WebstacTime(daysAndTimeMatch[DaysAndTimeCaptureGroups.EndTime] || ""),
                 repeatingDays: WebstacCourseParser.parseCourseDays(
                     daysAndTimeMatch[DaysAndTimeCaptureGroups.Days] || ""
                 )
@@ -71,11 +72,11 @@ export class WebstacCourseParser {
      */
     private static parseCourseDays(rawInput: string): Set<DayOfWeek> {
         const days: Set<DayOfWeek> = new Set();
-        if (rawInput.length === AllDays.length) {
-            for (let i = 0; i < AllDays.length; i++) {
+        if (rawInput.length === ALL_DAYS.length) {
+            for (let i = 0; i < ALL_DAYS.length; i++) {
                 // I'm not going to check if the letter is the right one for the position
                 if (rawInput.charAt(i) !== "-") {
-                    days.add(AllDays[i]);
+                    days.add(ALL_DAYS[i]);
                 }
             }
         }
