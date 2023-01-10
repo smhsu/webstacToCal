@@ -49,7 +49,7 @@ export function useManageExportState(
         let errorMessage = "";
         let wasSuccessful = false;
         try {
-            successUrl = await EXPORTER.exportOne(editorStates[index].data, calendarId, semester);
+            successUrl = await EXPORTER.exportOne(editorStates[index].inputs, calendarId, semester);
             wasSuccessful = true;
         } catch (error) {
             console.error(error);

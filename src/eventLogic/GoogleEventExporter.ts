@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 import { CalendarApi } from "src/google/CalendarApi";
 import { DayOfWeek } from "./DayOfWeek";
 import { ISemester } from "./ISemester";
-import { IWebstacEventData, WebstacEventType } from "./IWebstacEvent";
+import { IEventInputs, WebstacEventType } from "./IEventInputs";
 
 // Example of an ISO 8601 date: 2017-10-09T02:33:50Z
 const ISO_TIME_START_INDEX = 11;
@@ -32,7 +32,7 @@ const REMINDERS = {
 };
 
 export class GoogleEventExporter {
-    exportOne(event: IWebstacEventData, calendarId: string, semester: ISemester): Promise<string> {
+    exportOne(event: IEventInputs, calendarId: string, semester: ISemester): Promise<string> {
         const { start, end } = this._generateStartEndAsISO(event, semester);
         return CalendarApi.getInstance().createEvent(calendarId, {
             summary: event.name,
@@ -51,7 +51,7 @@ export class GoogleEventExporter {
         });
     }
 
-    private _generateStartEndAsISO(event: IWebstacEventData, semester: ISemester) {
+    private _generateStartEndAsISO(event: IEventInputs, semester: ISemester) {
         const startTime = event.startTime.parsed;
         const endTime = event.endTime.parsed;
         const startDate = this._getStartDate(event, semester);
@@ -74,7 +74,7 @@ export class GoogleEventExporter {
      * @param semester
      * @private
      */
-    private _getStartDate(event: IWebstacEventData, semester: ISemester): DateTime {
+    private _getStartDate(event: IEventInputs, semester: ISemester): DateTime {
         if (event.type === WebstacEventType.Course) {
             return semester.firstDayOfClasses.plus({
                 // The event might not happen on the first day of classes.  Advance time to find the first day.
@@ -117,7 +117,7 @@ export class GoogleEventExporter {
      * @param semester
      * @return list of recurrence rules
      */
-    private _generateRecurrence(event: IWebstacEventData, semester: ISemester): string[] {
+    private _generateRecurrence(event: IEventInputs, semester: ISemester): string[] {
         if (event.type !== WebstacEventType.Course) {
             return [];
         }

@@ -1,4 +1,4 @@
-import { DESCRIPTION_FOR_TYPE, WebstacEventType } from "src/eventLogic/IWebstacEvent";
+import { DESCRIPTION_FOR_TYPE, WebstacEventType } from "src/eventLogic/IEventInputs";
 import "./EditorLegend.css";
 
 interface IEditorLegendProps {

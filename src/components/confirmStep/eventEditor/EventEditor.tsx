@@ -4,8 +4,8 @@ import React from "react";
 
 import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { IValidationError, ValidationErrorType } from "src/eventLogic/IValidationError";
-import { IWebstacEventData, WebstacEventType } from "src/eventLogic/IWebstacEvent";
-import { WebstacDate } from "src/eventLogic/WebstacDate";
+import { IEventInputs, WebstacEventType } from "src/eventLogic/IEventInputs";
+import { EventDateInput } from "src/eventLogic/EventDateInput";
 
 import { EditorLegend } from "./EditorLegend";
 import { LabeledInput } from "./LabeledInput";
@@ -35,13 +35,13 @@ interface IEventEditorProps {
  */
 export const EventEditor = function EventEditor(props: IEventEditorProps) {
     const { editorState, validationErrors, index, onChange, onExportClicked } = props;
-    const { data, isSelected, exportState } = editorState;
-    const dispatchChange = function<T extends IWebstacEventData>(updatedData: Partial<T>) {
+    const { inputs, isSelected, exportState } = editorState;
+    const dispatchChange = function<T extends IEventInputs>(updatedInputs: Partial<T>) {
         onChange({
             ...editorState,
-            data: {
-                ...data,
-                ...updatedData
+            inputs: {
+                ...inputs,
+                ...updatedInputs
             }
         });
     };
@@ -57,7 +57,7 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
     return <EditorLayout
         className={isSelected && validationErrors.length === 0 ? "EventEditor-bg-highlighted" : "bg-light"}
 
-        renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={data.type} index={index} />}
+        renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={inputs.type} index={index} />}
 
         renderCol1={cssClasses => <div className={cssClasses}>
             <LabeledInput
@@ -66,7 +66,7 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
                     id={id}
                     type="text"
                     className={"form-control" + getBorderCss([ValidationErrorType.BadName])}
-                    value={data.name}
+                    value={inputs.name}
                     placeholder="Enter a name"
                     readOnly={isReadOnly}
                     disabled={isReadOnly}
@@ -79,7 +79,7 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
                     id={id}
                     type="text"
                     className="form-control"
-                    value={data.location}
+                    value={inputs.location}
                     placeholder="Enter a location"
                     readOnly={isReadOnly}
                     disabled={isReadOnly}
@@ -89,9 +89,9 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
         </div>}
 
         renderCol2={cssClasses => <div className={cssClasses}>
-            {data.type === WebstacEventType.Course ?
+            {inputs.type === WebstacEventType.Course ?
                 <RepeatingDaysSelector
-                    selectedDays={data.repeatingDays}
+                    selectedDays={inputs.repeatingDays}
                     legendClassName="EventEditor-repeating-days-legend"
                     disabled={isReadOnly}
                     onChange={newSelection => dispatchChange({ repeatingDays: newSelection })}
@@ -105,14 +105,14 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
                         className={"form-control w-auto" + getBorderCss([ValidationErrorType.BadDate])}
                         size={DATE_INPUT_SIZE}
                         maxLength={DATE_INPUT_SIZE + 2}
-                        value={data.date.raw}
+                        value={inputs.date.raw}
                         readOnly={isReadOnly}
-                        onChange={e => dispatchChange({ date: new WebstacDate(e.currentTarget.value) })}
+                        onChange={e => dispatchChange({ date: new EventDateInput(e.currentTarget.value) })}
                     />}
                 />
             }
             <StartEndTimeInputs
-                data={data}
+                values={inputs}
                 isReadOnly={isReadOnly}
                 startClassName={getBorderCss([ValidationErrorType.BadStartTime, ValidationErrorType.EndBeforeStart])}
                 endClassName={getBorderCss([ValidationErrorType.BadEndTime, ValidationErrorType.EndBeforeStart])}

@@ -1,6 +1,6 @@
 import { DayOfWeek } from "./DayOfWeek";
-import { WebstacDate } from "./WebstacDate";
-import { WebstacTime } from "./WebstacTime";
+import { EventDateInput } from "src/eventLogic/EventDateInput";
+import { EventTimeInput } from "src/eventLogic/EventTimeInput";
 
 /**
  * The type of event -- courses are recurring events, and exams are one-time events.
@@ -23,22 +23,22 @@ export const DESCRIPTION_FOR_TYPE: Record<WebstacEventType, string> = {
     [WebstacEventType.Final]: "Final"
 };
 
-interface IWebstacBasicData {
+interface IEventBasicInputs {
     type: WebstacEventType;
     name: string;
     location: string;
-    startTime: WebstacTime;
-    endTime: WebstacTime;
+    startTime: EventTimeInput;
+    endTime: EventTimeInput;
 }
 
-export interface IWebstacCourseData extends IWebstacBasicData {
+export interface ICourseEventInputs extends IEventBasicInputs {
     type: WebstacEventType.Course;
     repeatingDays: Set<DayOfWeek>;
 }
 
-export interface IWebstacFinalData extends IWebstacBasicData {
+export interface IFinalEventInputs extends IEventBasicInputs {
     type: WebstacEventType.Final;
-    date: WebstacDate;
+    date: EventDateInput;
 }
 
-export type IWebstacEventData = IWebstacCourseData | IWebstacFinalData;
+export type IEventInputs = ICourseEventInputs | IFinalEventInputs;

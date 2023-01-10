@@ -1,8 +1,8 @@
 import { IValidationError, ValidationErrorType } from "./IValidationError";
-import { IWebstacEventData, WebstacEventType } from "./IWebstacEvent";
+import { IEventInputs, WebstacEventType } from "./IEventInputs";
 
 export class EventValidator {
-    validate(event: IWebstacEventData): IValidationError[] {
+    validate(event: IEventInputs): IValidationError[] {
         const errors: IValidationError[] = [];
 
         if (!event.name) {

@@ -1,6 +1,6 @@
-import { WebstacTime } from "src/eventLogic/WebstacTime";
+import { EventTimeInput } from "src/eventLogic/EventTimeInput";
 import { ALL_DAYS, DayOfWeek } from "./DayOfWeek";
-import { IWebstacCourseData, WebstacEventType } from "./IWebstacEvent";
+import { ICourseEventInputs, WebstacEventType } from "./IEventInputs";
 
 /*
 A course looks like this.  Major fields are separated by tabs:
@@ -36,13 +36,13 @@ export class WebstacCourseParser {
      * @param rawInput - class schedule copy-pasted from WebSTAC
      * @return array of parsed courses
      */
-    static parseCourses(rawInput: string): IWebstacCourseData[] {
+    static parseCourses(rawInput: string): ICourseEventInputs[] {
         const fuzzyCourseMatches = rawInput.match(COURSE_REGEX);
         if (!fuzzyCourseMatches) {
             return [];
         }
 
-        const events: IWebstacCourseData[] = [];
+        const events: ICourseEventInputs[] = [];
         for (const fuzzyCourseMatch of fuzzyCourseMatches) {
             const columns = fuzzyCourseMatch.split("\t");
             if (columns.length < ColumnIndex.MinExpected) {
@@ -54,8 +54,8 @@ export class WebstacCourseParser {
                 type: WebstacEventType.Course,
                 name: columns[ColumnIndex.Name].trim() || "",
                 location: columns[ColumnIndex.Location] || "",
-                startTime: new WebstacTime(daysAndTimeMatch[DaysAndTimeCaptureGroups.StartTime] || ""),
-                endTime: new WebstacTime(daysAndTimeMatch[DaysAndTimeCaptureGroups.EndTime] || ""),
+                startTime: new EventTimeInput(daysAndTimeMatch[DaysAndTimeCaptureGroups.StartTime] || ""),
+                endTime: new EventTimeInput(daysAndTimeMatch[DaysAndTimeCaptureGroups.EndTime] || ""),
                 repeatingDays: WebstacCourseParser.parseCourseDays(
                     daysAndTimeMatch[DaysAndTimeCaptureGroups.Days] || ""
                 )

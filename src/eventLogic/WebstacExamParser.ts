@@ -1,6 +1,6 @@
-import { WebstacDate } from "src/eventLogic/WebstacDate";
-import { WebstacTime } from "src/eventLogic/WebstacTime";
-import { DESCRIPTION_FOR_TYPE, IWebstacCourseData, IWebstacFinalData, WebstacEventType } from "./IWebstacEvent";
+import { EventDateInput } from "src/eventLogic/EventDateInput";
+import { EventTimeInput } from "src/eventLogic/EventTimeInput";
+import { DESCRIPTION_FOR_TYPE, ICourseEventInputs, IFinalEventInputs, WebstacEventType } from "./IEventInputs";
 
 /*
 An exam looks like this; it takes up two lines:
@@ -41,13 +41,13 @@ export class WebstacExamParser {
      * @param courses - list of courses to match to exams for determining exam locations
      * @return array of parsed exams
      */
-    static parseExams(rawInput: string, courses: IWebstacCourseData[]): IWebstacFinalData[] {
+    static parseExams(rawInput: string, courses: ICourseEventInputs[]): IFinalEventInputs[] {
         const locationForCourseName: Record<string, string> = {};
         for (const course of courses) { // Initialize the mapping
             locationForCourseName[course.name] = course.location;
         }
 
-        const events: IWebstacFinalData[] = [];
+        const events: IFinalEventInputs[] = [];
         let examMatch = EXAM_REGEX.exec(rawInput);
         while (examMatch !== null) {
             const courseName = examMatch[CaptureGroups.CourseName];
@@ -60,9 +60,9 @@ export class WebstacExamParser {
                 type: WebstacEventType.Final,
                 name: `${courseName} ${DESCRIPTION_FOR_TYPE[WebstacEventType.Final]}`,
                 location,
-                date: new WebstacDate(examMatch[CaptureGroups.Date]),
-                startTime: new WebstacTime(examMatch[CaptureGroups.StartTime]),
-                endTime: new WebstacTime(examMatch[CaptureGroups.EndTime])
+                date: new EventDateInput(examMatch[CaptureGroups.Date]),
+                startTime: new EventTimeInput(examMatch[CaptureGroups.StartTime]),
+                endTime: new EventTimeInput(examMatch[CaptureGroups.EndTime])
             });
             examMatch = EXAM_REGEX.exec(rawInput);
         }

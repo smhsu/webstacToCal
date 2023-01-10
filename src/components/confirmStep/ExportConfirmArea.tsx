@@ -4,10 +4,10 @@ import { AppStepLink } from "src/components/AppStepLink";
 import { EventExportMethod } from "src/eventLogic/EventExportMethod";
 import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
-import { WebstacEventType } from "src/eventLogic/IWebstacEvent";
+import { WebstacEventType } from "src/eventLogic/IEventInputs";
 
 import { ExportAllPanel } from "./ExportAllPanel";
-import { EventTable } from "./EventTable";
+import { EventList } from "./EventList";
 import { useEventInputValidation } from "./useEventInputValidation";
 import { useManageExportState } from "./useManageExportState";
 
@@ -67,8 +67,8 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     return <div className="mt-3">
         <ExportAllPanel editorStates={editorStates} validationErrors={validationErrors} exporter={exportMany} />
         <div>
-            <EventTable eventType={WebstacEventType.Course} {...tableProps} />
-            <EventTable eventType={WebstacEventType.Final} {...tableProps} />
+            <EventList eventType={WebstacEventType.Course} {...tableProps} />
+            <EventList eventType={WebstacEventType.Final} {...tableProps} />
         </div>
     </div>;
 }

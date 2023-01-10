@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 /**
  * User input for date.  Expects input in a format matching WebSTAC's formatting.
  */
-export class WebstacDate {
+export class EventDateInput {
     /**
      * Raw input string.
      */

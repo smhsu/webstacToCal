@@ -3,7 +3,7 @@ import { EventEditor } from "src/components/confirmStep/eventEditor/EventEditor"
 import { getPlural } from "src/describeCount";
 import { EventId, IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { IValidationError } from "src/eventLogic/IValidationError";
-import { DESCRIPTION_FOR_TYPE, WebstacEventType } from "src/eventLogic/IWebstacEvent";
+import { DESCRIPTION_FOR_TYPE, WebstacEventType } from "src/eventLogic/IEventInputs";
 
 interface IEventTableProps {
     eventType: WebstacEventType;
@@ -13,11 +13,11 @@ interface IEventTableProps {
     onExportClicked: (toExport: IEventEditorState) => void;
 }
 
-export function EventTable(props: IEventTableProps) {
+export function EventList(props: IEventTableProps) {
     const { eventType, editorStates, validationErrors, onChange, onExportClicked } = props;
 
-    const statesToRender = editorStates.filter(state => state.data.type === eventType);
-    if (statesToRender.length <= 0) {
+    const eventsToRender = editorStates.filter(event => event.inputs.type === eventType);
+    if (eventsToRender.length <= 0) {
         return null;
     }
 
@@ -30,7 +30,7 @@ export function EventTable(props: IEventTableProps) {
         </div>
 
         {
-            statesToRender.map((event, index) => {
+            eventsToRender.map((event, index) => {
                 return <EventEditor
                     key={event.id}
                     editorState={event}

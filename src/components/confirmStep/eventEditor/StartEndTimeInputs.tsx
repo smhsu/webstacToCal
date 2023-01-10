@@ -1,20 +1,20 @@
 import React from "react";
-import { IWebstacEventData } from "src/eventLogic/IWebstacEvent";
-import { WebstacTime } from "src/eventLogic/WebstacTime";
+import { IEventInputs } from "src/eventLogic/IEventInputs";
+import { EventTimeInput } from "src/eventLogic/EventTimeInput";
 import { LabeledInput } from "./LabeledInput";
 
 const TIME_INPUT_SIZE = 8;
 
 interface IStartEndTimeInputsProps {
-    data: IWebstacEventData;
+    values: IEventInputs;
     startClassName?: string;
     endClassName?: string;
     isReadOnly?: boolean;
-    onChange: (updates: Partial<IWebstacEventData>) => void;
+    onChange: (updates: Partial<IEventInputs>) => void;
 }
 
 export function StartEndTimeInputs(props: IStartEndTimeInputsProps) {
-    const { data, startClassName, isReadOnly, endClassName, onChange } = props;
+    const { values, startClassName, isReadOnly, endClassName, onChange } = props;
     const commonProps: React.InputHTMLAttributes<HTMLInputElement> = {
         type: "text",
         size: TIME_INPUT_SIZE,
@@ -30,8 +30,8 @@ export function StartEndTimeInputs(props: IStartEndTimeInputsProps) {
                 id={id}
                 {...commonProps}
                 className={"form-control" + (startClassName || "")}
-                value={data.startTime.raw}
-                onChange={e => onChange({ startTime: new WebstacTime(e.currentTarget.value) })}
+                value={values.startTime.raw}
+                onChange={e => onChange({ startTime: new EventTimeInput(e.currentTarget.value) })}
             />}
         />
         <LabeledInput
@@ -40,8 +40,8 @@ export function StartEndTimeInputs(props: IStartEndTimeInputsProps) {
                 id={id}
                 {...commonProps}
                 className={"form-control" + (endClassName || "")}
-                value={data.endTime.raw}
-                onChange={e => onChange({ endTime: new WebstacTime(e.currentTarget.value) })}
+                value={values.endTime.raw}
+                onChange={e => onChange({ endTime: new EventTimeInput(e.currentTarget.value) })}
             />}
         />
     </div>;
