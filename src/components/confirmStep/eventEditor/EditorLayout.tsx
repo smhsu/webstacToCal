@@ -2,7 +2,7 @@ import React from "react";
 
 type ChildElementMaker = (cssClasses: string) => JSX.Element;
 
-interface IEventEditorLayoutProps {
+interface IEditorLayoutProps {
     className?: string;
     renderLegend: ChildElementMaker
     renderCol1: ChildElementMaker;
@@ -12,7 +12,7 @@ interface IEventEditorLayoutProps {
     renderExportErrors: ChildElementMaker
 }
 
-export function EventEditorLayout(props: IEventEditorLayoutProps) {
+export function EditorLayout(props: IEditorLayoutProps) {
     const { renderLegend, renderCol1, renderCol2, renderCol3, renderValidationErrors, renderExportErrors } = props;
     const extraCss = props.className || "";
     return <fieldset className={"row EventEditor border border-secondary ps-1 pt-2 pb-md-1 pb-3 " + extraCss}>

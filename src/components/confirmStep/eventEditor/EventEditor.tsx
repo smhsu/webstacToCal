@@ -11,7 +11,7 @@ import { EditorLegend } from "./EditorLegend";
 import { LabeledInput } from "./LabeledInput";
 import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
 import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
-import { EventEditorLayout } from "./EventEditorLayout";
+import { EditorLayout } from "src/components/confirmStep/eventEditor/EditorLayout";
 import { StartEndTimeInputs } from "./StartEndTimeInputs";
 import { EditorExportControls } from "./EditorExportControls";
 import "./EventEditor.css";
@@ -54,7 +54,7 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
         return activatingErrors.some(errType => validationErrorTypes.has(errType)) ? " border-warning-darker" : "";
     }
 
-    return <EventEditorLayout
+    return <EditorLayout
         className={isSelected && validationErrors.length === 0 ? "EventEditor-bg-highlighted" : "bg-light"}
 
         renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={data.type} index={index} />}

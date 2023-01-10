@@ -1,5 +1,5 @@
 import React from "react";
-import { EventEditor } from "src/components/confirmStep/EventEditor";
+import { EventEditor } from "src/components/confirmStep/eventEditor/EventEditor";
 import { getPlural } from "src/describeCount";
 import { EventId, IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { IValidationError } from "src/eventLogic/IValidationError";
