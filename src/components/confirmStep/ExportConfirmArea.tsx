@@ -5,26 +5,28 @@ import { EventExportMethod } from "src/eventLogic/EventExportMethod";
 import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
 import { WebstacEventType } from "src/eventLogic/IEventInputs";
+import { IGoogleCalendarMetadata } from "src/google/IGoogleCalendarMetadata";
 
 import { ExportAllPanel } from "./ExportAllPanel";
 import { EventList } from "./EventList";
 import { useEventInputValidation } from "./useEventInputValidation";
 import { useManageExportState } from "./useManageExportState";
+import googleLogo from "src/googleLogo.svg";
 
 const IS_CHECKING_READY_STATE = false;
 
 interface IExportConfirmAreaProps {
     exportMethod: EventExportMethod;
-    calendarId: string;
+    calendar: IGoogleCalendarMetadata;
     semester: ISemester | null;
     editorStates: IEventEditorState[];
     onEditorStatesChanged: (newEvents: IEventEditorState[]) => void;
 }
 
 export function ExportConfirmArea(props: IExportConfirmAreaProps) {
-    const { exportMethod, calendarId, semester, editorStates, onEditorStatesChanged } = props;
+    const { exportMethod, calendar, semester, editorStates, onEditorStatesChanged } = props;
     const validationErrors = useEventInputValidation(editorStates);
-    const { exportOne, exportMany } = useManageExportState(editorStates, calendarId, semester, onEditorStatesChanged);
+    const { exportOne, exportMany } = useManageExportState(editorStates, calendar.id, semester, onEditorStatesChanged);
 
     const handleOneEditorChanged = (updatedState: IEventEditorState) => {
         const index = editorStates.findIndex(state => state.id === updatedState.id);
@@ -39,12 +41,12 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     const notReadyNotifications = [];
     if (exportMethod === EventExportMethod.None) {
         notReadyNotifications.push(<li key="0">
-            You must <AppStepLink step={AppWorkflowStep.Config} linkText={"choose an eventExport method"}/>.
+            You must <AppStepLink step={AppWorkflowStep.Config}>choose an export method</AppStepLink>.
         </li>);
     }
     if (semester === null) {
         notReadyNotifications.push(<li key="1">
-            You must <AppStepLink step={AppWorkflowStep.Config} linkText={"choose a semester"} />.
+            You must <AppStepLink step={AppWorkflowStep.Config}>choose a semester</AppStepLink>.
         </li>);
     }
     if (editorStates.length <= 0) {
@@ -65,6 +67,17 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     };
 
     return <div className="mt-3">
+        <div className="mb-2 gap-1">
+            Configured:
+            <span className="ms-1 badge bg-wustl text-white">{semester?.name}</span>
+            <span className="ms-1 badge bg-wustl text-white">
+                <img
+                    src={googleLogo}
+                    style={{ maxHeight: "11px", verticalAlign: "bottom" }}
+                    alt="Google"
+                /> {calendar.summary}
+            </span>
+        </div>
         <ExportAllPanel editorStates={editorStates} validationErrors={validationErrors} exporter={exportMany} />
         <div>
             <EventList eventType={WebstacEventType.Course} {...tableProps} />

@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { describeCount } from "src/describeCount";
 import { CalendarApi } from "src/google/CalendarApi";
 import { GoogleAuthScope } from "src/google/GoogleAuthScope";
+import { IGoogleCalendarMetadata, PRIMARY_CALENDAR } from "src/google/IGoogleCalendarMetadata";
 import { AuthError, AuthManagement } from "src/google/useAuthState";
 
 const AUTH_SCOPES = [GoogleAuthScope.ReadWriteEvents, GoogleAuthScope.ListCalendars];
@@ -12,11 +13,11 @@ const NON_PRIMARY_CALENDAR_VALUE = "other";
 
 interface ICalendarSelectorProps {
     /**
-     * The selected calendar ID.
+     * The selected calendar.
      */
-    value: string;
+    value: IGoogleCalendarMetadata;
     auth: AuthManagement;
-    onChange?: (newValue: string) => void;
+    onChange?: (newValue: IGoogleCalendarMetadata) => void;
 }
 
 export function CalendarSelector(props: ICalendarSelectorProps) {
@@ -41,7 +42,8 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
                 .then(fetchCalendars)
                 .catch(setAuthError);
         } else {
-            onChange?.(newValue);
+            const matchingCalendar = fetchedCalendars.find(calendar => calendar.id === newValue)!;
+            onChange?.(matchingCalendar);
         }
     };
 
@@ -91,10 +93,10 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
     }
 
     return <div>
-        <select className="form-select w-auto" value={value} onChange={handleSelectChanged}>
+        <select className="form-select w-auto" value={value.id} onChange={handleSelectChanged}>
             {fetchedCalendars.length === 0 &&
                 <>
-                    <option value="primary">Your primary calendar</option>
+                    <option value={PRIMARY_CALENDAR.id}>{PRIMARY_CALENDAR.summary}</option>
                     <option value="other">
                         Another calendar... (will ask for permission to fetch your calendars)
                     </option>

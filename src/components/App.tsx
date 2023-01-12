@@ -5,6 +5,7 @@ import { EventExportMethod } from "src/eventLogic/EventExportMethod";
 import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
 import { IEventInputs } from "src/eventLogic/IEventInputs";
+import { PRIMARY_CALENDAR } from "src/google/IGoogleCalendarMetadata";
 import { useAuth } from "src/google/useAuthState";
 import { useGlobalGoogleApis } from "src/google/useGlobalGoogleApis";
 
@@ -13,8 +14,8 @@ import { ExportMethodSelector } from "./configStep/ExportMethodSelector";
 import { SemesterSelector } from "./configStep/SemesterSelector";
 import { ExportConfirmArea } from "./confirmStep/ExportConfirmArea";
 import { ScheduleInputArea } from "./copyPasteStep/ScheduleInputArea";
-import { Intro } from "./Intro";
-import { NavSidebar } from "./NavSidebar";
+import { Intro } from "src/components/Intro";
+import { Navigation } from "src/components/Navigation";
 
 import "./App.css";
 
@@ -22,7 +23,7 @@ export function App() {
     const apiLoadState = useGlobalGoogleApis();
     const auth = useAuth(apiLoadState.isLoaded);
     const [exportMethod, setExportMethod] = useState(EventExportMethod.None);
-    const [selectedCalendarId, setSelectedCalendarId] = useState("primary");
+    const [selectedCalendar, setSelectedCalendar] = useState(PRIMARY_CALENDAR);
     const [selectedSemester, setSelectedSemester] = useState<ISemester | null>(null);
     const [editorStates, setEditorStates] = useState<IEventEditorState[]>([]);
 
@@ -49,7 +50,9 @@ export function App() {
 
     return <div className="container-lg">
         <div className="row">
-            <div className="col-md-2"><NavSidebar /></div>
+            <div className="col-md-2">
+                <Navigation />
+            </div>
             <div className="col">
                 <Intro />
 
@@ -70,9 +73,9 @@ export function App() {
                             <h3 className="fs-6">• Choose a Google Calendar to export to:</h3>
                             <IndentedDiv className="mb-4">
                                 <CalendarSelector
-                                    value={selectedCalendarId}
+                                    value={selectedCalendar}
                                     auth={auth}
-                                    onChange={setSelectedCalendarId}
+                                    onChange={setSelectedCalendar}
                                 />
                             </IndentedDiv>
                         </>
@@ -92,7 +95,7 @@ export function App() {
                     <IndentedDiv>
                         <ExportConfirmArea
                             exportMethod={exportMethod}
-                            calendarId={selectedCalendarId}
+                            calendar={selectedCalendar}
                             semester={selectedSemester}
                             editorStates={editorStates}
                             onEditorStatesChanged={setEditorStates} />
