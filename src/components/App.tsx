@@ -48,11 +48,9 @@ export function App() {
         }));
     }, []);
 
-    return <div className="container-lg">
+    return <div className="container-lg mt-md-3">
         <div className="row">
-            <div className="col-md-2">
-                <Navigation />
-            </div>
+            <Navigation/>
             <div className="col">
                 <Intro />
 
