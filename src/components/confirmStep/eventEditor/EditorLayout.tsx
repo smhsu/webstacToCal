@@ -15,7 +15,7 @@ interface IEditorLayoutProps {
 export function EditorLayout(props: IEditorLayoutProps) {
     const { renderLegend, renderCol1, renderCol2, renderCol3, renderValidationErrors, renderExportErrors } = props;
     const extraCss = props.className || "";
-    return <fieldset className={"row EventEditor border border-secondary ps-1 pt-2 pb-md-1 pb-3 " + extraCss}>
+    return <fieldset className={"row EventEditor border border-secondary ps-1 pt-2 pb-md-0 pb-3 " + extraCss}>
         {renderLegend("col-auto")}
         {renderCol1("col-md col-12")}
         <SmallScreenColBreak />
@@ -26,7 +26,7 @@ export function EditorLayout(props: IEditorLayoutProps) {
         {renderExportErrors("d-md-none col mt-3")} { /* Only visible on small screens */ }
 
         { /* Render row of errors that's only visible on larger screens */ }
-        <div className="row d-md-flex d-none mt-3 mb-1">
+        <div className="row d-md-flex d-none mt-3">
             { /* Render an invisible legend so there's a left margin that's the width of the legend */ }
             {renderLegend("col-auto invisible height-0")}
             {renderValidationErrors("col")}

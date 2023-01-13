@@ -1,8 +1,9 @@
 import React from "react";
 import { AppWorkflowStep } from "src/AppWorkflowStep";
 import { AppStepLink } from "src/components/AppStepLink";
+import { IUpdateStateAction } from "src/state/editorStatesActions";
 import { EventExportMethod } from "src/eventLogic/EventExportMethod";
-import { IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { IEventEditorState } from "src/state/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
 import { WebstacEventType } from "src/eventLogic/IEventInputs";
 import { IGoogleCalendarMetadata } from "src/google/IGoogleCalendarMetadata";
@@ -10,7 +11,7 @@ import { IGoogleCalendarMetadata } from "src/google/IGoogleCalendarMetadata";
 import { ExportAllPanel } from "./ExportAllPanel";
 import { EventList } from "./EventList";
 import { useEventInputValidation } from "./useEventInputValidation";
-import { useManageExportState } from "./useManageExportState";
+import { useEventExporter } from "src/components/confirmStep/useEventExporter";
 import googleLogo from "src/googleLogo.svg";
 
 const IS_CHECKING_READY_STATE = false;
@@ -20,23 +21,13 @@ interface IExportConfirmAreaProps {
     calendar: IGoogleCalendarMetadata;
     semester: ISemester | null;
     editorStates: IEventEditorState[];
-    onEditorStatesChanged: (newEvents: IEventEditorState[]) => void;
+    dispatch: React.Dispatch<IUpdateStateAction>;
 }
 
 export function ExportConfirmArea(props: IExportConfirmAreaProps) {
-    const { exportMethod, calendar, semester, editorStates, onEditorStatesChanged } = props;
+    const { exportMethod, calendar, semester, editorStates, dispatch } = props;
     const validationErrors = useEventInputValidation(editorStates);
-    const { exportOne, exportMany } = useManageExportState(editorStates, calendar.id, semester, onEditorStatesChanged);
-
-    const handleOneEditorChanged = (updatedState: IEventEditorState) => {
-        const index = editorStates.findIndex(state => state.id === updatedState.id);
-        if (index < 0) {
-            return;
-        }
-        const newStates = editorStates.slice();
-        newStates[index] = updatedState;
-        onEditorStatesChanged(newStates);
-    };
+    const { exportOne, exportMany } = useEventExporter(calendar.id, semester, dispatch);
 
     const notReadyNotifications = [];
     if (exportMethod === EventExportMethod.None) {
@@ -54,7 +45,7 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     }
     if (notReadyNotifications.length > 0 && IS_CHECKING_READY_STATE) {
         return <div>
-            Hold your horses!  To eventExport events:
+            Hold your horses!  To export events:
             <ul className="mt-1">{notReadyNotifications}</ul>
         </div>;
     }
@@ -62,7 +53,7 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     const tableProps = {
         editorStates,
         validationErrors,
-        onChange: handleOneEditorChanged,
+        dispatch,
         onExportClicked: exportOne
     };
 

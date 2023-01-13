@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 
 import { EventValidator } from "src/eventLogic/EventValidator";
-import { EventId, IEventEditorState } from "src/eventLogic/IEventEditorState";
+import { EventEditorId, IEventEditorState } from "src/state/IEventEditorState";
 import { IValidationError } from "src/eventLogic/IValidationError";
 import { IEventInputs } from "src/eventLogic/IEventInputs";
 
 const VALIDATOR = new EventValidator();
 
-export function useEventInputValidation(editorStates: IEventEditorState[]): Record<EventId, IValidationError[]> {
+export function useEventInputValidation(editorStates: IEventEditorState[]): Record<EventEditorId, IValidationError[]> {
     const errorCache = useMemo(() => new Map<IEventInputs, IValidationError[]>(), []);
 
     // Clear the cache of old values
@@ -19,7 +19,7 @@ export function useEventInputValidation(editorStates: IEventEditorState[]): Reco
         }
     }
 
-    const errorsById: Record<EventId, IValidationError[]> = {};
+    const errorsById: Record<EventEditorId, IValidationError[]> = {};
     for (const state of editorStates) {
         const userInput = state.inputs;
         let errors = errorCache.get(userInput);

@@ -1,8 +1,9 @@
-import { PropsWithChildren, useCallback, useId, useState } from "react";
+import React, { PropsWithChildren, useCallback, useId, useReducer, useState } from "react";
 
 import { AppWorkflowStep, PROPS_FOR_STEP } from "src/AppWorkflowStep";
+import { ActionType } from "src/state/editorStatesActions";
+import { editorStatesReducer } from "src/state/editorStatesReducer";
 import { EventExportMethod } from "src/eventLogic/EventExportMethod";
-import { IEventEditorState } from "src/eventLogic/IEventEditorState";
 import { ISemester } from "src/eventLogic/ISemester";
 import { IEventInputs } from "src/eventLogic/IEventInputs";
 import { PRIMARY_CALENDAR } from "src/google/IGoogleCalendarMetadata";
@@ -25,7 +26,7 @@ export function App() {
     const [exportMethod, setExportMethod] = useState(EventExportMethod.None);
     const [selectedCalendar, setSelectedCalendar] = useState(PRIMARY_CALENDAR);
     const [selectedSemester, setSelectedSemester] = useState<ISemester | null>(null);
-    const [editorStates, setEditorStates] = useState<IEventEditorState[]>([]);
+    const [editorStates, dispatch] = useReducer(editorStatesReducer, []);
 
     const exportMethodLabelId = useId();
 
@@ -33,19 +34,8 @@ export function App() {
         setExportMethod(newMethod);
     }, []);
 
-    const handleEventsParsed = useCallback((newEvents: IEventInputs[]) => {
-        setEditorStates(newEvents.map((event, i) => {
-            return {
-                id: i.toString(),
-                inputs: event,
-                isSelected: true,
-                exportState: {
-                    isExporting: false,
-                    successUrl: "",
-                    errorMessage: ""
-                }
-            };
-        }));
+    const handleEventsParsed = useCallback((inputs: IEventInputs[]) => {
+        dispatch({ type: ActionType.Replace, replacementInputs: inputs });
     }, []);
 
     return <div className="container-lg mt-md-3">
@@ -96,7 +86,7 @@ export function App() {
                             calendar={selectedCalendar}
                             semester={selectedSemester}
                             editorStates={editorStates}
-                            onEditorStatesChanged={setEditorStates} />
+                            dispatch={dispatch} />
                     </IndentedDiv>
                 </StepContainer>
             </div>
@@ -111,7 +101,6 @@ function StepContainer(props: PropsWithChildren<{step: AppWorkflowStep}>) {
         {props.children}
     </div>;
 }
-
 
 export function IndentedDiv(props: React.HTMLAttributes<HTMLDivElement>) {
     const extendedClasses = "ms-4 me-2 " + (props.className || "");

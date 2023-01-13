@@ -2,12 +2,11 @@ import { faCheck, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-import { IEventExportState } from "src/eventLogic/IEventExportState";
+import { EventExportState } from "src/state/EventExportState";
 import { LabeledInput } from "./LabeledInput";
 
 interface IEditorExportControlsProps {
-    exportState: IEventExportState;
-    isSelectedForExport: boolean;
+    exportState: EventExportState;
     disabled?: boolean;
     className?: string;
     onExportClicked: () => void;
@@ -15,7 +14,7 @@ interface IEditorExportControlsProps {
 }
 
 export function EditorExportControls(props: IEditorExportControlsProps) {
-    const { exportState, isSelectedForExport, className, disabled, onExportClicked, onSelectionToggle } = props;
+    const { exportState, className, disabled, onExportClicked, onSelectionToggle } = props;
     if (exportState.successUrl) {
         return <div className={className + " d-flex align-items-center"}>
             <div className="alert alert-success p-2">
@@ -55,7 +54,7 @@ export function EditorExportControls(props: IEditorExportControlsProps) {
                 id={id}
                 type="checkbox"
                 className="form-check-input flex-shrink-0"
-                checked={isSelectedForExport}
+                checked={exportState.isSelected}
                 onChange={onSelectionToggle}
             />}
         />

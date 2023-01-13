@@ -14,6 +14,9 @@
 .EventEditor-bg-highlighted {
     background-color: #fffff0;
 }
+.EventEditor-bg-success {
+    background-color: mintcream;
+}
 
 .EventEditor .text-warning-darker {
     color: #997405;
@@ -25,5 +28,6 @@
 }
 
 .EventEditor .form-control {
-    padding: 0.25em;
+    padding: 0 0.25em;
+    border-radius: 0;
 }

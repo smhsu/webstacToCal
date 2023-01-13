@@ -2,18 +2,19 @@ import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-import { IEventEditorState } from "src/eventLogic/IEventEditorState";
-import { IValidationError, ValidationErrorType } from "src/eventLogic/IValidationError";
-import { IEventInputs, WebstacEventType } from "src/eventLogic/IEventInputs";
 import { EventDateInput } from "src/eventLogic/EventDateInput";
+import { IEventInputs, WebstacEventType } from "src/eventLogic/IEventInputs";
+import { IValidationError, ValidationErrorType } from "src/eventLogic/IValidationError";
+import { ActionType, IUpdateStateAction } from "src/state/editorStatesActions";
+import { IEventEditorState } from "src/state/IEventEditorState";
 
+import { EditorExportControls } from "./EditorExportControls";
+import { EditorLayout } from "./EditorLayout";
 import { EditorLegend } from "./EditorLegend";
 import { LabeledInput } from "./LabeledInput";
 import { RepeatingDaysSelector } from "./RepeatingDaysSelector";
-import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
-import { EditorLayout } from "src/components/confirmStep/eventEditor/EditorLayout";
 import { StartEndTimeInputs } from "./StartEndTimeInputs";
-import { EditorExportControls } from "./EditorExportControls";
+import { ValidationErrorDisplay } from "./ValidationErrorDisplay";
 import "./EventEditor.css";
 
 const DATE_INPUT_SIZE = 12;
@@ -22,7 +23,7 @@ interface IEventEditorProps {
     editorState: IEventEditorState;
     validationErrors: IValidationError[];
     index: number;
-    onChange: (updated: IEventEditorState) => void;
+    dispatch: React.Dispatch<IUpdateStateAction>;
     onExportClicked: (toExport: IEventEditorState) => void;
 }
 
@@ -33,16 +34,14 @@ interface IEventEditorProps {
  *
  * @param props
  */
-export const EventEditor = function EventEditor(props: IEventEditorProps) {
-    const { editorState, validationErrors, index, onChange, onExportClicked } = props;
-    const { inputs, isSelected, exportState } = editorState;
-    const dispatchChange = function<T extends IEventInputs>(updatedInputs: Partial<T>) {
-        onChange({
-            ...editorState,
-            inputs: {
-                ...inputs,
-                ...updatedInputs
-            }
+export const EventEditor = React.memo(function EventEditor(props: IEventEditorProps) {
+    const { editorState, validationErrors, index, dispatch, onExportClicked } = props;
+    const { inputs, exportState } = editorState;
+    const dispatchChange = function<T extends IEventInputs>(updates: Partial<T>) {
+        dispatch({
+            type: ActionType.UpdateInputs,
+            id: editorState.id,
+            updates
         });
     };
 
@@ -54,8 +53,17 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
         return activatingErrors.some(errType => validationErrorTypes.has(errType)) ? " border-warning-darker" : "";
     }
 
+    let className;
+    if (exportState.successUrl.length > 0) {
+        className = "EventEditor-bg-success";
+    } else if (exportState.isInBatchExport(validationErrors.length > 0)) {
+        className = "EventEditor-bg-highlighted";
+    } else {
+        className = "bg-light";
+    }
+
     return <EditorLayout
-        className={isSelected && validationErrors.length === 0 ? "EventEditor-bg-highlighted" : "bg-light"}
+        className={className}
 
         renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={inputs.type} index={index} />}
 
@@ -107,6 +115,7 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
                         maxLength={DATE_INPUT_SIZE + 2}
                         value={inputs.date.raw}
                         readOnly={isReadOnly}
+                        disabled={isReadOnly}
                         onChange={e => dispatchChange({ date: new EventDateInput(e.currentTarget.value) })}
                     />}
                 />
@@ -122,11 +131,14 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
 
         renderCol3={cssClasses => <EditorExportControls
             exportState={exportState}
-            isSelectedForExport={isSelected}
             className={cssClasses}
             disabled={isExportDisabled}
             onExportClicked={() => onExportClicked(editorState)}
-            onSelectionToggle={() => onChange( { ...editorState, isSelected: !editorState.isSelected })}
+            onSelectionToggle={() => dispatch({
+                type: ActionType.SetSelectionForExport,
+                ids: [editorState.id],
+                newSelectionState: !exportState.isSelected
+            })}
         />}
 
         renderValidationErrors={cssClasses => <ValidationErrorDisplay
@@ -143,4 +155,4 @@ export const EventEditor = function EventEditor(props: IEventEditorProps) {
             }
         </div>}
     />;
-};
+});

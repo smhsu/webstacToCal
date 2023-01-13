@@ -3,7 +3,7 @@ import { IEventInputs } from "src/eventLogic/IEventInputs";
 import { EventTimeInput } from "src/eventLogic/EventTimeInput";
 import { LabeledInput } from "./LabeledInput";
 
-const TIME_INPUT_SIZE = 8;
+const TIME_INPUT_SIZE = 7;
 
 interface IStartEndTimeInputsProps {
     values: IEventInputs;
