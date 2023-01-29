@@ -1,6 +1,6 @@
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useId } from "react";
 
 import { EventDateInput } from "src/eventLogic/EventDateInput";
 import { IEventInputs, WebstacEventType } from "src/eventLogic/IEventInputs";
@@ -37,6 +37,15 @@ interface IEventEditorProps {
 export const EventEditor = React.memo(function EventEditor(props: IEventEditorProps) {
     const { editorState, validationErrors, index, dispatch, onExportClicked } = props;
     const { inputs, exportState } = editorState;
+
+    const checkboxId = useId();
+    const toggleSelection = function() {
+        dispatch({
+            type: ActionType.SetSelectionForExport,
+            ids: [editorState.id],
+            newSelectionState: !editorState.exportState.isSelected
+        });
+    };
     const dispatchChange = function<T extends IEventInputs>(updates: Partial<T>) {
         dispatch({
             type: ActionType.UpdateInputs,
@@ -53,13 +62,13 @@ export const EventEditor = React.memo(function EventEditor(props: IEventEditorPr
         return activatingErrors.some(errType => validationErrorTypes.has(errType)) ? " border-warning-darker" : "";
     }
 
-    let className;
+    let className = "EventEditor";
     if (exportState.successUrl.length > 0) {
-        className = "EventEditor-bg-success";
+        className += " EventEditor-bg-success";
     } else if (exportState.isInBatchExport(validationErrors.length > 0)) {
-        className = "EventEditor-bg-highlighted";
+        className += " EventEditor-bg-highlighted";
     } else {
-        className = "bg-light";
+        className += " bg-light";
     }
 
     return <EditorLayout
@@ -67,28 +76,45 @@ export const EventEditor = React.memo(function EventEditor(props: IEventEditorPr
 
         renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={inputs.type} index={index} />}
 
+        renderCol0={cssClasses => <label className={cssClasses + " d-flex align-items-center"} htmlFor={checkboxId} >
+            <input
+                id={checkboxId}
+                aria-label="Select event"
+                className="form-check-input m-0 fs-5"
+                type="checkbox"
+                checked={editorState.exportState.isSelected}
+                onChange={toggleSelection}
+            />
+        </label>}
+
         renderCol1={cssClasses => <div className={cssClasses}>
             <LabeledInput
-                renderLabel="Name"
+                className="input-group"
+                renderLabel={inputId => <label htmlFor={inputId} className="input-group-text" >
+                    Name
+                </label>}
                 renderInput={id => <input
                     id={id}
                     type="text"
-                    className={"form-control" + getBorderCss([ValidationErrorType.BadName])}
+                    className={"form-control flex-grow-1" + getBorderCss([ValidationErrorType.BadName])}
                     value={inputs.name}
-                    placeholder="Enter a name"
+                    placeholder="Event name"
                     readOnly={isReadOnly}
                     disabled={isReadOnly}
                     onChange={e => dispatchChange({ name: e.currentTarget.value })}
                 />}
             />
             <LabeledInput
-                renderLabel="Location"
+                className="input-group mt-1"
+                renderLabel={inputId => <label htmlFor={inputId} className="input-group-text" >
+                    Location
+                </label>}
                 renderInput={id => <input
                     id={id}
                     type="text"
-                    className="form-control"
+                    className="form-control flex-grow-1"
                     value={inputs.location}
-                    placeholder="Enter a location"
+                    placeholder="Location"
                     readOnly={isReadOnly}
                     disabled={isReadOnly}
                     onChange={e => dispatchChange({ location: e.currentTarget.value })}
@@ -100,24 +126,20 @@ export const EventEditor = React.memo(function EventEditor(props: IEventEditorPr
             {inputs.type === WebstacEventType.Course ?
                 <RepeatingDaysSelector
                     selectedDays={inputs.repeatingDays}
-                    legendClassName="EventEditor-repeating-days-legend"
                     disabled={isReadOnly}
                     onChange={newSelection => dispatchChange({ repeatingDays: newSelection })}
                 />
                 :
-                <LabeledInput
-                    renderLabel="Date"
-                    renderInput={id => <input
-                        id={id}
-                        type="text"
-                        className={"form-control w-auto" + getBorderCss([ValidationErrorType.BadDate])}
-                        size={DATE_INPUT_SIZE}
-                        maxLength={DATE_INPUT_SIZE + 2}
-                        value={inputs.date.raw}
-                        readOnly={isReadOnly}
-                        disabled={isReadOnly}
-                        onChange={e => dispatchChange({ date: new EventDateInput(e.currentTarget.value) })}
-                    />}
+                <input
+                    type="text"
+                    aria-label="Date"
+                    className={"form-control" + getBorderCss([ValidationErrorType.BadDate])}
+                    size={DATE_INPUT_SIZE}
+                    maxLength={DATE_INPUT_SIZE + 2}
+                    value={inputs.date.raw}
+                    readOnly={isReadOnly}
+                    disabled={isReadOnly}
+                    onChange={e => dispatchChange({ date: new EventDateInput(e.currentTarget.value) })}
                 />
             }
             <StartEndTimeInputs
@@ -134,25 +156,30 @@ export const EventEditor = React.memo(function EventEditor(props: IEventEditorPr
             className={cssClasses}
             disabled={isExportDisabled}
             onExportClicked={() => onExportClicked(editorState)}
-            onSelectionToggle={() => dispatch({
-                type: ActionType.SetSelectionForExport,
-                ids: [editorState.id],
-                newSelectionState: !exportState.isSelected
-            })}
         />}
 
-        renderValidationErrors={cssClasses => <ValidationErrorDisplay
-            errors={validationErrors}
-            containerClassName={cssClasses + " text-warning-darker"}
-        />}
+        renderValidationErrors={cssClasses => {
+            if (validationErrors.length <= 0) {
+                return null;
+            }
 
-        renderExportErrors={cssClasses => <div className={cssClasses}>
-            {exportState.errorMessage &&
+            return <ValidationErrorDisplay
+                errors={validationErrors}
+                containerClassName={cssClasses + " text-warning-darker"}
+            />;
+        }}
+
+        renderExportErrors={cssClasses => {
+            if (!exportState.errorMessage) {
+                return null;
+            }
+
+            return <div className={cssClasses}>
                 <div className="alert alert-danger float-end d-inline-block py-2 px-3 mb-0" role="status">
                     <FontAwesomeIcon className="me-1" icon={faTriangleExclamation} /> Error while
                     adding: {exportState.errorMessage}
                 </div>
-            }
-        </div>}
+            </div>;
+        }}
     />;
 });

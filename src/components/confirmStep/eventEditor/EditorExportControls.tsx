@@ -3,18 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 import { EventExportState } from "src/state/EventExportState";
-import { LabeledInput } from "./LabeledInput";
 
 interface IEditorExportControlsProps {
     exportState: EventExportState;
     disabled?: boolean;
     className?: string;
     onExportClicked: () => void;
-    onSelectionToggle: () => void
 }
 
 export function EditorExportControls(props: IEditorExportControlsProps) {
-    const { exportState, className, disabled, onExportClicked, onSelectionToggle } = props;
+    const { exportState, className, disabled, onExportClicked } = props;
     if (exportState.successUrl) {
         return <div className={className + " d-flex align-items-center"}>
             <div className="alert alert-success p-2">
@@ -44,19 +42,5 @@ export function EditorExportControls(props: IEditorExportControlsProps) {
                 }
             </button>
         </div>
-
-        <LabeledInput
-            className="d-flex gap-2 align-items-center justify-content-md-center"
-            renderLabel={inputId => <label htmlFor={inputId} className="order-1 EventEditor-checkbox-label">
-                Include when adding all
-            </label>}
-            renderInput={id => <input
-                id={id}
-                type="checkbox"
-                className="form-check-input flex-shrink-0"
-                checked={exportState.isSelected}
-                onChange={onSelectionToggle}
-            />}
-        />
     </div>;
 }

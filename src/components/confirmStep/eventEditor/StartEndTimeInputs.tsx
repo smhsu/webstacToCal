@@ -1,9 +1,8 @@
 import React from "react";
 import { IEventInputs } from "src/eventLogic/IEventInputs";
 import { EventTimeInput } from "src/eventLogic/EventTimeInput";
-import { LabeledInput } from "./LabeledInput";
 
-const TIME_INPUT_SIZE = 7;
+const TIME_INPUT_SIZE = 6;
 
 interface IStartEndTimeInputsProps {
     values: IEventInputs;
@@ -23,26 +22,21 @@ export function StartEndTimeInputs(props: IStartEndTimeInputsProps) {
         disabled: isReadOnly
     };
 
-    return <div className="d-flex gap-2">
-        <LabeledInput
-            renderLabel="Start time"
-            renderInput={id => <input
-                id={id}
-                {...commonProps}
-                className={"form-control" + (startClassName || "")}
-                value={values.startTime.raw}
-                onChange={e => onChange({ startTime: new EventTimeInput(e.currentTarget.value) })}
-            />}
+    return <div className="d-flex gap-1 align-items-baseline mt-1">
+        <input
+            {...commonProps}
+            aria-label="Start time"
+            className={"form-control px-1" + (startClassName || "")}
+            value={values.startTime.raw}
+            onChange={e => onChange({ startTime: new EventTimeInput(e.currentTarget.value) })}
         />
-        <LabeledInput
-            renderLabel="End time"
-            renderInput={id => <input
-                id={id}
-                {...commonProps}
-                className={"form-control" + (endClassName || "")}
-                value={values.endTime.raw}
-                onChange={e => onChange({ endTime: new EventTimeInput(e.currentTarget.value) })}
-            />}
+        to
+        <input
+            {...commonProps}
+            aria-label="End time"
+            className={"form-control px-1" + (endClassName || "")}
+            value={values.endTime.raw}
+            onChange={e => onChange({ endTime: new EventTimeInput(e.currentTarget.value) })}
         />
     </div>;
 }

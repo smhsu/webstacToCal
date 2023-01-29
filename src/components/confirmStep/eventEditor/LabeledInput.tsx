@@ -14,11 +14,11 @@ export function LabeledInput(props: ILabeledInputProps) {
     let label;
     if (typeof(renderLabel) === "string") {
         label = <label htmlFor={id}>{renderLabel}</label>;
-    } else {
+    } else if (typeof(renderLabel) === "function") {
         label = renderLabel(id);
     }
 
-    return <div className={className} >
+    return <div className={className}>
         {label}
         {renderInput(id)}
     </div>;

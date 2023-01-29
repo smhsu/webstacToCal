@@ -4,13 +4,12 @@ import "./RepeatingDaysSelector.css";
 
 interface IRepeatingDaysSelectorProps {
     selectedDays: Set<DayOfWeek>;
-    legendClassName?: string;
     disabled?: boolean;
     onChange: (newSelection: Set<DayOfWeek>) => void;
 }
 
 export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
-    const { selectedDays, legendClassName, disabled, onChange } = props;
+    const { selectedDays, disabled, onChange } = props;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, day: DayOfWeek) => {
         if (e.key === " ") {
@@ -41,7 +40,7 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
             className={className}
             role="checkbox"
             aria-checked={isChecked}
-            aria-label={dayFullName}
+            aria-label={dayFullName + "s"}
             aria-disabled={disabled}
             tabIndex={0}
             onClick={() => handleToggle(day)}
@@ -51,12 +50,11 @@ export function RepeatingDaysSelector(props: IRepeatingDaysSelectorProps) {
         </div>);
     }
 
-    return <fieldset>
-        <legend className={legendClassName}>Repeat every week on...</legend>
-        <div className="RepeatingDaysSelector-box-row">
-            {checkboxes}
-            {/* An invisible text input so the height of things are still consistent */}
-            <input type="text" className="form-control d-inline invisible" style={{ width: "1px" }} />
-        </div>
-    </fieldset>;
+    return <div className="RepeatingDaysSelector-box-row">
+        {checkboxes}
+        {/* An invisible text input so the height of things are still consistent */}
+        <input type="text" className="form-control d-inline invisible px-0" style={{ width: 0 }} />
+    </div>;
 }
+
+//

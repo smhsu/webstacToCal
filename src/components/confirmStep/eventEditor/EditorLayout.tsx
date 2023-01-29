@@ -1,10 +1,11 @@
 import React from "react";
 
-type ChildElementMaker = (cssClasses: string) => JSX.Element;
+type ChildElementMaker = (cssClasses: string) => JSX.Element | null;
 
 interface IEditorLayoutProps {
     className?: string;
-    renderLegend: ChildElementMaker
+    renderLegend: ChildElementMaker;
+    renderCol0: ChildElementMaker;
     renderCol1: ChildElementMaker;
     renderCol2: ChildElementMaker;
     renderCol3: ChildElementMaker;
@@ -13,25 +14,34 @@ interface IEditorLayoutProps {
 }
 
 export function EditorLayout(props: IEditorLayoutProps) {
-    const { renderLegend, renderCol1, renderCol2, renderCol3, renderValidationErrors, renderExportErrors } = props;
+    const { renderLegend, renderCol0, renderCol1, renderCol2, renderCol3, renderValidationErrors,
+        renderExportErrors } = props;
+
+
+    const bottomRowErrs = [renderValidationErrors("col mt-2"), renderExportErrors("col mt-2")];
+    let bottomRow = null;
+    if (bottomRowErrs.some(element => element !== null)) {
+        // Bottom row only visible on large screens
+        bottomRow = <div className="row d-md-flex d-none">
+            {renderCol0("col-auto invisible")} {/* Invisible first column to make a matching left margin */ }
+            {bottomRowErrs[0]}
+            {bottomRowErrs[1]}
+        </div>;
+    }
+
     const extraCss = props.className || "";
-    return <fieldset className={"row EventEditor border border-secondary ps-1 pt-2 pb-md-0 pb-3 " + extraCss}>
-        {renderLegend("col-auto")}
-        {renderCol1("col-md col-12")}
+    return <fieldset className={"row border border-secondary px-2 pt-2 pb-md-2 pb-3 " + extraCss}>
+        {renderLegend("d-none")}
+        {renderCol0("col-auto")}
+        {renderCol1("col")}
         <SmallScreenColBreak />
-        {renderCol2("col-auto mt-2 mt-md-0")}
+        {renderCol2("col-auto mt-md-0 mt-2")}
         {renderValidationErrors("d-md-none col mt-3")} { /* Only visible on small screens */ }
         <SmallScreenColBreak />
-        {renderCol3("col-xl-2 col-md-3 col-auto mt-3")}
+        {renderCol3("col-auto mt-md-0 mt-3")}
         {renderExportErrors("d-md-none col mt-3")} { /* Only visible on small screens */ }
 
-        { /* Render row of errors that's only visible on larger screens */ }
-        <div className="row d-md-flex d-none mt-3">
-            { /* Render an invisible legend so there's a left margin that's the width of the legend */ }
-            {renderLegend("col-auto invisible height-0")}
-            {renderValidationErrors("col")}
-            {renderExportErrors("col")}
-        </div>
+        {bottomRow}
     </fieldset>;
 }
 
