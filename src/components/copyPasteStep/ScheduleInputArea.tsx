@@ -90,8 +90,8 @@ function Instructions() {
                     While in <i>List View</i>, highlight ALL the text on the page, including finals.
                     (Shortcut: <SelectAllShortcut />)
                 </li>
-                <li>Copy-paste into the box below.</li>
-                <li>Processing of your schedule will happen automatically.</li>
+                <li>Copy-paste the highlighted text into the box below.</li>
+                <li>Below the box, export your selection of detected classes and finals.</li>
             </ol>
         </div>
         <div className="mb-4">
@@ -113,8 +113,8 @@ function ParseStatus(props: IScheduleInputAreaState) {
         isRoleStatus = true;
     } else if (isParsingFailure) {
         additionalClassNames = "alert-danger";
-        secondaryText = "Couldn't find anything in this input.  Be sure you are copy-pasting from " +
-            "a desktop or laptop computer.";
+        secondaryText = "Couldn't find anything in this input.  Please note that sometimes, copy-pasting from " +
+            "phones or tablets causes issues.";
         isRoleStatus = true;
     } else {
         additionalClassNames = "alert-secondary";

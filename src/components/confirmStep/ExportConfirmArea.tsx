@@ -14,7 +14,13 @@ import { useEventInputValidation } from "./useEventInputValidation";
 import { useEventExporter } from "src/components/confirmStep/useEventExporter";
 import googleLogo from "src/googleLogo.svg";
 
-const IS_CHECKING_READY_STATE = false;
+const IS_CHECKING_READY_STATE = true; // For debug purposes only.
+let checkingReadyStateNotification: JSX.Element | null = null;
+if (process.env.NODE_ENV === "development" && !IS_CHECKING_READY_STATE) {
+    checkingReadyStateNotification = <p>
+        [DEBUG] Currently not checking app state for readiness to add events.
+    </p>;
+}
 
 interface IExportConfirmAreaProps {
     exportMethod: EventExportMethod;
@@ -58,6 +64,7 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     };
 
     return <div className="mt-3">
+        {checkingReadyStateNotification}
         <div className="mb-2 gap-1">
             Configured:
             <span className="ms-1 badge bg-wustl text-white">{semester?.name}</span>

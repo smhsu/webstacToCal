@@ -1,5 +1,4 @@
 import { DateTime } from "luxon";
-import { describeCount } from "src/describeCount";
 import { ISemester } from "src/eventLogic/ISemester";
 import { FancyRadioButton } from "./FancyRadioButton";
 
@@ -26,18 +25,17 @@ interface ISemesterSelectorProps {
 export function SemesterSelector(props: ISemesterSelectorProps) {
     const { value, onChange } = props;
     const semesterElements = SEMESTERS.map(semester => {
-        const daysUntilSemesterStart = Math.round(semester.firstDayOfClasses.diffNow("day").days);
-        let timeUntilDescription;
-        if (daysUntilSemesterStart > 0) {
-            timeUntilDescription = `starts in ${describeCount(daysUntilSemesterStart, "day")}`;
-        } else if (daysUntilSemesterStart < 0) {
-            timeUntilDescription = `started ${describeCount(daysUntilSemesterStart, "day")} ago`;
-        } else {
-            timeUntilDescription = "starts today";
+        let timeDiff = semester.firstDayOfClasses.toRelativeCalendar();
+        if (timeDiff) {
+            if (DateTime.now() < semester.firstDayOfClasses) {
+                timeDiff = "starts " + timeDiff;
+            } else {
+                timeDiff = "started " + timeDiff;
+            }
         }
 
         const description = `Classes from ${semester.firstDayOfClasses.toLocaleString()} to ` +
-            `${semester.lastDayOfClasses.toLocaleString()} (${timeUntilDescription})`;
+            `${semester.lastDayOfClasses.toLocaleString()} (${timeDiff})`;
         return <FancyRadioButton
             key={semester.name}
             majorText={semester.name}
