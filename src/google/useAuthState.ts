@@ -51,7 +51,6 @@ export function useAuth(areApisLoaded: boolean): AuthManagement {
                         console.error(response);
                         reject(AuthError.Unknown);
                     } else {
-                        console.log(response);
                         // The type definition for TokenResponse is incorrect... it should be `scope` not `scopes`
                         const grantedScopes = (response as any).scope.split(" ") as GoogleAuthScope[];
                         setAuthedScopes(new Set(grantedScopes));

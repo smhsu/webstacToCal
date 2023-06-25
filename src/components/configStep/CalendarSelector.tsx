@@ -1,6 +1,6 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { describeCount } from "src/describeCount";
 import { CalendarApi } from "src/google/CalendarApi";
@@ -8,8 +8,9 @@ import { GoogleAuthScope } from "src/google/GoogleAuthScope";
 import { IGoogleCalendarMetadata, PRIMARY_CALENDAR } from "src/google/IGoogleCalendarMetadata";
 import { AuthError, AuthManagement } from "src/google/useAuthState";
 
-const AUTH_SCOPES = [GoogleAuthScope.ReadWriteEvents, GoogleAuthScope.ListCalendars];
-const NON_PRIMARY_CALENDAR_VALUE = "other";
+/* Scopes required for fetching calendars */
+const REQUIRED_AUTH_SCOPES = [GoogleAuthScope.ReadWriteEvents, GoogleAuthScope.ListCalendars];
+const REQUEST_FETCH_CALENDARS_VALUE = "doFetch";
 
 interface ICalendarSelectorProps {
     /**
@@ -26,19 +27,13 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
     const [authError, setAuthError] = useState(AuthError.None);
     const [isFetchError, setIsFetchError] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
-    const isAuthed = AUTH_SCOPES.every(scope => auth.authedScopes.has(scope));
-
-    useEffect(() => {
-        if (isAuthed) {
-            fetchCalendars();
-        }
-    }, [isAuthed]);
+    const isAuthed = REQUIRED_AUTH_SCOPES.every(scope => auth.authedScopes.has(scope));
 
     const handleSelectChanged = (e: ChangeEvent<HTMLSelectElement>) => {
         const newValue = e.currentTarget.value;
-        if (newValue === NON_PRIMARY_CALENDAR_VALUE) {
+        if (newValue === REQUEST_FETCH_CALENDARS_VALUE) {
             setAuthError(AuthError.None);
-            auth.startAuthFlow(AUTH_SCOPES)
+            auth.startAuthFlow(REQUIRED_AUTH_SCOPES)
                 .then(fetchCalendars)
                 .catch(setAuthError);
         } else {
@@ -47,7 +42,7 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
         }
     };
 
-    const fetchCalendars = async () => {
+    const fetchCalendars = useCallback(async () => {
         setIsFetching(true);
         setIsFetchError(false);
         try {
@@ -64,7 +59,23 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
             setIsFetchError(true);
         }
         setIsFetching(false);
-    };
+    }, []);
+
+    useEffect(() => { // Refresh the calendar list whenever the authorization state changes
+        if (isAuthed) {
+            fetchCalendars();
+        } else {
+            setFetchedCalendars([]);
+        }
+    }, [isAuthed, fetchCalendars]);
+
+    useEffect(() => {
+        // Whenever the calendar list changes, double check if the currently selected calendar still exists in the
+        // newly-fetched calendars
+        if (!fetchedCalendars.find(calendar => calendar.id === value.id)) {
+            onChange?.(fetchedCalendars[0] || PRIMARY_CALENDAR); // If not, auto-select the primary calendar.
+        }
+    }, [fetchedCalendars, value.id, onChange]);
 
     let statusDisplay;
     if (authError === AuthError.PopupBlocked || authError === AuthError.Unknown) {
@@ -97,7 +108,7 @@ export function CalendarSelector(props: ICalendarSelectorProps) {
             {fetchedCalendars.length === 0 &&
                 <>
                     <option value={PRIMARY_CALENDAR.id}>{PRIMARY_CALENDAR.summary}</option>
-                    <option value="other">
+                    <option value={REQUEST_FETCH_CALENDARS_VALUE}>
                         Another calendar... (will ask for permission to fetch your calendars)
                     </option>
                 </>
