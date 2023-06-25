@@ -6,9 +6,19 @@ const TIME_ZONE = { zone: "America/Chicago" };
 
 export const SEMESTERS: ISemester[] = [
     {
-        name: "SP23",
-        firstDayOfClasses: DateTime.fromObject({ year: 2023, month: 1, day: 17, hour: 8 }, TIME_ZONE),
-        lastDayOfClasses: DateTime.fromObject({ year: 2023, month: 4, day: 28, hour: 8 }, TIME_ZONE)
+        name: "SU23 Session III",
+        firstDayOfClasses: DateTime.fromObject({ year: 2023, month: 6, day: 12, hour: 8 }, TIME_ZONE),
+        lastDayOfClasses:DateTime.fromObject({ year: 2023, month: 8, day: 4, hour: 8 }, TIME_ZONE)
+    },
+    {
+        name: "SU24 Session IV",
+        firstDayOfClasses: DateTime.fromObject({ year: 2023, month: 7, day: 17, hour: 8 }, TIME_ZONE),
+        lastDayOfClasses:DateTime.fromObject({ year: 2023, month: 8, day: 17, hour: 8 }, TIME_ZONE)
+    },
+    {
+        name: "FL23",
+        firstDayOfClasses: DateTime.fromObject({ year: 2023, month: 8, day: 29, hour: 8 }, TIME_ZONE),
+        lastDayOfClasses: DateTime.fromObject({ year: 2023, month: 12, day: 9, hour: 8 }, TIME_ZONE)
     }
 ];
 for (const semester of SEMESTERS) {
@@ -16,6 +26,16 @@ for (const semester of SEMESTERS) {
         throw new Error(`${semester.name} has invalid start or end date configured`);
     }
 }
+function sortSemesters() {
+    const now = DateTime.now().toUnixInteger();
+    SEMESTERS.sort((s1, s2) => {
+        const s1TimeDiff = Math.abs(s1.firstDayOfClasses.toUnixInteger() - now);
+        const s2TimeDiff = Math.abs(s2.firstDayOfClasses.toUnixInteger() - now);
+        return s1TimeDiff - s2TimeDiff;
+    });
+}
+sortSemesters();
+
 
 interface ISemesterSelectorProps {
     value: ISemester | null;

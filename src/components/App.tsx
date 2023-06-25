@@ -45,7 +45,7 @@ export function App() {
                 <Intro />
 
                 <StepContainer step={AppWorkflowStep.Config}>
-                    <h3 id={exportMethodLabelId} className="fs-6">• Choose an export method:</h3>
+                    <h3 id={exportMethodLabelId} className="fs-6">Export method</h3>
                     <IndentedDiv className="mb-4">
                         <ExportMethodSelector
                             method={exportMethod}
@@ -58,7 +58,7 @@ export function App() {
 
                     {exportMethod === EventExportMethod.GoogleCalendar &&
                         <>
-                            <h3 className="fs-6">• Choose a Google Calendar to export to:</h3>
+                            <h3 className="fs-6">Google Calendar to export to</h3>
                             <IndentedDiv className="mb-4">
                                 <CalendarSelector
                                     value={selectedCalendar}
@@ -69,7 +69,7 @@ export function App() {
                         </>
                     }
 
-                    <h3 className="fs-6">• Choose a semester:</h3>
+                    <h3 className="fs-6">Semester</h3>
                     <IndentedDiv className="mb-2">
                         <SemesterSelector value={selectedSemester} onChange={setSelectedSemester} />
                     </IndentedDiv>

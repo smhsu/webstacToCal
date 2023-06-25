@@ -10,6 +10,10 @@ export interface IEventExportState {
 export class EventExportState implements IEventExportState {
     [immerable] = true;
 
+    /**
+     * Whether the user has targeted this event for export.  Note that this does NOT indicate whether the event is valid
+     * for export or whether it has already been exported.
+     */
     public isSelected: boolean;
     public isExporting: boolean;
     public successUrl: string;

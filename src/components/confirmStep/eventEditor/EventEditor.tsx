@@ -76,16 +76,18 @@ export const EventEditor = React.memo(function EventEditor(props: IEventEditorPr
 
         renderLegend={cssClasses => <EditorLegend className={cssClasses} eventType={inputs.type} index={index} />}
 
-        renderCol0={cssClasses => <div className={cssClasses + " d-flex align-items-center"}>
+        renderCol0={cssClasses => <label className={cssClasses + " d-flex align-items-center"}>
+            {/* Span invisible to sighted people but screen readers will read it */}
+            <span style={{ position: "absolute", left: -9999 }}>Select event</span>
             <input
                 id={checkboxId}
-                aria-label="Select event"
                 className="form-check-input m-0 fs-5"
                 type="checkbox"
-                checked={editorState.exportState.isSelected}
+                checked={editorState.exportState.successUrl.length <= 0 && editorState.exportState.isSelected}
+                disabled={editorState.exportState.successUrl.length > 0}
                 onChange={toggleSelection}
             />
-        </div>}
+        </label>}
 
         renderCol1={cssClasses => <div className={cssClasses}>
             <LabeledInput
