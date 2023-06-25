@@ -1,0 +1,92 @@
+body {
+    font-family: "Oxygen", "Helvetica", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Open Sans", sans-serif;
+}
+
+.height-0 {
+    height: 0;
+}
+
+.font-heading {
+    font-family: "Open Sans", sans-serif;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.bg-wustl {
+    background-color: rgb(22, 53, 37);
+}
+
+.bg-wustl-gradient {
+    background: linear-gradient(to bottom, rgb(22, 53, 37), rgb(8, 19, 13));
+}
+
+.keyboard-key {
+    border: 1px solid #aaa;
+    border-radius: 0.2em;
+    box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);
+    background-color: #f9f9f9;
+    background-image: linear-gradient(to bottom,#eee,#f9f9f9,#eee);
+    color: #000;
+    padding: 0.1em 0.3em;
+    font-family: inherit;
+    font-size: 0.85em;
+}
+
+/** Most of this stuff below is for the main page */
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+.title {
+    margin: 0.1em 0;
+}
+.header img {
+    max-height: 6em;
+    margin-bottom: 0.5em;
+}
+
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    padding: 1em;
+    margin-top: 1em;
+}
+.footer-container {
+    max-width: 1140px;
+}
+.footer h2 {
+    margin-bottom: 0.5em;
+}
+.contact-info {
+    display: inline-block;
+    border: 2px solid white;
+    border-radius: 0.5em;
+    margin: 2em 0;
+    padding: 0.5em 2em;
+}
+.contact-info h3 {
+    font-size: 1.5em;
+}
+.donate-button-label {
+    display: block;
+    font-style: italic;
+    margin-bottom: 0.25em;
+    pointer-events: none;
+}
+.copyright {
+    font-size: smaller;
+    margin-top: 2em;
+}

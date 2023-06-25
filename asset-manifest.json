@@ -1,20 +1,16 @@
 {
   "files": {
-    "main.css": "/webstacToCal/static/css/main.b536bcc3.chunk.css",
-    "main.js": "/webstacToCal/static/js/main.55d72f9d.chunk.js",
-    "main.js.map": "/webstacToCal/static/js/main.55d72f9d.chunk.js.map",
-    "runtime-main.js": "/webstacToCal/static/js/runtime-main.ef1b5f12.js",
-    "runtime-main.js.map": "/webstacToCal/static/js/runtime-main.ef1b5f12.js.map",
-    "static/js/2.a312ef76.chunk.js": "/webstacToCal/static/js/2.a312ef76.chunk.js",
-    "static/js/2.a312ef76.chunk.js.map": "/webstacToCal/static/js/2.a312ef76.chunk.js.map",
+    "main.css": "/webstacToCal/static/css/main.38a5b594.css",
+    "main.js": "/webstacToCal/static/js/main.4ff3ed39.js",
+    "static/js/787.4172cff5.chunk.js": "/webstacToCal/static/js/787.4172cff5.chunk.js",
     "index.html": "/webstacToCal/index.html",
-    "static/css/main.b536bcc3.chunk.css.map": "/webstacToCal/static/css/main.b536bcc3.chunk.css.map",
-    "static/js/2.a312ef76.chunk.js.LICENSE.txt": "/webstacToCal/static/js/2.a312ef76.chunk.js.LICENSE.txt"
+    "static/media/googleLogo.svg": "/webstacToCal/static/media/googleLogo.d7f092af888a54de79ed9c9303d689d7.svg",
+    "main.38a5b594.css.map": "/webstacToCal/static/css/main.38a5b594.css.map",
+    "main.4ff3ed39.js.map": "/webstacToCal/static/js/main.4ff3ed39.js.map",
+    "787.4172cff5.chunk.js.map": "/webstacToCal/static/js/787.4172cff5.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.ef1b5f12.js",
-    "static/js/2.a312ef76.chunk.js",
-    "static/css/main.b536bcc3.chunk.css",
-    "static/js/main.55d72f9d.chunk.js"
+    "static/css/main.38a5b594.css",
+    "static/js/main.4ff3ed39.js"
   ]
 }
