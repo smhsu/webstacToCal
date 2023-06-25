@@ -34,6 +34,18 @@
     <link rel="stylesheet" href="bootstrap@5.2.3.min.css">
     <link rel="stylesheet" href="global.css">
     <script async defer src="bootstrap.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js"></script>
+    <script>
+      if (process.env.NODE_ENV === "production" && process.env.GTAG_ID) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag("js", new Date());
+        gtag("config", process.env.GTAG_ID);
+      }
+    </script>
+
   </head>
   <body>
     <div id="top" class="header bg-wustl">

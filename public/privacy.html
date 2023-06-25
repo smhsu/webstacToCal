@@ -31,6 +31,16 @@
     <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="privacy.css">
     <title>Privacy Policy</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js"></script>
+    <script>
+        if (process.env.NODE_ENV === "production" && process.env.GTAG_ID) {
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag("js", new Date());
+            gtag("config", process.env.GTAG_ID);
+        }
+    </script>
 </head>
 <body>
 <div class="header bg-wustl">
@@ -47,8 +57,8 @@
     <h2>No calendar data collected</h2>
     <p>
         All aspects of reading and exporting your class schedule happens inside your web browser, on your computer.
-        This website does NOT read, collect, or store events from Google Calendar, nor does it send class schedules
-        anywhere except Google Calendar.  Permission to read events from Google Calendar are not necessary for the site
+        This website does NOT read or store events from Google Calendar, and it only sends class schedules
+        to your Google Calendar.  Permission to read events from Google Calendar are not necessary for the site
         to function, but Google bundles them with the permission to add events.
     </p>
     <p>
@@ -63,7 +73,7 @@
     <ul>
         <li><a href="https://www.bounteous.com/insights/2016/06/22/how-does-google-analytics-collect-information/">Basic
             usage stats</a>, such as how long you were on the site, and your web browser version.</li>
-        <li>Whether class/final parsing was successful (a pure yes-no)</li>
+        <li>Whether you input a class/final schedule (a pure yes-no)</li>
         <li>The number of events added</li>
     </ul>
     <p>

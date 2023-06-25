@@ -38,16 +38,16 @@ export function ExportConfirmArea(props: IExportConfirmAreaProps) {
     const notReadyNotifications = [];
     if (exportMethod === EventExportMethod.None) {
         notReadyNotifications.push(<li key="0">
-            You must <AppStepLink step={AppWorkflowStep.Config}>choose an export method</AppStepLink>.
+            Please <AppStepLink step={AppWorkflowStep.Config}>choose an export method</AppStepLink>.
         </li>);
     }
     if (semester === null) {
         notReadyNotifications.push(<li key="1">
-            You must <AppStepLink step={AppWorkflowStep.Config}>choose a semester</AppStepLink>.
+            Please <AppStepLink step={AppWorkflowStep.Config}>choose a semester</AppStepLink>.
         </li>);
     }
     if (editorStates.length <= 0) {
-        notReadyNotifications.push(<li key="2">You must copy-paste something valid from WebSTAC.</li>);
+        notReadyNotifications.push(<li key="2">Please copy-paste something valid from WebSTAC.</li>);
     }
     if (notReadyNotifications.length > 0 && IS_CHECKING_READY_STATE) {
         return <div>

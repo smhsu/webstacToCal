@@ -3,10 +3,10 @@
 This branch contains all the code necessary to build the static HTML and CSS for **WebSTAC to Calendar**.
 
 ## Installation and running the dev server
-1. Make sure you have the most recent version of Node.js (https://nodejs.org/en/).
+1. Install the most recent LTS version of Node.js (https://nodejs.org/en/).
 2. On the command line, in the root directory of the repository, run `npm install`.
 3. You will need a Google Calendar API key and an OAuth 2.0 client ID to make the app work.  See https://console.developers.google.com/ to get those.
-    * When you create the API key, I recommend you add appropriate restrictions to prevent unauthorized use.  The most basic one is to add an HTTP referrer restriction of http://localhost:3000, which is the default run URL of the dev server.
+    * When you create the API key, don't forget to add HTTP referrer restrictions to prevent unauthorized use.
 4. Once you have those keys, create a new file called `.env.development.local` in the root of the repository.
 5. Write the following two lines in the file, in the same style as `.env.production`.
 ```
@@ -28,5 +28,6 @@ REACT_APP_OAUTH_CLIENT_ID=your_oauth_client_id
 Of course, you'll need your own webserver for this.
 
 1. Change the `homepage` key in `package.json` to whereever you are hosting.
-2. Change the keys in `.env.production` to whatever API keys you will be using.
+2. Change the values in `.env.production` to whatever API keys you will be using.
+    * `GTAG_ID` is for Google Analytics.  You can delete that key if you don't want to use Analytics.
 3. Run `npm run build` on the command line.  This will output static HTML and Javascript that you can host.

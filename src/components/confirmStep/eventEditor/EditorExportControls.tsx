@@ -1,7 +1,7 @@
 import { faCheck, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-
+import { Analytics } from "src/google/Analytics";
 import { EventExportState } from "src/state/EventExportState";
 
 interface IEditorExportControlsProps {
@@ -13,6 +13,11 @@ interface IEditorExportControlsProps {
 
 export function EditorExportControls(props: IEditorExportControlsProps) {
     const { exportState, className, disabled, onExportClicked } = props;
+    const handleExportClicked = () => {
+        Analytics.sendEvent("Export one clicked");
+        onExportClicked();
+    };
+
     if (exportState.successUrl) {
         return <div className={className + " d-flex align-items-center"}>
             <div className="alert alert-success p-2">
@@ -30,7 +35,7 @@ export function EditorExportControls(props: IEditorExportControlsProps) {
             <button
                 className="btn btn-primary"
                 disabled={disabled || exportState.isExporting}
-                onClick={onExportClicked}
+                onClick={handleExportClicked}
             >
                 <FontAwesomeIcon icon={faCloudArrowUp} className="me-2" />
                 {exportState.isExporting ?

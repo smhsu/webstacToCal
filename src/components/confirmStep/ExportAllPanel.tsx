@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
 import { describeCount } from "src/describeCount";
+import { Analytics } from "src/google/Analytics";
 import { EventEditorId, IEventEditorState } from "src/state/IEventEditorState";
 import { IValidationError } from "src/eventLogic/IValidationError";
 import { ExportAllResults } from "./ExportAllResults";
@@ -25,6 +26,7 @@ export function ExportAllPanel(props: IExportAllPanelProps) {
     const handleExportClicked = async () => {
         setNumSuccessful(0);
         setNumFailed(0);
+        Analytics.sendEvent("Export all clicked");
         const promises = exporter(batch);
         for (const promise of promises) {
             promise.then(wasSuccessful => {

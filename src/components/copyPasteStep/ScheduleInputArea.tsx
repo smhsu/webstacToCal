@@ -4,6 +4,7 @@ import { describeCount } from "src/describeCount";
 import { WebstacCourseParser } from "src/eventLogic/WebstacCourseParser";
 import { WebstacExamParser } from "src/eventLogic/WebstacExamParser";
 import { IEventInputs } from "src/eventLogic/IEventInputs";
+import { Analytics } from "src/google/Analytics";
 
 const CLASS_SCHEDULE_URL = "https://acadinfo.wustl.edu/apps/ClassSchedule/";
 const PLACEHOLDER = "Go to WebSTAC >> Courses & Registration >> Class Schedule.\n" +
@@ -51,6 +52,9 @@ export class ScheduleInputArea extends React.PureComponent<IScheduleInputAreaPro
         const allEvents = (courses as IEventInputs[]).concat(finals);
         if (allEvents.length <= 0 && input.trim().length > 0) {
             this.setState({ isParsingFailure: true });
+            Analytics.sendEvent("Schedule parse failed");
+        } else {
+            Analytics.sendEvent("Schedule parse succeeded");
         }
         this.props.onEventsParsed?.(allEvents);
     }
