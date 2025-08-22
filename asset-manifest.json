@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/webstacToCal/static/css/main.38a5b594.css",
-    "main.js": "/webstacToCal/static/js/main.4544e144.js",
+    "main.js": "/webstacToCal/static/js/main.fde47303.js",
     "static/js/787.4172cff5.chunk.js": "/webstacToCal/static/js/787.4172cff5.chunk.js",
     "index.html": "/webstacToCal/index.html",
     "static/media/googleLogo.svg": "/webstacToCal/static/media/googleLogo.d7f092af888a54de79ed9c9303d689d7.svg",
     "main.38a5b594.css.map": "/webstacToCal/static/css/main.38a5b594.css.map",
-    "main.4544e144.js.map": "/webstacToCal/static/js/main.4544e144.js.map",
+    "main.fde47303.js.map": "/webstacToCal/static/js/main.fde47303.js.map",
     "787.4172cff5.chunk.js.map": "/webstacToCal/static/js/787.4172cff5.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.38a5b594.css",
-    "static/js/main.4544e144.js"
+    "static/js/main.fde47303.js"
   ]
 }
